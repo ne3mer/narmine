@@ -196,8 +196,8 @@ export default function AccountPage() {
 
   const latestOrder = orders[0];
 
-  const navItems: Array<{ id: Tab; label: string; icon: string }> = [
-    { id: 'overview', label: 'داشبورد', icon: 'layout-dashboard' },
+  const navItems: Array<{ id: Tab; label: string; icon: IconName }> = [
+    { id: 'overview', label: 'داشبورد', icon: 'dashboard' },
     { id: 'orders', label: 'سفارش‌ها', icon: 'package' },
     { id: 'notifications', label: 'اعلان‌ها', icon: 'bell' },
     { id: 'addresses', label: 'آدرس‌ها', icon: 'map-pin' },
