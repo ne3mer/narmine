@@ -97,7 +97,13 @@ export const sendNotification = async (options: SendNotificationOptions): Promis
     }
 
     if (emailContent) {
-      results.emailSent = await sendEmail(emailContent);
+      try {
+        await sendEmail(emailContent);
+        results.emailSent = true;
+      } catch (error) {
+        console.error('Failed to send email:', error);
+        results.emailSent = false;
+      }
     }
   }
 
