@@ -592,7 +592,7 @@ export default function HomepageSettingsPage() {
                 </button>
               </div>
               <div className="space-y-4">
-                {content.heroSlides.map((slide, index) => (
+                {(content.heroSlides || []).map((slide, index) => (
                   <div key={index} className="rounded-2xl border border-slate-100 p-4 shadow-sm">
                     <div className="flex items-center justify-between text-sm font-bold text-slate-900">
                       <span>{slide.badge}</span>
