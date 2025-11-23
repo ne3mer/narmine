@@ -65,10 +65,12 @@ import {
   Cpu,
   ShoppingBag,
   Image as ImageIcon
+  Hash,
+  LogOut
 } from 'lucide-react';
 import { type LucideIcon } from 'lucide-react';
 
-type IconName =
+export type IconName =
   | 'dashboard'
   | 'game'
   | 'cart'
@@ -132,7 +134,9 @@ type IconName =
   | 'info'
   | 'truck'
   | 'cpu'
-  | 'shopping-bag';
+  | 'shopping-bag'
+  | 'hash'
+  | 'log-out';
 
 const iconMap: Record<IconName, LucideIcon> = {
   dashboard: LayoutDashboard,
@@ -198,8 +202,12 @@ const iconMap: Record<IconName, LucideIcon> = {
   info: Info,
   truck: Truck,
   cpu: Cpu,
-  'shopping-bag': ShoppingBag
+  'shopping-bag': ShoppingBag,
+  hash: Hash,
+  'log-out': LogOut
 };
+
+export type { IconName };
 
 interface IconProps {
   name: IconName;
