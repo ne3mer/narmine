@@ -22,6 +22,7 @@ import gameRequestRouter from "./game-request.route";
 import telegramRouter from "./telegram.route";
 import homepageSettingsRouter from "./homepageSettings.routes";
 import shippingMethodRouter from "./shipping-method.route";
+import pageRouter from "./page.route";
 
 const router = Router();
 
@@ -47,5 +48,6 @@ router.use("/game-requests", gameRequestRouter);
 router.use("/telegram", telegramRouter);
 router.use("/homepage-settings", homepageSettingsRouter);
 router.use("/shipping-methods", shippingMethodRouter);
+router.use("/pages", pageRouter);
 
 export default router;
