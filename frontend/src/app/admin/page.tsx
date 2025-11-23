@@ -128,8 +128,21 @@ export default function AdminDashboard() {
           .sort((a, b) => b.sales - a.sales)
           .slice(0, 5);
 
-        // Fetch users count (if we had an endpoint, for now estimate from orders)
-        const newUsers = 0; // TODO: Add user count endpoint
+        // Fetch user stats
+        let newUsers = 0;
+        if (ADMIN_API_KEY) {
+          try {
+            const userStatsRes = await fetch(`${API_BASE_URL}/api/users/stats`, {
+              headers: adminHeaders()
+            });
+            if (userStatsRes.ok) {
+              const userStatsData = await userStatsRes.json();
+              newUsers = userStatsData?.data?.newUsersThisWeek || 0;
+            }
+          } catch (err) {
+            console.warn('Could not fetch user stats:', err);
+          }
+        }
 
         setStats({
           ordersToday,

@@ -71,3 +71,9 @@ export const getUserInsights = async (req: Request, res: Response) => {
   const data = await userService.getUserInsights(id);
   res.json({ data });
 };
+
+export const getUserStats = async (_req: Request, res: Response) => {
+  const stats = await userService.getUserStats();
+  res.json({ data: stats });
+};
+

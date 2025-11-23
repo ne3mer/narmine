@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserInsights = exports.sendUserMessage = exports.deleteUser = exports.updateUser = exports.updateUserRole = exports.getUserById = exports.getAllUsers = void 0;
+exports.getUserStats = exports.getUserInsights = exports.sendUserMessage = exports.deleteUser = exports.updateUser = exports.updateUserRole = exports.getUserById = exports.getAllUsers = void 0;
 const userService = __importStar(require("../services/user.service"));
 const getAllUsers = async (_req, res) => {
     const users = await userService.getAllUsers();
@@ -104,4 +104,9 @@ const getUserInsights = async (req, res) => {
     res.json({ data });
 };
 exports.getUserInsights = getUserInsights;
+const getUserStats = async (_req, res) => {
+    const stats = await userService.getUserStats();
+    res.json({ data: stats });
+};
+exports.getUserStats = getUserStats;
 //# sourceMappingURL=user.controller.js.map

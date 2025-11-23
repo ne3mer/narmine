@@ -99,7 +99,7 @@ export default async function HomePage() {
         <section className="w-full bg-white py-20">
           <div className="mx-auto max-w-7xl px-6">
             <div className="text-center mb-16">
-              <p className="mb-3 text-sm font-medium tracking-widest text-[#c9a896] uppercase">چرا نرمینه خواب؟</p>
+              <p className="mb-3 text-sm font-medium tracking-widest text-[#8b6f47] uppercase">چرا نرمینه خواب؟</p>
               <h2 className="font-serif text-4xl font-bold text-[#4a3f3a] md:text-5xl" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
                 تجربه‌ای متفاوت از خرید
               </h2>

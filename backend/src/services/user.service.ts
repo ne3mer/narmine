@@ -277,3 +277,25 @@ export const getUserInsights = async (userId: string) => {
     }
   };
 };
+
+export const getUserStats = async () => {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const thisWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const [totalUsers, newUsersToday, newUsersThisWeek, newUsersThisMonth] = await Promise.all([
+    UserModel.countDocuments(),
+    UserModel.countDocuments({ createdAt: { $gte: today } }),
+    UserModel.countDocuments({ createdAt: { $gte: thisWeek } }),
+    UserModel.countDocuments({ createdAt: { $gte: thisMonth } })
+  ]);
+
+  return {
+    totalUsers,
+    newUsersToday,
+    newUsersThisWeek,
+    newUsersThisMonth
+  };
+};
+

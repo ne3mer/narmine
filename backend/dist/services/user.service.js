@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserInsights = exports.sendAdminMessage = exports.deleteUser = exports.updateUser = exports.updateUserRole = exports.getUserByEmail = exports.getUserById = exports.getAllUsers = void 0;
+exports.getUserStats = exports.getUserInsights = exports.sendAdminMessage = exports.deleteUser = exports.updateUser = exports.updateUserRole = exports.getUserByEmail = exports.getUserById = exports.getAllUsers = void 0;
 const user_model_1 = require("../models/user.model");
 const errorHandler_1 = require("../middleware/errorHandler");
 const order_model_1 = require("../models/order.model");
@@ -237,4 +237,23 @@ const getUserInsights = async (userId) => {
     };
 };
 exports.getUserInsights = getUserInsights;
+const getUserStats = async () => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const thisWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const [totalUsers, newUsersToday, newUsersThisWeek, newUsersThisMonth] = await Promise.all([
+        user_model_1.UserModel.countDocuments(),
+        user_model_1.UserModel.countDocuments({ createdAt: { $gte: today } }),
+        user_model_1.UserModel.countDocuments({ createdAt: { $gte: thisWeek } }),
+        user_model_1.UserModel.countDocuments({ createdAt: { $gte: thisMonth } })
+    ]);
+    return {
+        totalUsers,
+        newUsersToday,
+        newUsersThisWeek,
+        newUsersThisMonth
+    };
+};
+exports.getUserStats = getUserStats;
 //# sourceMappingURL=user.service.js.map

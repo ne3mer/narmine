@@ -19,7 +19,7 @@ export const ShippingExperience = ({ methods = defaultHomeContent.shippingMethod
     <div className="rounded-3xl border border-[#c9a896]/30 bg-gradient-to-br from-white via-[#fefaf6] to-[#f5ebe3] p-8 shadow-xl">
       <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#c9a896]">SHIPPING EXPERIENCE</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#8b6f47]">SHIPPING EXPERIENCE</p>
           <h2 className="mt-3 font-serif text-3xl text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
             روش‌های ارسال نرمینه خواب
           </h2>

@@ -19,6 +19,7 @@ const router = Router();
 router.use(adminAuth);
 
 router.get('/', validateResource(getAllUsersSchema), asyncHandler(userController.getAllUsers));
+router.get('/stats', asyncHandler(userController.getUserStats));
 router.post('/messages', validateResource(sendUserMessageSchema), asyncHandler(userController.sendUserMessage));
 router.get('/:id/insights', validateResource(getUserInsightsSchema), asyncHandler(userController.getUserInsights));
 router.get('/:id', validateResource(getUserByIdSchema), asyncHandler(userController.getUserById));

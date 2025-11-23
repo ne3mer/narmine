@@ -48,7 +48,7 @@ export function FeaturedCollections() {
       <div className="mx-auto max-w-7xl">
         {/* Section Header */}
         <div className="mb-16 text-center">
-          <p className="mb-3 text-sm font-medium tracking-widest text-[#c9a896] uppercase">کلکشن‌های ویژه</p>
+          <p className="mb-3 text-sm font-medium tracking-widest text-[#8b6f47] uppercase">کلکشن‌های ویژه</p>
           <h2 className="font-serif text-4xl font-bold text-[#4a3f3a] md:text-5xl" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
             انتخاب بر اساس نیاز شما
           </h2>

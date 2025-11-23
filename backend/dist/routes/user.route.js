@@ -43,6 +43,7 @@ const router = (0, express_1.Router)();
 // All user management routes require admin authentication
 router.use(adminAuth_1.adminAuth);
 router.get('/', (0, validateResource_1.validateResource)(user_schema_1.getAllUsersSchema), (0, asyncHandler_1.asyncHandler)(userController.getAllUsers));
+router.get('/stats', (0, asyncHandler_1.asyncHandler)(userController.getUserStats));
 router.post('/messages', (0, validateResource_1.validateResource)(user_schema_1.sendUserMessageSchema), (0, asyncHandler_1.asyncHandler)(userController.sendUserMessage));
 router.get('/:id/insights', (0, validateResource_1.validateResource)(user_schema_1.getUserInsightsSchema), (0, asyncHandler_1.asyncHandler)(userController.getUserInsights));
 router.get('/:id', (0, validateResource_1.validateResource)(user_schema_1.getUserByIdSchema), (0, asyncHandler_1.asyncHandler)(userController.getUserById));

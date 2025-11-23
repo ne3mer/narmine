@@ -36,7 +36,7 @@ export function LuxuryHero({ content = defaultHomeContent.hero, slides = default
         {/* Badge */}
         <div className="animate-fade-in mb-6 inline-flex items-center gap-2 rounded-full border border-[#c9a896]/30 bg-white/60 backdrop-blur-sm px-6 py-2 shadow-sm">
           <span className="h-2 w-2 rounded-full bg-[#c9a896] animate-pulse" />
-          <span className="text-xs font-medium tracking-widest text-[#4a3f3a] uppercase">{content.badge}</span>
+          <span className="text-xs font-medium tracking-widest text-[#8b6f47] uppercase">{content.badge}</span>
         </div>
 
         {/* Main Headline */}
@@ -49,7 +49,7 @@ export function LuxuryHero({ content = defaultHomeContent.hero, slides = default
           }}
         >
           {heroLines.map((line, idx) => (
-            <span key={`${line}-${idx}`} className={idx === 1 ? 'text-[#c9a896]' : undefined}>
+            <span key={`${line}-${idx}`} className={idx === 1 ? 'text-[#a6785d]' : undefined}>
               {line}
               {idx !== heroLines.length - 1 && <br />}
             </span>
@@ -82,7 +82,7 @@ export function LuxuryHero({ content = defaultHomeContent.hero, slides = default
         <div className="animate-fade-in delay-400 mt-16 flex flex-wrap items-center justify-center gap-8 text-sm text-[#4a3f3a]/60">
           {content.stats.map((stat) => (
             <div key={stat.id} className="flex items-center gap-2">
-              <Icon name="check" size={18} className="text-[#c9a896]" />
+              <Icon name="check" size={18} className="text-[#a6785d]" />
               <span>{`${stat.label}: ${stat.value}`}</span>
             </div>
           ))}
