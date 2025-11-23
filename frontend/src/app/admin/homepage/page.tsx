@@ -232,7 +232,7 @@ export default function HomepageSettingsPage() {
   const updateSlide = (index: number, field: keyof HeroContent, value: string) => {
     setContent((prev) => ({
       ...prev,
-      heroSlides: prev.heroSlides.map((slide, idx) => (idx === index ? { ...slide, [field]: value } : slide))
+      heroSlides: (prev.heroSlides || []).map((slide, idx) => (idx === index ? { ...slide, [field]: value } : slide))
     }));
   };
 
@@ -244,7 +244,7 @@ export default function HomepageSettingsPage() {
   ) => {
     setContent((prev) => ({
       ...prev,
-      heroSlides: prev.heroSlides.map((slide, idx) =>
+      heroSlides: (prev.heroSlides || []).map((slide, idx) =>
         idx === index
           ? {
               ...slide,
@@ -261,7 +261,7 @@ export default function HomepageSettingsPage() {
   const updateSlideStat = (slideIndex: number, statIndex: number, field: 'label' | 'value', value: string) => {
     setContent((prev) => ({
       ...prev,
-      heroSlides: prev.heroSlides.map((slide, idx) =>
+      heroSlides: (prev.heroSlides || []).map((slide, idx) =>
         idx === slideIndex
           ? {
               ...slide,
@@ -276,7 +276,7 @@ export default function HomepageSettingsPage() {
     setContent((prev) => ({
       ...prev,
       heroSlides: [
-        ...prev.heroSlides,
+        ...(prev.heroSlides || []),
         {
           badge: 'اسلاید جدید',
           title: 'عنوان جدید',
@@ -291,7 +291,7 @@ export default function HomepageSettingsPage() {
   };
 
   const removeSlide = (index: number) => {
-    setContent((prev) => ({ ...prev, heroSlides: prev.heroSlides.filter((_, idx) => idx !== index) }));
+    setContent((prev) => ({ ...prev, heroSlides: (prev.heroSlides || []).filter((_, idx) => idx !== index) }));
   };
 
   const updateBannerField = (field: keyof BannerContent, value: string | string[]) => {
