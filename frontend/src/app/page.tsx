@@ -3,7 +3,6 @@ import { FeaturedCollections } from "@/components/sections/FeaturedCollections";
 import { NewArrivalsSection } from "@/components/sections/NewArrivalsSection";
 import { CategoriesSection } from "@/components/sections/CategoriesSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
-import { CreativeBanner } from "@/components/sections/CreativeBanner";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { categories as defaultCategories } from "@/data/home";
 import { API_BASE_URL } from "@/lib/api";
@@ -139,12 +138,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Creative Banner */}
-        <section className="w-full bg-gradient-to-b from-white to-[#f8f5f2] py-20">
-          <div className="mx-auto max-w-7xl px-6">
-            <CreativeBanner content={homeContent.creativeBanner} />
-          </div>
-        </section>
+
 
         {/* Shipping Experience */}
         <section className="w-full bg-[#f8f5f2] py-20">
