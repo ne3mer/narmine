@@ -64,7 +64,7 @@ import {
   Truck,
   Cpu,
   ShoppingBag,
-  Image as ImageIcon
+  Image as ImageIcon,
   Hash,
   LogOut
 } from 'lucide-react';
@@ -206,8 +206,6 @@ const iconMap: Record<IconName, LucideIcon> = {
   hash: Hash,
   'log-out': LogOut
 };
-
-export type { IconName };
 
 interface IconProps {
   name: IconName;
