@@ -86,8 +86,8 @@ const TournamentPaymentSchema: Schema = new Schema(
 // Indexes
 TournamentPaymentSchema.index({ userId: 1 });
 TournamentPaymentSchema.index({ tournamentId: 1 });
-TournamentPaymentSchema.index({ authority: 1 });
-TournamentPaymentSchema.index({ transactionId: 1 });
+// TournamentPaymentSchema.index({ authority: 1 }); // Already unique in schema
+// TournamentPaymentSchema.index({ transactionId: 1 }); // Already unique in schema
 TournamentPaymentSchema.index({ status: 1 });
 TournamentPaymentSchema.index({ createdAt: -1 });
 
