@@ -499,7 +499,7 @@ export default function EditProductPage() {
                   onChange={(event) => handleFieldChange('title', event.target.value)}
                   className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
                   required
-                  placeholder="مثال: God of War Ragnarök"
+                  placeholder="مثال: سرویس خواب دو نفره مدل رویال"
                 />
               </label>
 
@@ -510,27 +510,12 @@ export default function EditProductPage() {
                   onChange={(event) => handleFieldChange('slug', event.target.value)}
                   className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-mono focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
                   required
-                  placeholder="god-of-war-ragnarok"
+                  placeholder="royal-double-bedding-set"
                 />
                 <p className="text-xs text-slate-500 mt-1">فقط حروف انگلیسی، اعداد و خط تیره</p>
               </label>
 
-              <label>
-                <span className="text-sm font-bold text-slate-700 mb-2 block">پلتفرم *</span>
-                <select
-                  value={formState.platform}
-                  onChange={(event) => handleFieldChange('platform', event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  required
-                >
-                  <option value="PS5">PlayStation 5</option>
-                  <option value="PS4">PlayStation 4</option>
-                  <option value="Xbox Series X|S">Xbox Series X|S</option>
-                  <option value="Xbox One">Xbox One</option>
-                  <option value="PC">PC</option>
-                  <option value="Nintendo Switch">Nintendo Switch</option>
-                </select>
-              </label>
+
 
               <label>
                 <span className="text-sm font-bold text-slate-700 mb-2 block">قیمت پایه (تومان) *</span>
@@ -541,29 +526,11 @@ export default function EditProductPage() {
                   className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
                   required
                   min="0"
-                  placeholder="1500000"
+                  placeholder="2500000"
                 />
               </label>
 
-              <label>
-                <span className="text-sm font-bold text-slate-700 mb-2 block">ژانرها (با کاما)</span>
-                <input
-                  value={formState.genre}
-                  onChange={(event) => handleFieldChange('genre', event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  placeholder="اکشن, ماجراجویی, نقش آفرینی"
-                />
-              </label>
 
-              <label>
-                <span className="text-sm font-bold text-slate-700 mb-2 block">مناطق (با کاما)</span>
-                <input
-                  value={formState.regionOptions}
-                  onChange={(event) => handleFieldChange('regionOptions', event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  placeholder="R1, R2, R3"
-                />
-              </label>
 
               <label className="md:col-span-2">
                 <span className="text-sm font-bold text-slate-700 mb-2 block">توضیحات کوتاه *</span>
@@ -633,29 +600,7 @@ export default function EditProductPage() {
             <h2 className="text-xl font-bold text-slate-900 border-b border-slate-100 pb-3">رسانه و تصاویر</h2>
             
             <div className="grid gap-6">
-              <label>
-                <span className="text-sm font-bold text-slate-700 mb-2 block">لینک تریلر (YouTube/Vimeo)</span>
-                <input
-                  type="url"
-                  value={formState.trailerUrl}
-                  onChange={(event) => handleFieldChange('trailerUrl', event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  placeholder="https://www.youtube.com/watch?v=..."
-                />
-                <p className="text-xs text-slate-500 mt-1">لینک کامل ویدیو از YouTube یا Vimeo</p>
-              </label>
 
-              <label>
-                <span className="text-sm font-bold text-slate-700 mb-2 block">لینک ویدیو گیم‌پلی (YouTube/Vimeo)</span>
-                <input
-                  type="url"
-                  value={formState.gameplayVideoUrl}
-                  onChange={(event) => handleFieldChange('gameplayVideoUrl', event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  placeholder="https://www.youtube.com/watch?v=..."
-                />
-                <p className="text-xs text-slate-500 mt-1">لینک کامل ویدیو گیم‌پلی از YouTube یا Vimeo</p>
-              </label>
 
               <div className="md:col-span-2">
                 <ImageGalleryUpload
@@ -672,17 +617,7 @@ export default function EditProductPage() {
                 />
               </div>
 
-              <label>
-                <span className="text-sm font-bold text-slate-700 mb-2 block">اسکرین‌شات‌ها (با کاما)</span>
-                <textarea
-                  value={formState.screenshots}
-                  onChange={(event) => handleScreenshotsChange(event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  rows={3}
-                  placeholder="https://example.com/screenshot1.jpg, https://example.com/screenshot2.jpg"
-                />
-                <p className="text-xs text-slate-500 mt-1">لینک تصاویر محصول را با کاما از هم جدا کنید</p>
-              </label>
+
             </div>
           </div>
         )}
@@ -707,51 +642,7 @@ export default function EditProductPage() {
                 />
               </label>
 
-              <label>
-                <span className="text-sm font-bold text-slate-700 mb-2 block">تاریخ انتشار</span>
-                <input
-                  type="date"
-                  value={formState.releaseDate}
-                  onChange={(event) => handleFieldChange('releaseDate', event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                />
-              </label>
 
-              <label>
-                <span className="text-sm font-bold text-slate-700 mb-2 block">توسعه‌دهنده</span>
-                <input
-                  value={formState.developer}
-                  onChange={(event) => handleFieldChange('developer', event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  placeholder="مثال: Santa Monica Studio"
-                />
-              </label>
-
-              <label>
-                <span className="text-sm font-bold text-slate-700 mb-2 block">ناشر</span>
-                <input
-                  value={formState.publisher}
-                  onChange={(event) => handleFieldChange('publisher', event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  placeholder="مثال: Sony Interactive Entertainment"
-                />
-              </label>
-
-              <label>
-                <span className="text-sm font-bold text-slate-700 mb-2 block">رده سنی</span>
-                <select
-                  value={formState.ageRating}
-                  onChange={(event) => handleFieldChange('ageRating', event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                >
-                  <option value="">انتخاب کنید</option>
-                  <option value="E">E - Everyone</option>
-                  <option value="E10+">E10+ - Everyone 10+</option>
-                  <option value="T">T - Teen</option>
-                  <option value="M">M - Mature</option>
-                  <option value="AO">AO - Adults Only</option>
-                </select>
-              </label>
 
               <label className="md:col-span-2">
                 <span className="text-sm font-bold text-slate-700 mb-2 block">ویژگی‌ها (با کاما)</span>
@@ -759,31 +650,11 @@ export default function EditProductPage() {
                   value={formState.features}
                   onChange={(event) => handleFieldChange('features', event.target.value)}
                   className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  placeholder="چند نفره آنلاین, رایگان, Ray Tracing"
+                  placeholder="ضد حساسیت, قابل شستشو, رنگ ثابت"
                 />
               </label>
 
-              <label className="md:col-span-2">
-                <span className="text-sm font-bold text-slate-700 mb-2 block">حداقل نیازمندی‌های سیستم</span>
-                <textarea
-                  value={formState.systemRequirementsMinimum}
-                  onChange={(event) => handleFieldChange('systemRequirementsMinimum', event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  rows={3}
-                  placeholder="CPU: Intel Core i5-8400..."
-                />
-              </label>
 
-              <label className="md:col-span-2">
-                <span className="text-sm font-bold text-slate-700 mb-2 block">پیشنهادی نیازمندی‌های سیستم</span>
-                <textarea
-                  value={formState.systemRequirementsRecommended}
-                  onChange={(event) => handleFieldChange('systemRequirementsRecommended', event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  rows={3}
-                  placeholder="CPU: Intel Core i7-9700K..."
-                />
-              </label>
             </div>
           </div>
         )}
