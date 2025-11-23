@@ -23,6 +23,7 @@ import telegramRouter from "./telegram.route";
 import homepageSettingsRouter from "./homepageSettings.routes";
 import shippingMethodRouter from "./shipping-method.route";
 import pageRouter from "./page.route";
+import contactRouter from "./contact.route";
 
 const router = Router();
 
@@ -49,5 +50,6 @@ router.use("/telegram", telegramRouter);
 router.use("/homepage-settings", homepageSettingsRouter);
 router.use("/shipping-methods", shippingMethodRouter);
 router.use("/pages", pageRouter);
+router.use("/contact", contactRouter);
 
 export default router;

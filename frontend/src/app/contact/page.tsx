@@ -1,8 +1,7 @@
-'use client';
-
 import { useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/Icon';
+import { API_BASE_URL } from '@/lib/api';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -13,16 +12,36 @@ export default function ContactPage() {
     message: ''
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
+    setErrorMessage('');
     
-    // Simulate API call
-    setTimeout(() => {
-      setStatus('success');
-      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-    }, 1500);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+        setTimeout(() => setStatus('idle'), 5000);
+      } else {
+        setStatus('error');
+        setErrorMessage(data.message || 'خطا در ارسال پیام');
+      }
+    } catch (error) {
+      setStatus('error');
+      setErrorMessage('خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید');
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -152,6 +171,15 @@ export default function ContactPage() {
                     <div className="flex items-center gap-2">
                       <Icon name="check" size={20} />
                       <p className="text-sm font-semibold">پیام شما با موفقیت ارسال شد!</p>
+                    </div>
+                  </div>
+                )}
+
+                {status === 'error' && (
+                  <div className="rounded-2xl bg-rose-50 border border-rose-200 p-4 text-rose-800">
+                    <div className="flex items-center gap-2">
+                      <Icon name="x" size={20} />
+                      <p className="text-sm font-semibold">{errorMessage}</p>
                     </div>
                   </div>
                 )}
