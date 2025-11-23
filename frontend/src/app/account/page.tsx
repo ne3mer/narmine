@@ -11,36 +11,7 @@ import { Icon, type IconName } from '@/components/icons/Icon';
 
 // ... (inside AccountPage component)
 
-    const overviewCards: { label: string; value: string; icon: IconName }[] = [
-      {
-        label: 'کل سفارش‌ها',
-        value: stats.totalOrders.toLocaleString('fa-IR'),
-        icon: 'package'
-      },
-      {
-        label: 'پرداخت شده',
-        value: stats.paidOrders.toLocaleString('fa-IR'),
-        icon: 'check-circle' as IconName // 'check-circle' is not in IconName, it's 'check' or 'check-circle-2' (mapped to 'check')? 
-        // Wait, let me check Icon.tsx again.
-        // Line 148: check: CheckCircle2
-        // Line 82: | 'check'
-        // So 'check-circle' is NOT a valid IconName. It should be 'check'.
-        // Let's check other icons.
-        // 'package' -> Line 81: | 'package' (Valid)
-        // 'clock' -> Line 83: | 'clock' (Valid)
-        // 'credit-card' -> Line 102: | 'credit-card' (Valid)
-      },
-      {
-        label: 'در حال پردازش',
-        value: stats.pendingOrders.toLocaleString('fa-IR'),
-        icon: 'clock'
-      },
-      {
-        label: 'جمع پرداختی',
-        value: `${formatToman(stats.totalSpent)} تومان`,
-        icon: 'credit-card'
-      }
-    ];
+
 import { getAuthToken } from '@/lib/auth';
 import { NotificationCenter } from '@/components/dashboard/NotificationCenter';
 import { QuickTrackWidget } from '@/components/dashboard/QuickTrackWidget';
