@@ -275,3 +275,15 @@ export type UserInsights = {
     unreadNotifications: number;
   };
 };
+
+export type CompactProduct = {
+  id: string;
+  _id?: string;
+  title: string;
+  coverUrl?: string;
+  basePrice: number;
+  onSale?: boolean;
+  salePrice?: number;
+  rating?: number;
+  slug: string;
+};

@@ -21,7 +21,7 @@ export const CompactProductCard = ({ product }: CompactProductCardProps) => {
       {/* Image */}
       <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-[#f8f5f2]">
         <Image
-          src={product.cover}
+          src={product.coverUrl || '/images/placeholder.jpg'}
           alt={product.title}
           fill
           sizes="96px"
@@ -35,7 +35,7 @@ export const CompactProductCard = ({ product }: CompactProductCardProps) => {
           <h3 className="mb-1 text-sm font-semibold text-[#4a3f3a] line-clamp-2 leading-snug">
             {product.title}
           </h3>
-          {product.rating && product.rating > 0 && (
+          {product.rating !== undefined && product.rating > 0 && (
             <div className="flex items-center gap-1 text-xs text-[#4a3f3a]/60">
               <Icon name="star" size={12} className="text-amber-500" strokeWidth={0} />
               <span>{product.rating.toFixed(1)}</span>
@@ -43,14 +43,11 @@ export const CompactProductCard = ({ product }: CompactProductCardProps) => {
           )}
         </div>
         <div className="flex items-baseline gap-1">
-          <span className="font-serif text-base font-bold text-[#4a3f3a]">{formatToman(product.price)}</span>
+          <span className="font-serif text-base font-bold text-[#4a3f3a]">
+            {formatToman(product.salePrice || product.basePrice)}
+          </span>
           <span className="text-xs text-[#4a3f3a]/60">تومان</span>
         </div>
-        {product.monthlyPrice && product.monthlyPrice > 0 && (
-          <p className="text-xs text-[#4a3f3a]/60">
-            پرداخت ماهانه: {formatToman(product.monthlyPrice)} تومان
-          </p>
-        )}
       </div>
     </Link>
   );

@@ -170,7 +170,7 @@ export default function CartPage() {
                 <span>ارسال سریع به سراسر کشور</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-[#4a3f3a]/60">
-                <Icon name="refresh-cw" size={16} className="text-[#c9a896]" />
+                <Icon name="refresh" size={16} className="text-[#c9a896]" />
                 <span>ضمانت بازگشت کالا</span>
               </div>
             </div>

@@ -158,7 +158,7 @@ export default function CheckoutPage() {
       }
 
       const orderItems = (cart?.items || [])
-        .map((item) => {
+        .map((item): OrderPayloadItem | null => {
           const productId = typeof item.gameId === 'string' ? item.gameId : item.gameId?.id;
           if (!productId) return null;
 
@@ -170,7 +170,7 @@ export default function CheckoutPage() {
             quantity: item.quantity
           };
         })
-        .filter((item): item is OrderPayloadItem => Boolean(item));
+        .filter((item): item is OrderPayloadItem => item !== null);
 
       if (orderItems.length === 0) {
         setError('سبد خرید شما خالی است');
@@ -573,7 +573,7 @@ export default function CheckoutPage() {
                     onChange={(e) => setPaymentMethod(e.target.value)}
                     className="accent-[#c9a896]"
                   />
-                  <Icon name="dollar-sign" size={20} className="text-[#c9a896]" />
+                  <Icon name="dollar" size={20} className="text-[#c9a896]" />
                   <span className="font-medium text-[#4a3f3a]">پرداخت در محل</span>
                 </label>
               </div>
@@ -588,7 +588,7 @@ export default function CheckoutPage() {
               <div className="mb-6 space-y-4">
                 {cart.items.map((item, index) => {
                   const product = item.gameId ?? null;
-                  const productId = product?.id ?? `${item.id || 'item'}-${index}`;
+                  const productId = product?.id ?? `item-${index}`;
                   const productTitle = product?.title ?? 'محصول نامشخص';
                   const coverUrl = product?.coverUrl;
 
