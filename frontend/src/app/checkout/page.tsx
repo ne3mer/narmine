@@ -9,6 +9,7 @@ import { formatToman } from '@/lib/format';
 import { API_BASE_URL } from '@/lib/api';
 import { Icon } from '@/components/icons/Icon';
 import { getAuthToken } from '@/lib/auth';
+import { defaultHomeContent, type ShippingMethodContent } from '@/data/homeContent';
 
 type OrderPayloadItem = {
   gameId: string;
@@ -38,6 +39,12 @@ export default function CheckoutPage() {
   });
 
   const [paymentMethod, setPaymentMethod] = useState('online');
+  const [shippingMethods, setShippingMethods] = useState<ShippingMethodContent[]>(defaultHomeContent.shippingMethods);
+  const [selectedShippingId, setSelectedShippingId] = useState<string>(
+    defaultHomeContent.shippingMethods[0]?.id ?? ''
+  );
+  const [deliveryDate, setDeliveryDate] = useState('');
+  const [deliveryNote, setDeliveryNote] = useState('');
 
   const cartProductIds = useMemo(() => {
     if (!cart?.items) return [] as string[];
@@ -50,8 +57,20 @@ export default function CheckoutPage() {
   }, [cart]);
 
   const discountAmount = appliedCoupon?.discount || 0;
-  const shippingCost = totalPrice > 500000 ? 0 : 50000;
-  const finalTotal = Math.max(totalPrice - discountAmount + shippingCost, 0);
+  const selectedShippingMethod =
+    shippingMethods.find((method) => method.id === selectedShippingId) ?? shippingMethods[0] ?? null;
+  const shippingCost = useMemo(() => {
+    if (!selectedShippingMethod) return 0;
+    if (selectedShippingMethod.freeThreshold && totalPrice >= selectedShippingMethod.freeThreshold) {
+      return 0;
+    }
+    return selectedShippingMethod.price ?? 0;
+  }, [selectedShippingMethod, totalPrice]);
+  const finalTotal = useMemo(
+    () => Math.max(totalPrice - discountAmount + shippingCost, 0),
+    [totalPrice, discountAmount, shippingCost]
+  );
+  const shippingPriceLabel = shippingCost > 0 ? `${formatToman(shippingCost)} تومان` : 'رایگان';
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -104,6 +123,27 @@ export default function CheckoutPage() {
     fetchInitialData();
   }, []);
 
+  useEffect(() => {
+    const fetchShippingMethods = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/homepage-settings`);
+        if (!response.ok) return;
+        const payload = await response.json();
+        const methods = payload?.data?.content?.shippingMethods;
+        if (Array.isArray(methods) && methods.length > 0) {
+          setShippingMethods(methods);
+          setSelectedShippingId((prev) =>
+            methods.some((method: ShippingMethodContent) => method.id === prev) ? prev : methods[0].id
+          );
+        }
+      } catch (error) {
+        console.warn('Shipping methods unavailable:', error);
+      }
+    };
+
+    fetchShippingMethods();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -138,6 +178,43 @@ export default function CheckoutPage() {
         return;
       }
 
+      const shippingAddressPayload = {
+        city: customerInfo.city,
+        address: customerInfo.address,
+        postalCode: customerInfo.postalCode,
+        recipientName: customerInfo.name,
+        recipientPhone: customerInfo.phone
+      };
+
+      const customerInfoPayload = {
+        name: customerInfo.name,
+        email: customerInfo.email,
+        phone: customerInfo.phone,
+        shippingAddress: shippingAddressPayload
+      };
+
+      const shippingMethodPayload = selectedShippingMethod
+        ? {
+            id: selectedShippingMethod.id,
+            name: selectedShippingMethod.name,
+            badge: selectedShippingMethod.badge,
+            icon: selectedShippingMethod.icon,
+            eta: selectedShippingMethod.eta,
+            perks: selectedShippingMethod.perks,
+            freeThreshold: selectedShippingMethod.freeThreshold,
+            priceLabel: shippingCost === 0 ? selectedShippingMethod.priceLabel ?? 'رایگان' : selectedShippingMethod.priceLabel,
+            price: shippingCost
+          }
+        : undefined;
+
+      const shippingPreferencesPayload =
+        deliveryDate || deliveryNote
+          ? {
+              deliveryDate: deliveryDate || undefined,
+              instructions: deliveryNote || undefined
+            }
+          : undefined;
+
       const response = await fetch(`${API_BASE_URL}/api/orders`, {
         method: 'POST',
         headers: {
@@ -145,12 +222,14 @@ export default function CheckoutPage() {
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          customerInfo,
+          customerInfo: customerInfoPayload,
           paymentMethod,
           items: orderItems,
           totalAmount: finalTotal,
           couponCode: appliedCoupon?.code,
-          discountAmount: discountAmount > 0 ? discountAmount : undefined
+          discountAmount: discountAmount > 0 ? discountAmount : undefined,
+          shippingMethod: shippingMethodPayload,
+          shippingPreferences: shippingPreferencesPayload
         })
       });
 
@@ -256,7 +335,7 @@ export default function CheckoutPage() {
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-[#f8f5f2]">
             <Icon name="shopping-bag" size={40} className="text-[#c9a896]" />
           </div>
-          <h2 className="mb-3 font-serif text-3xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+          <h2 className="mb-3 font-serif text-3xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
             سبد خرید شما خالی است
           </h2>
           <Link
@@ -274,7 +353,7 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-gradient-to-b from-[#f8f5f2] to-white px-4 py-16 md:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8">
-          <h1 className="mb-2 font-serif text-4xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+          <h1 className="mb-2 font-serif text-4xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
             تکمیل خرید
           </h1>
           <p className="text-[#4a3f3a]/60">لطفاً اطلاعات خود را وارد کنید</p>
@@ -358,6 +437,111 @@ export default function CheckoutPage() {
                     value={customerInfo.address}
                     onChange={(e) => setCustomerInfo({...customerInfo, address: e.target.value})}
                     className="w-full rounded-2xl border border-[#c9a896]/30 bg-[#f8f5f2]/30 px-4 py-3 text-[#4a3f3a] focus:border-[#c9a896] focus:outline-none focus:ring-2 focus:ring-[#c9a896]/20"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-[#c9a896]/20 bg-white p-6 shadow-sm">
+              <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <h2 className="font-serif text-2xl font-bold text-[#4a3f3a]">انتخاب روش ارسال</h2>
+                <p className="text-sm text-[#4a3f3a]/60">بر اساس سرعت تحویل یا صرفه اقتصادی انتخاب کنید</p>
+              </div>
+
+              <div className="space-y-4">
+                {shippingMethods.length === 0 && (
+                  <div className="rounded-2xl border border-dashed border-[#c9a896]/40 bg-[#f8f5f2]/50 p-4 text-center text-sm text-[#4a3f3a]/70">
+                    روش ارسال در دسترس نیست. لطفاً بعداً امتحان کنید.
+                  </div>
+                )}
+                {shippingMethods.map((method) => {
+                  const isSelected = method.id === selectedShippingId;
+                  const cost =
+                    method.freeThreshold && totalPrice >= method.freeThreshold ? 0 : method.price ?? 0;
+
+                  return (
+                    <label
+                      key={method.id}
+                      className={`block cursor-pointer rounded-2xl border-2 p-4 transition-all ${
+                        isSelected
+                          ? 'border-[#c9a896] bg-[#fdf8f3] shadow-lg'
+                          : 'border-transparent bg-[#f8f5f2]/50 hover:border-[#c9a896]/40'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="shippingMethod"
+                        value={method.id}
+                        checked={selectedShippingId === method.id}
+                        onChange={() => setSelectedShippingId(method.id)}
+                        className="sr-only"
+                      />
+                      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                        <div className="flex flex-1 items-start gap-3">
+                          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-2xl">
+                            {method.icon ?? '🚚'}
+                          </div>
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="font-serif text-xl font-semibold text-[#4a3f3a]">{method.name}</p>
+                              {method.badge && (
+                                <span className="rounded-full bg-[#f4e5d9] px-3 py-1 text-xs font-semibold text-[#a26c4d]">
+                                  {method.badge}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-[#4a3f3a]/70">{method.description}</p>
+                            <div className="mt-3 flex flex-wrap gap-2 text-xs text-[#4a3f3a]/60">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1">
+                                <Icon name="clock" size={14} /> {method.eta}
+                              </span>
+                              {(method.perks ?? []).slice(0, 2).map((perk) => (
+                                <span key={perk} className="rounded-full bg-white px-3 py-1">
+                                  {perk}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-[#4a3f3a]">
+                            {cost === 0 ? 'رایگان' : `${formatToman(cost)} تومان`}
+                          </p>
+                          {method.freeThreshold && (
+                            <p className="text-xs text-[#4a3f3a]/60">
+                              رایگان برای سفارش‌های بالای {formatToman(method.freeThreshold)} تومان
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-[#4a3f3a]">
+                    تاریخ تحویل مورد نظر (اختیاری)
+                  </label>
+                  <input
+                    type="date"
+                    value={deliveryDate}
+                    onChange={(e) => setDeliveryDate(e.target.value)}
+                    className="w-full rounded-2xl border border-[#c9a896]/30 bg-[#f8f5f2]/30 px-4 py-3 text-[#4a3f3a] focus:border-[#c9a896] focus:outline-none focus:ring-2 focus:ring-[#c9a896]/20"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-[#4a3f3a]">
+                    یادداشت ویژه برای پیک (اختیاری)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={deliveryNote}
+                    onChange={(e) => setDeliveryNote(e.target.value)}
+                    className="w-full rounded-2xl border border-[#c9a896]/30 bg-[#f8f5f2]/30 px-4 py-3 text-[#4a3f3a] focus:border-[#c9a896] focus:outline-none focus:ring-2 focus:ring-[#c9a896]/20"
+                    placeholder="مثال: لطفاً قبل از تحویل تماس بگیرید."
                   />
                 </div>
               </div>
@@ -493,10 +677,13 @@ export default function CheckoutPage() {
                 )}
                 <div className="flex justify-between text-[#4a3f3a]/70">
                   <span>هزینه ارسال</span>
-                  <span className="font-semibold text-[#4a3f3a]">
-                    {shippingCost > 0 ? `${formatToman(shippingCost)} تومان` : 'رایگان'}
-                  </span>
+                  <span className="font-semibold text-[#4a3f3a]">{shippingPriceLabel}</span>
                 </div>
+                {selectedShippingMethod && (
+                  <div className="text-xs text-[#4a3f3a]/60">
+                    {selectedShippingMethod.name} – {selectedShippingMethod.eta}
+                  </div>
+                )}
               </div>
 
               <div className="mt-4 flex justify-between border-t border-[#c9a896]/20 pt-4">

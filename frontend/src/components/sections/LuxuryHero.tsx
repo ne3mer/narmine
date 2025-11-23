@@ -2,10 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Icon } from '@/components/icons/Icon';
+import type { HeroContent } from '@/data/homeContent';
+import { defaultHomeContent } from '@/data/homeContent';
 
-export function LuxuryHero() {
+type LuxuryHeroProps = {
+  content?: HeroContent;
+  slides?: HeroContent[];
+};
+
+export function LuxuryHero({ content = defaultHomeContent.hero, slides = defaultHomeContent.heroSlides }: LuxuryHeroProps) {
   const [scrollY, setScrollY] = useState(0);
+  const heroLines = content.title.split('\n');
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -14,7 +23,7 @@ export function LuxuryHero() {
   }, []);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-[#f8f5f2] via-[#ffffff] to-[#e8d5d0]">
+    <section className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-[#f8f5f2] via-[#ffffff] to-[#e8d5d0] pb-16">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -23,63 +32,60 @@ export function LuxuryHero() {
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
+      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 pt-20 pb-24 text-center">
         {/* Badge */}
         <div className="animate-fade-in mb-6 inline-flex items-center gap-2 rounded-full border border-[#c9a896]/30 bg-white/60 backdrop-blur-sm px-6 py-2 shadow-sm">
           <span className="h-2 w-2 rounded-full bg-[#c9a896] animate-pulse" />
-          <span className="text-xs font-medium tracking-widest text-[#4a3f3a] uppercase">کالای خواب لوکس</span>
+          <span className="text-xs font-medium tracking-widest text-[#4a3f3a] uppercase">{content.badge}</span>
         </div>
 
         {/* Main Headline */}
         <h1 
           className="animate-fade-in-up delay-100 mb-6 max-w-4xl font-serif text-5xl font-bold leading-tight text-[#4a3f3a] md:text-7xl lg:text-8xl"
           style={{ 
-            fontFamily: 'var(--font-playfair)',
+            fontFamily: 'var(--font-vazirmatn)',
             letterSpacing: '-0.02em',
             transform: `translateY(${scrollY * 0.1}px)`,
           }}
         >
-          خوابی رویایی
-          <br />
-          <span className="text-[#c9a896]">با نرمینه خواب</span>
+          {heroLines.map((line, idx) => (
+            <span key={`${line}-${idx}`} className={idx === 1 ? 'text-[#c9a896]' : undefined}>
+              {line}
+              {idx !== heroLines.length - 1 && <br />}
+            </span>
+          ))}
         </h1>
 
         {/* Subtitle */}
         <p className="animate-fade-in-up delay-200 mb-10 max-w-2xl text-lg leading-relaxed text-[#4a3f3a]/70 md:text-xl">
-          تجربه‌ای بی‌نظیر از آرامش و کیفیت با مجموعه منحصر به فرد روتختی، بالش و ملزومات خواب
+          {content.subtitle}
         </p>
 
         {/* CTA Buttons */}
         <div className="animate-fade-in-up delay-300 flex flex-col gap-4 sm:flex-row">
           <Link
-            href="/products"
+            href={content.primaryCta.href}
             className="group relative overflow-hidden rounded-full bg-[#4a3f3a] px-10 py-4 text-base font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:scale-105"
           >
-            <span className="relative z-10">مشاهده محصولات</span>
+            <span className="relative z-10">{content.primaryCta.label}</span>
             <div className="absolute inset-0 bg-gradient-to-r from-[#c9a896] to-[#4a3f3a] opacity-0 transition-opacity group-hover:opacity-100" />
           </Link>
           <Link
-            href="/categories"
+            href={content.secondaryCta.href}
             className="rounded-full border-2 border-[#4a3f3a]/20 bg-white/60 backdrop-blur-sm px-10 py-4 text-base font-semibold text-[#4a3f3a] transition-all hover:border-[#c9a896] hover:bg-white"
           >
-            دسته‌بندی‌ها
+            {content.secondaryCta.label}
           </Link>
         </div>
 
         {/* Trust Indicators */}
         <div className="animate-fade-in delay-400 mt-16 flex flex-wrap items-center justify-center gap-8 text-sm text-[#4a3f3a]/60">
-          <div className="flex items-center gap-2">
-            <Icon name="check-circle" size={18} className="text-[#c9a896]" />
-            <span>ارسال رایگان</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Icon name="shield" size={18} className="text-[#c9a896]" />
-            <span>گارانتی اصالت</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Icon name="award" size={18} className="text-[#c9a896]" />
-            <span>کیفیت برتر</span>
-          </div>
+          {content.stats.map((stat) => (
+            <div key={stat.id} className="flex items-center gap-2">
+              <Icon name="check-circle" size={18} className="text-[#c9a896]" />
+              <span>{`${stat.label}: ${stat.value}`}</span>
+            </div>
+          ))}
         </div>
       </div>
 

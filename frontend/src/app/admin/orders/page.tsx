@@ -137,7 +137,8 @@ export default function OrdersPage() {
             deliveredAt: order.deliveryInfo.deliveredAt
           }
         : undefined,
-      customerAcknowledgement: order.customerAcknowledgement
+      customerAcknowledgement: order.customerAcknowledgement,
+      shippingMethod: order.shippingMethod
     };
   };
 
@@ -720,6 +721,21 @@ export default function OrdersPage() {
                   </div>
                 )}
               </div>
+
+              {selectedOrder.shippingMethod && (
+                <div className="border-t border-slate-100 pt-4">
+                  <h3 className="text-sm font-semibold text-slate-900">روش ارسال</h3>
+                  <div className="mt-2 rounded-xl border border-slate-100 bg-slate-50/60 p-3 text-xs text-slate-600">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="font-bold text-slate-900">{selectedOrder.shippingMethod.name}</span>
+                      <span className="font-bold">{(selectedOrder.shippingMethod.price || 0) === 0 ? 'رایگان' : `${(selectedOrder.shippingMethod.price || 0).toLocaleString('fa-IR')} تومان`}</span>
+                    </div>
+                    {selectedOrder.shippingMethod.eta && (
+                      <p className="text-slate-500">زمان تحویل: {selectedOrder.shippingMethod.eta}</p>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="border-t border-slate-100 pt-4">
                 <h3 className="text-sm font-semibold text-slate-900">ارسال رسید به ایمیل</h3>

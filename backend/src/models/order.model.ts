@@ -17,10 +17,37 @@ interface OrderItem {
   };
 }
 
+interface ShippingAddress {
+  province?: string;
+  city?: string;
+  address?: string;
+  postalCode?: string;
+  recipientName?: string;
+  recipientPhone?: string;
+}
+
 interface CustomerInfo {
   name?: string;
   email: string;
   phone: string;
+  shippingAddress?: ShippingAddress;
+}
+
+interface ShippingMethodInfo {
+  id?: string;
+  name: string;
+  price: number;
+  priceLabel?: string;
+  eta?: string;
+  badge?: string;
+  icon?: string;
+  perks?: string[];
+  freeThreshold?: number;
+}
+
+interface ShippingPreferences {
+  deliveryDate?: Date;
+  instructions?: string;
 }
 
 export interface OrderDocument extends Document {
@@ -43,6 +70,8 @@ export interface OrderDocument extends Document {
     deliveredAt?: Date;
     updatedBy?: Types.ObjectId;
   };
+  shippingMethod?: ShippingMethodInfo;
+  shippingPreferences?: ShippingPreferences;
   customerAcknowledgement?: {
     acknowledged: boolean;
     acknowledgedAt?: Date;
@@ -108,6 +137,21 @@ const orderSchema = new Schema<OrderDocument>(
       trackingCode: { type: String }, // Added tracking code
       deliveredAt: { type: Date },
       updatedBy: { type: Schema.Types.ObjectId, ref: 'User' }
+    },
+    shippingMethod: {
+      id: { type: String },
+      name: { type: String },
+      price: { type: Number },
+      priceLabel: { type: String },
+      eta: { type: String },
+      badge: { type: String },
+      icon: { type: String },
+      perks: [{ type: String }],
+      freeThreshold: { type: Number }
+    },
+    shippingPreferences: {
+      deliveryDate: { type: Date },
+      instructions: { type: String }
     },
     customerAcknowledgement: {
       acknowledged: { type: Boolean, default: false },

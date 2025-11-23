@@ -24,7 +24,7 @@ export default function CartPage() {
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-[#f8f5f2]">
             <Icon name="shopping-bag" size={40} className="text-[#c9a896]" />
           </div>
-          <h2 className="mb-3 font-serif text-3xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+          <h2 className="mb-3 font-serif text-3xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
             سبد خرید شما خالی است
           </h2>
           <p className="mb-8 text-[#4a3f3a]/60">
@@ -46,7 +46,7 @@ export default function CartPage() {
     <div className="min-h-screen bg-gradient-to-b from-[#f8f5f2] to-white px-4 py-16 md:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8">
-          <h1 className="mb-2 font-serif text-4xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+          <h1 className="mb-2 font-serif text-4xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
             سبد خرید
           </h1>
           <p className="text-[#4a3f3a]/60">{cart.items.length} محصول در سبد شما</p>
@@ -126,7 +126,7 @@ export default function CartPage() {
 
           {/* Order Summary */}
           <div className="h-fit rounded-2xl border border-[#c9a896]/20 bg-white p-6 shadow-lg">
-            <h2 className="mb-6 font-serif text-2xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+            <h2 className="mb-6 font-serif text-2xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
               خلاصه سفارش
             </h2>
             

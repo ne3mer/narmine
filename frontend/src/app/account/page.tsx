@@ -543,7 +543,7 @@ export default function AccountPage() {
     <div className="min-h-screen bg-gradient-to-b from-[#f8f5f2] to-white px-4 py-16 md:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8">
-          <h1 className="mb-2 font-serif text-4xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+          <h1 className="mb-2 font-serif text-4xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
             حساب کاربری
           </h1>
           <p className="text-sm text-[#4a3f3a]/70">سلام {profile?.name || ''}، همه‌چیز درباره سفارش‌ها و اعلان‌ها در اینجا جمع شده است.</p>

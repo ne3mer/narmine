@@ -27,7 +27,7 @@ export const createProductRequest = async (data: {
   brand: string;
   description?: string;
 }): Promise<ProductRequest> => {
-  const response = await fetch(`${API_BASE_URL}/api/product-requests`, {
+  const response = await fetch(`${API_BASE_URL}/api/game-requests`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export const createProductRequest = async (data: {
 };
 
 export const getUserProductRequests = async (): Promise<ProductRequest[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/product-requests`, {
+  const response = await fetch(`${API_BASE_URL}/api/game-requests`, {
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     }
@@ -61,8 +61,8 @@ export const getUserProductRequests = async (): Promise<ProductRequest[]> => {
 
 export const getAllProductRequests = async (status?: string): Promise<{ data: ProductRequest[]; statistics: ProductRequestStats }> => {
   const url = status 
-    ? `${API_BASE_URL}/api/product-requests/all?status=${status}`
-    : `${API_BASE_URL}/api/product-requests/all`;
+    ? `${API_BASE_URL}/api/game-requests/all?status=${status}`
+    : `${API_BASE_URL}/api/game-requests/all`;
 
   const response = await fetch(url, {
     headers: {
@@ -83,7 +83,7 @@ export const updateProductRequestStatus = async (
   status: string,
   adminNote?: string
 ): Promise<ProductRequest> => {
-  const response = await fetch(`${API_BASE_URL}/api/product-requests/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/api/game-requests/${id}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ export const updateProductRequestStatus = async (
 };
 
 export const deleteProductRequest = async (id: string): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/api/product-requests/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/api/game-requests/${id}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`

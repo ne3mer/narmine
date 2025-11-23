@@ -1,4 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import type { HomeContent } from '../config/homepageContent';
+import { DEFAULT_HOME_CONTENT } from '../config/homepageContent';
 
 export interface SectionConfig {
   id: string;
@@ -11,6 +13,7 @@ export interface HomepageSettingsDocument extends Document {
   sections: SectionConfig[];
   updatedAt: Date;
   updatedBy?: string;
+  content: HomeContent;
 }
 
 const SectionConfigSchema = new Schema({
@@ -23,7 +26,8 @@ const SectionConfigSchema = new Schema({
 const HomepageSettingsSchema = new Schema({
   sections: [SectionConfigSchema],
   updatedAt: { type: Date, default: Date.now },
-  updatedBy: { type: String }
+  updatedBy: { type: String },
+  content: { type: Schema.Types.Mixed, default: DEFAULT_HOME_CONTENT }
 }, {
   timestamps: true
 });

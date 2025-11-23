@@ -88,7 +88,7 @@ function ProductsContent() {
       <div className="border-b border-[#c9a896]/20 bg-white px-6 py-16">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 text-center">
-            <h1 className="mb-3 font-serif text-5xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+            <h1 className="mb-3 font-serif text-5xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
               محصولات نرمینه خواب
             </h1>
             <p className="text-lg text-[#4a3f3a]/60">

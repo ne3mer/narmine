@@ -200,7 +200,7 @@ export default function OrderSuccessPage() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
             <Icon name="check" size={32} />
           </div>
-          <h1 className="mb-2 font-serif text-3xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+          <h1 className="mb-2 font-serif text-3xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
             سفارش شما با موفقیت ثبت شد
           </h1>
           <p className="text-sm text-slate-500">

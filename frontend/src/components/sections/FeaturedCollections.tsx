@@ -49,7 +49,7 @@ export function FeaturedCollections() {
         {/* Section Header */}
         <div className="mb-16 text-center">
           <p className="mb-3 text-sm font-medium tracking-widest text-[#c9a896] uppercase">کلکشن‌های ویژه</p>
-          <h2 className="font-serif text-4xl font-bold text-[#4a3f3a] md:text-5xl" style={{ fontFamily: 'var(--font-playfair)' }}>
+          <h2 className="font-serif text-4xl font-bold text-[#4a3f3a] md:text-5xl" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
             انتخاب بر اساس نیاز شما
           </h2>
         </div>
@@ -85,7 +85,7 @@ export function FeaturedCollections() {
 
               {/* Content */}
               <div className="absolute bottom-0 left-0 right-0 p-8 text-white transform translate-y-4 transition-transform duration-500 group-hover:translate-y-0">
-                <h3 className="mb-2 font-serif text-2xl font-bold" style={{ fontFamily: 'var(--font-playfair)' }}>
+                <h3 className="mb-2 font-serif text-2xl font-bold" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
                   {collection.title}
                 </h3>
                 <p className="mb-4 text-sm text-white/80 opacity-0 transition-opacity duration-500 group-hover:opacity-100">

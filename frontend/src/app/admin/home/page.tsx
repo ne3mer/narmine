@@ -55,6 +55,31 @@ const sanitizeHeroSlides = (slides: HomeContentState['heroSlides']): HomeContent
   return sourceSlides.map((slide, index) => sanitizeHeroBlock(slide, fallbackSlides[index] ?? fallbackBase));
 };
 
+const sanitizeShippingMethods = (methods: HomeContentState['shippingMethods']): HomeContentState['shippingMethods'] => {
+  const fallbackMethods = defaultHomeContent.shippingMethods;
+  if (!methods || methods.length === 0) {
+    return fallbackMethods;
+  }
+
+  return methods.map((method, index) => {
+    const defaults = fallbackMethods[index] ?? fallbackMethods[0];
+    return {
+      id: method.id || crypto.randomUUID(),
+      name: fallback(method.name, defaults?.name ?? `روش ارسال ${index + 1}`),
+      description: fallback(method.description, defaults?.description ?? 'توضیحات روش ارسال'),
+      eta: fallback(method.eta, defaults?.eta ?? '۲ تا ۳ روز'),
+      price: typeof method.price === 'number' ? method.price : defaults?.price ?? 0,
+      priceLabel: method.priceLabel ?? defaults?.priceLabel,
+      badge: method.badge ?? defaults?.badge,
+      icon: method.icon ?? defaults?.icon ?? '🚚',
+      freeThreshold:
+        typeof method.freeThreshold === 'number' ? method.freeThreshold : defaults?.freeThreshold,
+      perks: method.perks && method.perks.length ? method.perks : defaults?.perks ?? [],
+      highlight: method.highlight ?? defaults?.highlight ?? false
+    };
+  });
+};
+
 const sanitizeHomeContent = (payload: HomeContentState): HomeContentState => {
   const hero = sanitizeHeroBlock(payload.hero, defaultHomeContent.hero);
 
@@ -91,7 +116,8 @@ const sanitizeHomeContent = (payload: HomeContentState): HomeContentState => {
     heroSlides: sanitizeHeroSlides(payload.heroSlides),
     spotlights: spotlights.length ? spotlights : defaultHomeContent.spotlights,
     trustSignals: trustSignals.length ? trustSignals : defaultHomeContent.trustSignals,
-    testimonials: testimonials.length ? testimonials : defaultHomeContent.testimonials
+    testimonials: testimonials.length ? testimonials : defaultHomeContent.testimonials,
+    shippingMethods: sanitizeShippingMethods(payload.shippingMethods)
   };
 };
 
@@ -106,7 +132,9 @@ const normalizeHomeContent = (settings?: Partial<HomeContentState>): HomeContent
     heroSlides: settings?.heroSlides?.length ? settings.heroSlides : fallbackSlides,
     spotlights: settings?.spotlights?.length ? settings.spotlights : defaultHomeContent.spotlights,
     trustSignals: settings?.trustSignals?.length ? settings.trustSignals : defaultHomeContent.trustSignals,
-    testimonials: settings?.testimonials?.length ? settings.testimonials : defaultHomeContent.testimonials
+    testimonials: settings?.testimonials?.length ? settings.testimonials : defaultHomeContent.testimonials,
+    shippingMethods:
+      settings?.shippingMethods?.length ? settings.shippingMethods : defaultHomeContent.shippingMethods
   };
 };
 
@@ -120,12 +148,13 @@ export default function AdminHomePage() {
     const fetchHomeContent = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/home`);
+        const response = await fetch(`${API_BASE_URL}/api/homepage-settings`);
         if (!response.ok) {
           throw new Error('دریافت تنظیمات صفحه با خطا مواجه شد.');
         }
         const payload = await response.json();
-        const settings = payload?.data?.settings as Partial<HomeContentState> | undefined;
+        // The new API returns { success: true, data: { content: ... } }
+        const settings = payload?.data?.content as Partial<HomeContentState> | undefined;
         setContent(normalizeHomeContent(settings));
       } catch (error) {
         console.error(error);
@@ -276,10 +305,11 @@ export default function AdminHomePage() {
     setStatus('');
     const payload = sanitizeHomeContent(content);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/home`, {
-        method: 'PATCH',
+      // The new API expects PUT and { content: ... }
+      const response = await fetch(`${API_BASE_URL}/api/homepage-settings`, {
+        method: 'PUT',
         headers: adminHeaders(),
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ content: payload })
       });
       if (!response.ok) {
         const errorPayload = await response.json().catch(() => ({}));

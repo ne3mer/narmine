@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Vazirmatn, Playfair_Display } from "next/font/google";
+import { Geist, Geist_Mono, Vazirmatn } from "next/font/google";
 import "./globals.css";
 import { MainNav } from "@/components/layout/MainNav";
 import { CartProvider } from "@/contexts/CartContext";
@@ -18,12 +18,6 @@ const geistMono = Geist_Mono({
 const vazirmatn = Vazirmatn({
   subsets: ["arabic", "latin"],
   variable: "--font-vazirmatn"
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  weight: ["400", "500", "600", "700", "800", "900"]
 });
 
 export const metadata: Metadata = {
@@ -83,7 +77,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${vazirmatn.variable} ${playfair.variable} antialiased`} suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${vazirmatn.variable} antialiased`} suppressHydrationWarning>
         <CartProvider>
           <AnalyticsProvider>
             <MainNav />
@@ -94,4 +88,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-

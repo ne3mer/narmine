@@ -128,7 +128,7 @@ export default function CategoriesPage() {
       {/* Mobile Card View */}
       <div className="block md:hidden space-y-3">
         {categories.map((category, index) => (
-          <div key={category._id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div key={category._id || index} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="flex items-start justify-between gap-3 mb-3">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <span className="text-3xl flex-shrink-0">{category.icon}</span>
@@ -214,7 +214,7 @@ export default function CategoriesPage() {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {categories.map((category, index) => (
-              <tr key={category._id} className="group hover:bg-slate-50/50">
+              <tr key={category._id || index} className="group hover:bg-slate-50/50">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-1">
                     <button

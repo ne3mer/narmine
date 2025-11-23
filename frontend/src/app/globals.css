@@ -19,7 +19,7 @@
   
   /* Typography */
   --font-sans: var(--font-vazirmatn);
-  --font-serif: var(--font-playfair);
+  --font-serif: var(--font-vazirmatn);
   
   /* Accent colors */
   --primary: #c9a896;

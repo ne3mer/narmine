@@ -128,7 +128,7 @@ export const MainNav = () => {
               <span className="text-xl text-white">ن</span>
             </div>
             <div className="hidden sm:block">
-              <span className="block font-serif text-xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+              <span className="block font-serif text-xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
                 نرمینه خواب
               </span>
               <span className="block text-xs text-[#c9a896]">Narmineh Khab</span>

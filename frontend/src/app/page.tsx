@@ -1,13 +1,15 @@
-import { Suspense } from "react";
 import { LuxuryHero } from "@/components/sections/LuxuryHero";
 import { FeaturedCollections } from "@/components/sections/FeaturedCollections";
 import { NewArrivalsSection } from "@/components/sections/NewArrivalsSection";
 import { CategoriesSection } from "@/components/sections/CategoriesSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
+import { CreativeBanner } from "@/components/sections/CreativeBanner";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { categories as defaultCategories } from "@/data/home";
 import { API_BASE_URL } from "@/lib/api";
-import { defaultHomeContent } from "@/data/homeContent";
+import { defaultHomeContent, type HomeContent } from "@/data/homeContent";
+import { ShippingExperience } from "@/components/sections/ShippingExperience";
+import { DynamicBannersSection } from "@/components/sections/DynamicBannersSection";
 
 type CategoryHighlight = {
   id: string;
@@ -18,6 +20,11 @@ type CategoryHighlight = {
   imageUrl?: string;
   productCount?: number;
   showOnHome?: boolean;
+};
+
+type HomepageSettingsResponse = {
+  sections: any[];
+  content?: HomeContent;
 };
 
 const fetchCategories = async (): Promise<CategoryHighlight[]> => {
@@ -42,16 +49,34 @@ const fetchCategories = async (): Promise<CategoryHighlight[]> => {
   }
 };
 
+const fetchHomepageSettings = async (): Promise<HomepageSettingsResponse | null> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/homepage-settings`, {
+      next: { revalidate: 300 }
+    });
+    if (!response.ok) return null;
+    const payload = await response.json();
+    return payload?.data ?? null;
+  } catch (error) {
+    console.warn('Homepage settings unavailable:', error);
+    return null;
+  }
+};
+
 export default async function HomePage() {
   const categories = await fetchCategories();
   const categoriesDisplay = categories.length > 0 ? categories : defaultCategories;
-  const homeContent = defaultHomeContent;
+  const homepageSettings = await fetchHomepageSettings();
+  const homeContent = homepageSettings?.content ?? defaultHomeContent;
 
   return (
     <>
       <main className="min-h-screen">
         {/* Luxury Hero Section */}
-        <LuxuryHero />
+        <LuxuryHero content={homeContent.hero} slides={homeContent.heroSlides ?? defaultHomeContent.heroSlides} />
+
+        {/* Dynamic Banners (Admin Managed) */}
+        <DynamicBannersSection />
 
         {/* Featured Collections */}
         <FeaturedCollections />
@@ -75,7 +100,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-7xl px-6">
             <div className="text-center mb-16">
               <p className="mb-3 text-sm font-medium tracking-widest text-[#c9a896] uppercase">چرا نرمینه خواب؟</p>
-              <h2 className="font-serif text-4xl font-bold text-[#4a3f3a] md:text-5xl" style={{ fontFamily: 'var(--font-playfair)' }}>
+              <h2 className="font-serif text-4xl font-bold text-[#4a3f3a] md:text-5xl" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
                 تجربه‌ای متفاوت از خرید
               </h2>
             </div>
@@ -114,8 +139,22 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Testimonials */}
+        {/* Creative Banner */}
         <section className="w-full bg-gradient-to-b from-white to-[#f8f5f2] py-20">
+          <div className="mx-auto max-w-7xl px-6">
+            <CreativeBanner content={homeContent.creativeBanner} />
+          </div>
+        </section>
+
+        {/* Shipping Experience */}
+        <section className="w-full bg-[#f8f5f2] py-20">
+          <div className="mx-auto max-w-7xl px-6">
+            <ShippingExperience methods={homeContent.shippingMethods} />
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="w-full bg-white py-20">
           <div className="mx-auto max-w-7xl px-6">
             <TestimonialsSection testimonials={homeContent.testimonials} />
           </div>
@@ -124,7 +163,7 @@ export default async function HomePage() {
         {/* Newsletter */}
         <section className="w-full bg-[#4a3f3a] py-20">
           <div className="mx-auto max-w-4xl px-6 text-center">
-            <h2 className="mb-4 font-serif text-3xl font-bold text-white md:text-4xl" style={{ fontFamily: 'var(--font-playfair)' }}>
+            <h2 className="mb-4 font-serif text-3xl font-bold text-white md:text-4xl" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
               از جدیدترین محصولات باخبر شوید
             </h2>
             <p className="mb-8 text-white/80">

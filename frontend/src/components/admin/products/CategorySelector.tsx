@@ -57,11 +57,11 @@ export default function CategorySelector({ selectedCategories, onChange }: Categ
     <div className="space-y-2">
       <label className="text-sm font-bold text-slate-700 block mb-2">دسته‌بندی‌ها</label>
       <div className="flex flex-wrap gap-2">
-        {categories.map((category) => {
+        {categories.map((category, index) => {
           const isSelected = selectedCategories.includes(category._id);
           return (
             <button
-              key={category._id}
+              key={category._id || index}
               type="button"
               onClick={() => toggleCategory(category._id)}
               className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition border ${

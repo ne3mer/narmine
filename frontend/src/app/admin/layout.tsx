@@ -47,7 +47,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       if (token) {
         try {
-          const response = await fetch(`${API_BASE_URL}/api/product-requests/all`, {
+          const response = await fetch(`${API_BASE_URL}/api/game-requests/all`, {
             headers
           });
           if (response.ok) {
@@ -101,6 +101,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { href: '/admin/products', label: 'محصولات', icon: 'game' },
         { href: '/admin/categories', label: 'دسته‌بندی‌ها', icon: 'layers' },
         { href: '/admin/orders', label: 'سفارشات', icon: 'package', badge: formatBadge(sectionCounts.orders) },
+        { href: '/admin/shipping', label: 'روش‌های ارسال', icon: 'truck' },
         { href: '/admin/requests', label: 'درخواست‌های محصول', icon: 'message', badge: formatBadge(sectionCounts.requests) },
         { href: '/admin/users', label: 'کاربران', icon: 'users' },
         { href: '/admin/reviews', label: 'نظرات', icon: 'star', badge: formatBadge(sectionCounts.reviews) },

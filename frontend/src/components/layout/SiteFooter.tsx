@@ -12,7 +12,7 @@ export const SiteFooter = () => (
               <span className="text-2xl text-white">ن</span>
             </div>
             <div>
-              <h3 className="font-serif text-2xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+              <h3 className="font-serif text-2xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
                 نرمینه خواب
               </h3>
               <p className="text-xs text-[#c9a896]">Narmineh Khab</p>

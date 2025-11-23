@@ -61,7 +61,7 @@ function LoginForm() {
               <span className="text-2xl text-white">ن</span>
             </div>
             <div className="text-right">
-              <h2 className="font-serif text-2xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+              <h2 className="font-serif text-2xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
                 نرمینه خواب
               </h2>
               <p className="text-xs text-[#c9a896]">Narmineh Khab</p>
@@ -72,7 +72,7 @@ function LoginForm() {
         {/* Form Card */}
         <div className="rounded-3xl border border-[#c9a896]/20 bg-white p-8 shadow-xl">
           <div className="mb-6 text-center">
-            <h1 className="mb-2 font-serif text-3xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+            <h1 className="mb-2 font-serif text-3xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
               خوش آمدید
             </h1>
             <p className="text-sm text-[#4a3f3a]/60">به حساب کاربری خود وارد شوید</p>

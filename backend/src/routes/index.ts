@@ -27,6 +27,7 @@ import disputeRouter from "./dispute.route";
 import payoutRouter from "./payout.route";
 import telegramRouter from "./telegram.route";
 import homepageSettingsRouter from "./homepageSettings.routes";
+import shippingMethodRouter from "./shipping-method.route";
 
 const router = Router();
 
@@ -56,5 +57,6 @@ router.use("/arena/disputes", disputeRouter);
 router.use("/arena/payouts", payoutRouter);
 router.use("/telegram", telegramRouter);
 router.use("/homepage-settings", homepageSettingsRouter);
+router.use("/shipping-methods", shippingMethodRouter);
 
 export default router;

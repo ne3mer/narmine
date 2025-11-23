@@ -78,7 +78,7 @@ export default function RegisterPage() {
               <span className="text-2xl text-white">ن</span>
             </div>
             <div className="text-right">
-              <h2 className="font-serif text-2xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+              <h2 className="font-serif text-2xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
                 نرمینه خواب
               </h2>
               <p className="text-xs text-[#c9a896]">Narmineh Khab</p>
@@ -89,7 +89,7 @@ export default function RegisterPage() {
         {/* Form Card */}
         <div className="rounded-3xl border border-[#c9a896]/20 bg-white p-8 shadow-xl">
           <div className="mb-6 text-center">
-            <h1 className="mb-2 font-serif text-3xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-playfair)' }}>
+            <h1 className="mb-2 font-serif text-3xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
               عضویت در نرمینه خواب
             </h1>
             <p className="text-sm text-[#4a3f3a]/60">حساب کاربری خود را ایجاد کنید</p>

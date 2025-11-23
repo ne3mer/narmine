@@ -166,6 +166,11 @@ export type AdminOrder = {
     acknowledged: boolean;
     acknowledgedAt?: string;
   };
+  shippingMethod?: {
+    name: string;
+    price: number;
+    eta?: string;
+  };
 };
 
 export type HomeHeroContent = {
@@ -202,12 +207,27 @@ export type HomeTestimonial = {
   highlight?: boolean;
 };
 
+export type HomeShippingMethod = {
+  id: string;
+  name: string;
+  description: string;
+  eta: string;
+  price: number;
+  priceLabel?: string;
+  badge?: string;
+  icon?: string;
+  freeThreshold?: number;
+  perks?: string[];
+  highlight?: boolean;
+};
+
 export type HomeContentState = {
   hero: HomeHeroContent;
   heroSlides: HomeHeroContent[];
   spotlights: HomeSpotlight[];
   trustSignals: HomeTrustSignal[];
   testimonials: HomeTestimonial[];
+  shippingMethods: HomeShippingMethod[];
 };
 
 export type UserInsights = {

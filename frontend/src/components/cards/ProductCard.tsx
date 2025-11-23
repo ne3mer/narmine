@@ -82,7 +82,7 @@ export const ProductCard = ({ game }: Props) => {
       {/* Content */}
       <div className="relative z-10 flex flex-1 flex-col p-6">
         {/* Title */}
-        <h3 className="mb-2 font-serif text-xl font-bold leading-tight text-[#4a3f3a] line-clamp-2" style={{ fontFamily: 'var(--font-playfair)' }}>
+        <h3 className="mb-2 font-serif text-xl font-bold leading-tight text-[#4a3f3a] line-clamp-2" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
           {game.title}
         </h3>
 

@@ -2,10 +2,26 @@ import { z } from 'zod';
 
 const empty = z.object({}).optional().transform(() => ({}));
 
+const shippingAddressSchema = z.object({
+  province: z.string().optional(),
+  city: z.string().min(2, 'شهر را وارد کنید'),
+  address: z.string().min(5, 'آدرس را کامل وارد کنید'),
+  postalCode: z.string().min(5, 'کد پستی حداقل ۵ رقم باشد').max(15).optional(),
+  recipientName: z.string().optional(),
+  recipientPhone: z.string().optional()
+});
+
 const customerInfoSchema = z.object({
   name: z.string().optional(),
   email: z.string().email('ایمیل معتبر وارد کنید'),
-  phone: z.string().min(10, 'شماره تلفن معتبر وارد کنید').max(15)
+  phone: z.string().min(10, 'شماره تلفن معتبر وارد کنید').max(15),
+  province: z.string().optional(),
+  city: z.string().optional(),
+  address: z.string().optional(),
+  postalCode: z.string().optional(),
+  recipientName: z.string().optional(),
+  recipientPhone: z.string().optional(),
+  shippingAddress: shippingAddressSchema.optional()
 });
 
 const orderItemSchema = z.object({
@@ -16,13 +32,36 @@ const orderItemSchema = z.object({
   quantity: z.number().int().positive().default(1)
 });
 
+const shippingMethodSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(2, 'نام روش ارسال را وارد کنید'),
+  price: z.number().nonnegative(),
+  priceLabel: z.string().optional(),
+  eta: z.string().optional(),
+  badge: z.string().optional(),
+  icon: z.string().optional(),
+  perks: z.array(z.string().min(1)).optional(),
+  freeThreshold: z.number().nonnegative().optional()
+});
+
+const shippingPreferencesSchema = z
+  .object({
+    deliveryDate: z.string().optional(),
+    instructions: z.string().optional()
+  })
+  .optional();
+
 export const createOrderSchema = z.object({
   body: z.object({
     customerInfo: customerInfoSchema,
     items: z.array(orderItemSchema).min(1, 'حداقل یک محصول باید در سفارش باشد'),
     totalAmount: z.number().positive(),
     couponCode: z.string().optional(),
-    discountAmount: z.number().nonnegative().optional()
+    discountAmount: z.number().nonnegative().optional(),
+    note: z.string().optional(),
+    paymentMethod: z.string().optional(),
+    shippingMethod: shippingMethodSchema.optional(),
+    shippingPreferences: shippingPreferencesSchema
   }),
   query: empty,
   params: empty

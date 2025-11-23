@@ -14,6 +14,14 @@ interface CreateOrderInput {
     name?: string;
     email: string;
     phone: string;
+    shippingAddress?: {
+      province?: string;
+      city?: string;
+      address?: string;
+      postalCode?: string;
+      recipientName?: string;
+      recipientPhone?: string;
+    };
   };
   items: Array<{
     gameId: string;
@@ -27,6 +35,21 @@ interface CreateOrderInput {
   discountAmount?: number;
   note?: string;
   paymentMethod?: string;
+  shippingMethod?: {
+    id?: string;
+    name: string;
+    price: number;
+    priceLabel?: string;
+    eta?: string;
+    badge?: string;
+    icon?: string;
+    perks?: string[];
+    freeThreshold?: number;
+  };
+  shippingPreferences?: {
+    deliveryDate?: string | Date;
+    instructions?: string;
+  };
 }
 
 export const createOrder = async (
@@ -56,6 +79,23 @@ export const createOrder = async (
 
   if (input.discountAmount && input.discountAmount > 0) {
     orderData.discountAmount = input.discountAmount;
+  }
+
+  if (input.shippingMethod) {
+    orderData.shippingMethod = {
+      ...input.shippingMethod,
+      price: Math.max(0, input.shippingMethod.price ?? 0)
+    };
+  }
+
+  if (input.shippingPreferences) {
+    const { deliveryDate, instructions } = input.shippingPreferences;
+    if (deliveryDate || instructions) {
+      orderData.shippingPreferences = {
+        instructions,
+        deliveryDate: deliveryDate ? new Date(deliveryDate) : undefined
+      };
+    }
   }
 
   if (input.userId) {

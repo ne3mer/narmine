@@ -271,46 +271,46 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
   ];
 
   return (
-    <div className="bg-gradient-to-b from-slate-50 to-white min-h-screen">
+    <div className="bg-gradient-to-b from-[#f8f5f2] to-white min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
         {/* Hero Section */}
-        <div className="relative mb-8 rounded-[32px] border border-white bg-white shadow-[0_35px_120px_rgba(15,23,42,0.12)]">
+        <div className="relative mb-8 rounded-[32px] border border-[#c9a896]/20 bg-white/90 shadow-[0_25px_80px_rgba(74,63,58,0.08)] backdrop-blur">
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute -right-10 top-0 h-64 w-64 rounded-full bg-rose-100 blur-[100px]" />
-            <div className="absolute left-4 bottom-0 h-48 w-48 rounded-full bg-sky-100 blur-[120px]" />
+            <div className="absolute -right-6 top-6 h-40 w-40 rounded-full bg-[#f4e8dc] blur-[120px]" />
+            <div className="absolute left-6 bottom-6 h-48 w-48 rounded-full bg-[#e0d0c7] blur-[140px]" />
           </div>
           <div className="relative grid gap-6 p-6 md:grid-cols-2 md:gap-8 md:p-12">
             <div className="space-y-4 md:space-y-6">
               {game.featured && (
-                <span className="inline-flex items-center gap-2 rounded-full bg-[#0a84ff] px-3 py-1 md:px-4 md:py-1.5 text-[10px] md:text-xs font-bold text-white shadow-sm">
+                <span className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4a3f3a] to-[#c9a896] px-3 py-1 md:px-4 md:py-1.5 text-[10px] md:text-xs font-bold text-white shadow-sm">
                   <Icon name="star" size={14} />
                   محصول ویژه
                 </span>
               )}
               <div>
-                <p className="mb-2 text-xs md:text-sm font-semibold text-rose-500">{game.platform}</p>
-                <h1 className="mb-3 md:mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl">{game.title}</h1>
-                <p className="text-base md:text-lg leading-relaxed text-slate-600">{game.description}</p>
+                <p className="mb-2 text-xs md:text-sm font-semibold text-[#c9a896]">{game.platform}</p>
+                <h1 className="mb-3 md:mb-4 font-serif text-3xl font-bold leading-tight text-[#4a3f3a] md:text-5xl" style={{ fontFamily: 'var(--font-vazirmatn)' }}>{game.title}</h1>
+                <p className="text-base md:text-lg leading-relaxed text-[#4a3f3a]/70">{game.description}</p>
               </div>
               
               {/* Rating & Metadata */}
               <div className="flex flex-wrap items-center gap-3 md:gap-4">
                 {gameRating !== null && gameRating > 0 && (
-                  <div className="flex items-center gap-2 rounded-full border border-orange-100 bg-orange-50 px-3 py-1.5 md:px-4 md:py-2 text-orange-600">
-                    <Icon name="star" size={16} className="text-amber-400 md:w-[18px] md:h-[18px]" />
-                    <span className="font-bold text-sm md:text-base">{gameRating.toFixed(1)}</span>
+                  <div className="flex items-center gap-2 rounded-full border border-[#c9a896]/30 bg-[#f8f5f2] px-3 py-1.5 md:px-4 md:py-2 text-[#c9a896]">
+                    <Icon name="star" size={16} className="text-[#c9a896] md:w-[18px] md:h-[18px]" />
+                    <span className="font-bold text-sm md:text-base text-[#4a3f3a]">{gameRating.toFixed(1)}</span>
                     {reviewCount > 0 && (
-                      <span className="text-[10px] md:text-xs text-orange-500">({reviewCount})</span>
+                      <span className="text-[10px] md:text-xs text-[#4a3f3a]/60">({reviewCount})</span>
                     )}
                   </div>
                 )}
                 {game.releaseDate && (
-                  <div className="text-xs md:text-sm text-slate-500">
-                    <span className="font-semibold text-slate-700">تاریخ انتشار:</span> {new Date(game.releaseDate).toLocaleDateString('fa-IR')}
+                  <div className="text-xs md:text-sm text-[#4a3f3a]/60">
+                    <span className="font-semibold text-[#4a3f3a]">تاریخ عرضه:</span> {new Date(game.releaseDate).toLocaleDateString('fa-IR')}
                   </div>
                 )}
                 {game.ageRating && (
-                  <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-bold text-slate-700">
+                  <div className="rounded-full border border-[#c9a896]/40 bg-white px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-bold text-[#4a3f3a]">
                     {game.ageRating}
                   </div>
                 )}
@@ -320,7 +320,7 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
               {game.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {game.tags.map((tag) => (
-                    <span key={tag} className="rounded-full border border-slate-200 bg-white px-2.5 py-0.5 md:px-3 md:py-1 text-[10px] md:text-xs font-semibold text-slate-600">
+                    <span key={tag} className="rounded-full border border-[#c9a896]/30 bg-white px-2.5 py-0.5 md:px-3 md:py-1 text-[10px] md:text-xs font-semibold text-[#4a3f3a]/70">
                       {tag}
                     </span>
                   ))}
@@ -329,7 +329,7 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
             </div>
 
             {/* Cover Image */}
-            <div className="relative aspect-square sm:aspect-[4/3] md:aspect-auto md:h-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-lg">
+            <div className="relative aspect-square sm:aspect-[4/3] md:aspect-auto md:h-full overflow-hidden rounded-2xl border border-[#c9a896]/30 bg-[#f8f5f2] shadow-lg">
               <Image 
                 src={defaultCover} 
                 alt={game.title} 
@@ -339,7 +339,7 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                 priority
               />
               {game.onSale && (
-                <div className="absolute left-4 top-4 rounded-full bg-rose-500 px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-bold text-white shadow-lg">
+                <div className="absolute left-4 top-4 rounded-full bg-[#4a3f3a] px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-bold text-white shadow-lg">
                   {discountPercent}% تخفیف
                 </div>
               )}
@@ -353,19 +353,19 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
           <div className="lg:col-span-1 lg:col-start-3 lg:row-start-1">
             <div className="sticky top-8 space-y-6">
               {/* Price Card */}
-              <div className="rounded-3xl bg-gradient-to-br from-white to-[#f5f6fa] border border-slate-100 p-6 shadow-xl">
+              <div className="rounded-3xl border border-[#c9a896]/30 bg-white/90 p-6 shadow-lg backdrop-blur">
                 <div className="mb-6">
                   {originalPrice && (
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm text-slate-500 line-through">{formatToman(originalPrice)}</span>
-                      <span className="rounded-full bg-rose-500 px-2 py-0.5 text-xs font-bold text-white">
+                      <span className="text-sm text-[#4a3f3a]/50 line-through">{formatToman(originalPrice)}</span>
+                      <span className="rounded-full bg-[#c9a896] px-2 py-0.5 text-xs font-bold text-white">
                         {discountPercent}% تخفیف
                       </span>
                     </div>
                   )}
-                  <p className="text-xs text-slate-600 mb-1">قیمت</p>
-                  <p className="text-3xl sm:text-4xl font-black text-slate-900">{formatToman(currentPrice)}</p>
-                  <p className="text-sm text-rose-600 font-semibold mt-1">تومان</p>
+                  <p className="text-xs text-[#4a3f3a]/60 mb-1">قیمت</p>
+                  <p className="text-3xl sm:text-4xl font-black text-[#4a3f3a]">{formatToman(currentPrice)}</p>
+                  <p className="text-sm text-[#c9a896] font-semibold mt-1">تومان</p>
                 </div>
 
                 {game.options.length > 0 && (
@@ -376,7 +376,7 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                         <select
                           value={selectedOptions[opt.name] || ''}
                           onChange={(e) => setSelectedOptions((prev) => ({ ...prev, [opt.name]: e.target.value }))}
-                          className="w-full rounded-xl border-2 border-rose-200 bg-white px-4 py-3 text-sm font-semibold focus:border-rose-400 focus:ring-2 focus:ring-rose-200 transition"
+                          className="w-full rounded-xl border-2 border-[#c9a896]/40 bg-white px-4 py-3 text-sm font-semibold focus:border-[#c9a896] focus:ring-2 focus:ring-[#c9a896]/20 transition"
                         >
                           {opt.values.map((val) => (
                             <option key={val} value={val}>
@@ -410,12 +410,12 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
 
                 {/* Shipping Info */}
                 {game.shipping?.requiresShipping && (
-                  <div className="mb-4 rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-2">
-                    <p className="text-xs font-bold text-slate-700 flex items-center gap-2">
+                  <div className="mb-4 rounded-xl bg-[#f8f5f2] border border-[#c9a896]/30 p-3 space-y-2">
+                    <p className="text-xs font-bold text-[#4a3f3a] flex items-center gap-2">
                       <Icon name="truck" size={14} />
                       اطلاعات ارسال
                     </p>
-                    <div className="text-xs text-slate-600 space-y-1">
+                    <div className="text-xs text-[#4a3f3a]/70 space-y-1">
                       {game.shipping.freeShipping ? (
                         <p className="text-emerald-600 font-semibold">ارسال رایگان</p>
                       ) : (
@@ -452,7 +452,7 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                       }
                     }}
                     disabled={(game.inventory?.status === 'out_of_stock') || (currentVariant && currentVariant.stock === 0)}
-                    className="w-full rounded-2xl bg-[#0a84ff] py-4 text-base font-bold text-white shadow-lg shadow-blue-400/40 transition hover:bg-[#0071e3] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full rounded-2xl bg-[#4a3f3a] py-4 text-base font-bold text-white shadow-lg shadow-[#4a3f3a]/30 transition hover:bg-[#2f2723] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {game.inventory?.status === 'out_of_stock' || (currentVariant && currentVariant.stock === 0) ? 'موجود نیست' : 'افزودن به سبد خرید'}
                   </button>
@@ -465,8 +465,8 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                       }
                       setShowPriceAlertModal(true);
                     }}
-                    className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
-                  >
+                    className="w-full rounded-2xl border-2 border-[#c9a896]/40 bg-white px-4 py-3 text-sm font-semibold text-[#4a3f3a] hover:bg-[#f8f5f2] transition"
+                >
                     {existingAlert ? '✏️ ویرایش هشدار قیمت' : '🔔 تنظیم هشدار قیمت'}
                   </button>
                 </div>
@@ -482,19 +482,19 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
               </div>
 
               {/* Guarantee Card */}
-              <div className="rounded-3xl border border-slate-100 bg-gradient-to-br from-white to-[#f7f7fb] p-6 shadow-lg">
-                <p className="text-sm font-bold text-[#0a84ff] mb-3 flex items-center gap-2">
+              <div className="rounded-3xl border border-[#c9a896]/30 bg-white p-6 shadow-md">
+                <p className="text-sm font-bold text-[#c9a896] mb-3 flex items-center gap-2">
                   <Icon name="shield" size={18} />
                   ضمانت نرمینه خواب
                 </p>
-                <ul className="space-y-2 text-sm text-slate-700">
+                <ul className="space-y-2 text-sm text-[#4a3f3a]/80">
                   {[
                     'تضمین کیفیت و اصالت کالا',
                     'ارسال سریع و مطمئن',
                     'پشتیبانی ۲۴ ساعته'
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2">
-                      <Icon name="check" size={16} className="text-rose-500 flex-shrink-0 mt-0.5" />
+                      <Icon name="check" size={16} className="text-[#c9a896] flex-shrink-0 mt-0.5" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -709,12 +709,12 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                         </div>
                       </div>
 
-                      <div className="rounded-2xl bg-slate-50 p-6">
-                        <h3 className="text-lg font-bold text-slate-900 mb-4">نکات نگهداری و شستشو</h3>
-                        <div className="space-y-4 text-sm">
+                      <div className="rounded-2xl bg-[#f8f5f2] p-6">
+                        <h3 className="text-lg font-bold text-[#4a3f3a] mb-4">نکات نگهداری و شستشو</h3>
+                        <div className="space-y-4 text-sm text-[#4a3f3a]/80">
                           <div>
-                            <h4 className="font-semibold text-slate-700 mb-2">دستورالعمل شستشو:</h4>
-                            <p className="text-slate-600 whitespace-pre-line">
+                            <h4 className="font-semibold text-[#4a3f3a] mb-2">دستورالعمل شستشو:</h4>
+                            <p className="whitespace-pre-line">
                               - شستشو با دمای ۳۰ درجه سانتی‌گراد
                               - از سفیدکننده استفاده نشود
                               - خشک‌شویی نشود
@@ -726,13 +726,13 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                       
                       {/* Custom Fields */}
                       {game.customFields && Object.entries(game.customFields).length > 0 && (
-                        <div className="rounded-2xl bg-slate-50 p-6 mt-6">
-                          <h3 className="text-lg font-bold text-slate-900 mb-4">مشخصات تکمیلی</h3>
-                          <div className="space-y-3 text-sm">
+                        <div className="rounded-2xl bg-[#f8f5f2] p-6 mt-6">
+                          <h3 className="text-lg font-bold text-[#4a3f3a] mb-4">مشخصات تکمیلی</h3>
+                          <div className="space-y-3 text-sm text-[#4a3f3a]/80">
                             {Object.entries(game.customFields).map(([key, value]) => (
                               <div key={key} className="flex justify-between border-b border-slate-200 pb-2 last:border-0 last:pb-0">
-                                <span className="text-slate-600">{key}:</span>
-                                <span className="font-semibold text-slate-900">{String(value)}</span>
+                                <span>{key}:</span>
+                                <span className="font-semibold text-[#4a3f3a]">{String(value)}</span>
                               </div>
                             ))}
                           </div>
