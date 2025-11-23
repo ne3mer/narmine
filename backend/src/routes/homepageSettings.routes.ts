@@ -88,7 +88,7 @@ router.put('/', adminAuth, async (req: Request, res: Response) => {
         settings.sections = sections;
       }
       if (content) {
-        settings.content = { ...(settings.content?.toJSON?.() ?? settings.content), ...content };
+        settings.content = { ...(settings.content as any)?.toJSON?.() ?? settings.content, ...content };
       }
       settings.updatedAt = new Date();
       settings.updatedBy = (req as any).user?.email || 'admin';
