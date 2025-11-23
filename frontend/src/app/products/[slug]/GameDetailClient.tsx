@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { notFound, useParams } from 'next/navigation';
 import { formatToman } from '@/lib/format';
 import { CreativeBanner } from '@/components/sections/CreativeBanner';
-import { API_BASE_URL } from '@/lib/api';
+import { API_BASE_URL, resolveImageUrl } from '@/lib/api';
 import { useCart } from '@/contexts/CartContext';
 import { PriceAlertModal } from '@/components/alerts/PriceAlertModal';
 import { getAuthToken } from '@/lib/auth';
@@ -249,9 +249,9 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
     );
   }
 
-  const defaultCover = game.coverUrl || 'https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.webp';
-  const gallery = game.gallery && game.gallery.length > 0 ? game.gallery : [defaultCover];
-  const screenshots = game.screenshots && game.screenshots.length > 0 ? game.screenshots : [];
+  const defaultCover = game.coverUrl ? resolveImageUrl(game.coverUrl) : 'https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.webp';
+  const gallery = game.gallery && game.gallery.length > 0 ? game.gallery.map(url => resolveImageUrl(url)) : [defaultCover];
+  const screenshots = game.screenshots && game.screenshots.length > 0 ? game.screenshots.map(url => resolveImageUrl(url)) : [];
   const allImages = [defaultCover, ...gallery, ...screenshots].filter((img, idx, arr) => arr.indexOf(img) === idx);
   
   const trailerEmbedUrl = game.trailerUrl ? getVideoEmbedUrl(game.trailerUrl) : null;
@@ -337,6 +337,7 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
                 priority
+                unoptimized
               />
               {game.onSale && (
                 <div className="absolute left-4 top-4 rounded-full bg-[#4a3f3a] px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-bold text-white shadow-lg">
@@ -657,6 +658,7 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                                 fill
                                 sizes="(max-width: 768px) 50vw, 25vw"
                                 className="object-cover"
+                                unoptimized
                               />
                               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition"></div>
                             </button>
@@ -789,6 +791,7 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
               fill
               sizes="100vw"
               className="object-contain"
+              unoptimized
             />
           </div>
           {allImages.length > 1 && (

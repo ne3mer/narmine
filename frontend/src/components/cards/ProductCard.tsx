@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
 import { formatToman } from '@/lib/format';
+import { resolveImageUrl } from '@/lib/api';
 import type { ProductCardContent } from '@/data/home';
 import { Icon } from '@/components/icons/Icon';
 import { useProductRating } from '@/hooks/useProductRating';
@@ -51,11 +52,12 @@ export const ProductCard = ({ game }: Props) => {
       {/* Image */}
       <div className="relative h-72 w-full overflow-hidden bg-[#f8f5f2]">
         <Image
-          src={game.cover}
+          src={resolveImageUrl(game.cover)}
           alt={game.title}
           fill
           sizes="(max-width: 768px) 300px, 360px"
           className={`object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
+          unoptimized
         />
         
         {/* Gradient Overlay */}

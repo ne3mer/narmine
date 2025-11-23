@@ -77,6 +77,7 @@ export function ImageUpload({ currentImage, onImageUploaded, label = 'تصویر
             alt="Preview"
             fill
             className="object-contain"
+            unoptimized
           />
         </div>
       )}

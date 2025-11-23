@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { API_BASE_URL, adminHeaders, ADMIN_API_KEY } from '@/lib/api';
 import { NewProductState, initialNewProduct } from '@/types/admin';
 import { ImageUpload } from '@/components/upload/ImageUpload';
+import { ImageGalleryUpload } from '@/components/upload/ImageGalleryUpload';
 import CategorySelector from '@/components/admin/products/CategorySelector';
 import { Icon } from '@/components/icons/Icon';
 import { ProductTypeSelector } from '@/components/admin/ProductTypeSelector';
@@ -57,10 +58,6 @@ export default function NewProductPage() {
 
   const handleNewProductChange = (field: keyof NewProductState, value: string | boolean) => {
     setNewProduct((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleGalleryChange = (value: string) => {
-    setNewProduct((prev) => ({ ...prev, gallery: parseList(value) }));
   };
 
   const handleScreenshotsChange = (value: string) => {
@@ -675,17 +672,20 @@ export default function NewProductPage() {
                 <p className="text-xs text-slate-500 mt-1">لینک کامل ویدیو گیم‌پلی از YouTube یا Vimeo</p>
               </label>
 
-              <label>
-                <span className="text-sm font-bold text-slate-700 mb-2 block">گالری تصاویر (با کاما)</span>
-                <textarea
-                  value={newProduct.gallery.join(', ')}
-                  onChange={(event) => handleGalleryChange(event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  rows={3}
-                  placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
+              <div className="md:col-span-2">
+                <ImageGalleryUpload
+                  images={newProduct.gallery}
+                  onImagesChange={(images) => {
+                    handleNewProductChange('gallery', images as any);
+                    // Automatically set first image as cover if cover is empty or was previous first image
+                    if (images.length > 0 && (!newProduct.coverUrl || newProduct.coverUrl === newProduct.gallery[0])) {
+                      handleNewProductChange('coverUrl', images[0]);
+                    }
+                  }}
+                  label="گالری تصاویر محصول"
+                  maxImages={10}
                 />
-                <p className="text-xs text-slate-500 mt-1">لینک تصاویر را با کاما از هم جدا کنید</p>
-              </label>
+              </div>
 
               <label>
                 <span className="text-sm font-bold text-slate-700 mb-2 block">اسکرین‌شات‌ها (با کاما)</span>

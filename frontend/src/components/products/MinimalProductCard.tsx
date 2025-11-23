@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatToman } from '@/lib/format';
+import { resolveImageUrl } from '@/lib/api';
 import { Icon } from '@/components/icons/Icon';
 import { useProductRating } from '@/hooks/useProductRating';
 
@@ -19,7 +20,7 @@ export const MinimalProductCard = ({ id, title, cover, price, slug, rating: stat
   const { rating: dynamicRating } = useProductRating(id);
   const displayRating = dynamicRating !== null && dynamicRating > 0 ? dynamicRating : (staticRating || 0);
   const productSlug = slug ?? id;
-  const imageSrc = cover && cover.trim() !== '' ? cover : '/placeholder-product.jpg';
+  const imageSrc = cover && cover.trim() !== '' ? resolveImageUrl(cover) : '/placeholder-product.jpg';
 
   return (
     <Link
@@ -35,6 +36,7 @@ export const MinimalProductCard = ({ id, title, cover, price, slug, rating: stat
             fill
             sizes="(max-width: 768px) 200px, 250px"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
+            unoptimized
           />
         ) : (
           <div className="flex h-full items-center justify-center text-6xl text-[#c9a896]/30">

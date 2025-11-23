@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatToman } from '@/lib/format';
+import { resolveImageUrl } from '@/lib/api';
 import type { GameCardContent } from '@/data/home';
 import { Icon } from '@/components/icons/Icon';
 
@@ -26,11 +27,12 @@ export function CatalogProductCard({ game }: { game: GameCardContent }) {
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[28px]">
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent z-10" />
         <Image
-          src={game.cover}
+          src={resolveImageUrl(game.cover)}
           alt={game.title}
           fill
           sizes="(max-width: 768px) 100vw, 320px"
           className="object-cover transition duration-700 group-hover:scale-110"
+          unoptimized
         />
         <div className="absolute left-4 top-4 z-20 flex gap-2 text-xs font-bold">
           <InfoChip icon="🎮" label={game.platform || 'PC'} />

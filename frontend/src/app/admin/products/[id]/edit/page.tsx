@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { API_BASE_URL, ADMIN_API_KEY, adminHeaders } from '@/lib/api';
 import { ImageUpload } from '@/components/upload/ImageUpload';
+import { ImageGalleryUpload } from '@/components/upload/ImageGalleryUpload';
 import CategorySelector from '@/components/admin/products/CategorySelector';
 import type { NewProductState, ProductRow } from '@/types/admin';
 import { Icon } from '@/components/icons/Icon';
@@ -117,10 +118,6 @@ export default function EditProductPage() {
 
   const handleFieldChange = (field: keyof EditableProductState, value: string | boolean) => {
     setFormState((prev) => (prev ? { ...prev, [field]: value } : prev));
-  };
-
-  const handleGalleryChange = (value: string) => {
-    setFormState((prev) => (prev ? { ...prev, gallery: parseList(value) } : prev));
   };
 
   const handleScreenshotsChange = (value: string) => {
@@ -660,17 +657,20 @@ export default function EditProductPage() {
                 <p className="text-xs text-slate-500 mt-1">لینک کامل ویدیو گیم‌پلی از YouTube یا Vimeo</p>
               </label>
 
-              <label>
-                <span className="text-sm font-bold text-slate-700 mb-2 block">گالری تصاویر (با کاما)</span>
-                <textarea
-                  value={formState.gallery.join(', ')}
-                  onChange={(event) => handleGalleryChange(event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  rows={3}
-                  placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
+              <div className="md:col-span-2">
+                <ImageGalleryUpload
+                  images={formState.gallery}
+                  onImagesChange={(images) => {
+                    handleFieldChange('gallery', images as any);
+                    // Automatically set first image as cover if cover is empty or was previous first image
+                    if (images.length > 0 && (!formState.coverUrl || formState.coverUrl === formState.gallery[0])) {
+                      handleFieldChange('coverUrl', images[0]);
+                    }
+                  }}
+                  label="گالری تصاویر محصول"
+                  maxImages={10}
                 />
-                <p className="text-xs text-slate-500 mt-1">لینک تصاویر را با کاما از هم جدا کنید</p>
-              </label>
+              </div>
 
               <label>
                 <span className="text-sm font-bold text-slate-700 mb-2 block">اسکرین‌شات‌ها (با کاما)</span>
