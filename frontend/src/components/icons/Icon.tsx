@@ -113,6 +113,7 @@ export type IconName =
   | 'chevron-right'
   | 'chevron-left'
   | 'alert'
+  | 'alert-circle'
   | 'trash'
   | 'edit'
   | 'eye'
@@ -185,6 +186,7 @@ const iconMap: Record<IconName, LucideIcon> = {
   'chevron-right': ChevronRight,
   'chevron-left': ChevronLeft,
   alert: AlertCircle,
+  'alert-circle': AlertCircle,
   trash: Trash2,
   edit: Edit,
   eye: Eye,
@@ -232,4 +234,3 @@ export function Icon({ name, size = 20, className = '', strokeWidth = 2 }: IconP
   
   return <IconComponent size={size} className={className} strokeWidth={strokeWidth} />;
 }
-
