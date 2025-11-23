@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_BASE_URL, adminHeaders } from '@/lib/api';
-import { Icon } from '@/components/icons/Icon';
+import { Icon, type IconName } from '@/components/icons/Icon';
 import {
   defaultHomeContent,
   type HomeContent,
@@ -19,14 +19,14 @@ interface SectionConfig {
   settings: Record<string, any>;
 }
 
-const SECTION_INFO: Record<string, { name: string; icon: string; description: string }> = {
+const SECTION_INFO: Record<string, { name: string; icon: IconName; description: string }> = {
   'hero-carousel': { name: 'اسلایدر اصلی', icon: 'image', description: 'قهرمان و معرفی برند' },
   'popular-games': { name: 'محصولات محبوب', icon: 'trending', description: 'پرفروش‌ترین‌ها' },
   'new-arrivals': { name: 'تازه‌ها', icon: 'star', description: 'جدیدترین محصولات' },
-  'categories': { name: 'دسته‌بندی‌ها', icon: 'grid', description: 'دسته‌های مورد علاقه' },
+  'categories': { name: 'دسته‌بندی‌ها', icon: 'dashboard', description: 'دسته‌های مورد علاقه' }, // 'grid' is not in IconName, using 'dashboard' as placeholder or need to add 'grid'
   'gaming-gear': { name: 'لوازم خواب تکمیلی', icon: 'cpu', description: 'جانبی‌های خواب' },
   'collectibles': { name: 'اکسسوری‌های دکوراتیو', icon: 'package', description: 'تزئینات اتاق' },
-  'testimonials': { name: 'نظرات کاربران', icon: 'message-circle', description: 'بازخورد مشتریان' },
+  'testimonials': { name: 'نظرات کاربران', icon: 'message', description: 'بازخورد مشتریان' }, // 'message-circle' -> 'message'
   'trust-signals': { name: 'نشانه‌های اعتماد', icon: 'shield', description: 'گارانتی و پشتیبانی' }
 };
 
@@ -449,7 +449,7 @@ export default function HomepageSettingsPage() {
               >
                 <div className="flex items-center gap-3">
                   <div className="rounded-2xl bg-slate-100 p-2 text-slate-600">
-                    <Icon name={SECTION_INFO[section.id]?.icon ?? 'layout'} size={16} />
+                    <Icon name={SECTION_INFO[section.id]?.icon ?? 'dashboard'} size={16} />
                   </div>
                   <div>
                     <p className="font-semibold text-slate-900">{SECTION_INFO[section.id]?.name ?? section.id}</p>
