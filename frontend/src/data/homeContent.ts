@@ -1,4 +1,5 @@
 import type { BannerContent } from '@/data/marketing';
+export type { BannerContent };
 
 export type HeroStat = {
   id: string;
