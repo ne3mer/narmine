@@ -17,7 +17,7 @@ import analyticsRouter from "./analytics.route";
 import profileRouter from "./profile.route";
 
 import categoryRouter from "./category.route";
-import gameRequestRouter from "./game-request.route";
+
 
 import telegramRouter from "./telegram.route";
 import homepageSettingsRouter from "./homepageSettings.routes";
@@ -44,7 +44,7 @@ router.use("/reviews", reviewRouter);
 router.use("/analytics", analyticsRouter);
 router.use("/profile", profileRouter);
 router.use("/categories", categoryRouter);
-router.use("/game-requests", gameRequestRouter);
+
 
 router.use("/telegram", telegramRouter);
 router.use("/homepage-settings", homepageSettingsRouter);

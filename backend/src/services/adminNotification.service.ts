@@ -26,16 +26,7 @@ type OrderCreatedEvent = {
   createdAt?: Date;
 };
 
-type GameRequestCreatedEvent = {
-  type: 'game_request_created';
-  requestId: string;
-  gameName: string;
-  platform: string;
-  region: string;
-  description?: string;
-  requestedBy?: TriggerSource;
-  createdAt?: Date;
-};
+
 
 type ReviewSubmittedEvent = {
   type: 'review_submitted';
@@ -56,7 +47,7 @@ type CustomAdminEvent = {
 
 export type AdminNotificationEvent =
   | OrderCreatedEvent
-  | GameRequestCreatedEvent
+
   | ReviewSubmittedEvent
   | CustomAdminEvent;
 
@@ -196,45 +187,7 @@ const buildEmailContent = (event: AdminNotificationEvent) => {
 
       return { subject, html: wrapEmail('سفارش جدید دریافت شد', body) };
     }
-    case 'game_request_created': {
-      const subject = `📝 فرم جدید: ${event.gameName}`;
-      const requesterInfo = event.requestedBy
-        ? renderKeyValueList([
-            ['نام کاربر', escapeHtml(event.requestedBy.name ?? '---')],
-            ['ایمیل کاربر', escapeHtml(event.requestedBy.email ?? '---')]
-          ])
-        : '';
 
-      const body = `
-        ${section(
-          'درخواست بازی جدید ارسال شد',
-          '<p style="margin:0;color:#374151;">یکی از کاربران فرم درخواست بازی را پر کرده است.</p>'
-        )}
-        ${section(
-          'مشخصات درخواست',
-          renderKeyValueList([
-            ['نام بازی', escapeHtml(event.gameName)],
-            ['پلتفرم', escapeHtml(event.platform)],
-            ['ریجن', escapeHtml(event.region)],
-            ['شناسه درخواست', escapeHtml(event.requestId)],
-            ['تاریخ', formatDate(event.createdAt)]
-          ])
-        )}
-        ${
-          event.description
-            ? section(
-                'توضیحات',
-                `<div style="padding:12px;border-radius:16px;background:#f8fafc;border:1px solid #e2e8f0;color:#111827;">${formatMultiline(
-                  event.description
-                )}</div>`
-              )
-            : ''
-        }
-        ${requesterInfo ? section('مشخصات ارسال‌کننده', requesterInfo) : ''}
-      `;
-
-      return { subject, html: wrapEmail('درخواست جدید بازی', body) };
-    }
     case 'review_submitted': {
       const subject = `💬 پیام/نظر جدید برای ${event.gameTitle}`;
       const reviewerInfo = event.submittedBy

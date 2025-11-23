@@ -7,12 +7,7 @@ export interface UserDocument extends Document {
   phone?: string;
   telegram?: string;
   role: 'user' | 'admin';
-  // Tournament-related fields
-  gameTag?: {
-    psn?: string;
-    activision?: string;
-    epic?: string;
-  };
+
   telegramChatId?: string;
   bankInfo?: {
     accountNumber?: string;
@@ -27,11 +22,7 @@ export interface UserDocument extends Document {
     until?: Date;
     permanent: boolean;
   };
-  warnings: Array<{
-    reason: string;
-    date: Date;
-    tournamentId?: Schema.Types.ObjectId;
-  }>;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,12 +35,7 @@ const userSchema = new Schema<UserDocument>(
     phone: { type: String },
     telegram: { type: String },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
-    // Tournament fields
-    gameTag: {
-      psn: { type: String, trim: true },
-      activision: { type: String, trim: true },
-      epic: { type: String, trim: true }
-    },
+
     telegramChatId: { type: String },
     bankInfo: {
       accountNumber: { type: String, trim: true },
@@ -64,11 +50,7 @@ const userSchema = new Schema<UserDocument>(
       until: { type: Date },
       permanent: { type: Boolean, default: false }
     },
-    warnings: [{
-      reason: { type: String, required: true },
-      date: { type: Date, default: Date.now },
-      tournamentId: { type: Schema.Types.ObjectId, ref: 'Tournament' }
-    }]
+
   },
   { timestamps: true }
 );

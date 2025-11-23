@@ -68,34 +68,4 @@ export const getProfile = async (req: Request, res: Response) => {
   }
 };
 
-export const updateArenaSettings = async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user?.id;
-    
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: 'لطفاً ابتدا وارد حساب کاربری خود شوید'
-      });
-    }
 
-    const { gameTag, bankInfo } = req.body;
-
-    const updates: any = {};
-    if (gameTag) updates.gameTag = gameTag;
-    if (bankInfo) updates.bankInfo = bankInfo;
-
-    const user = await updateUser(userId, updates);
-    
-    res.json({
-      success: true,
-      message: 'تنظیمات آرنا با موفقیت به‌روزرسانی شد',
-      data: user
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error instanceof Error ? error.message : 'خطا در به‌روزرسانی تنظیمات'
-    });
-  }
-};
