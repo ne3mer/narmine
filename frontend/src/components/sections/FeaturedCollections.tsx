@@ -79,16 +79,16 @@ export function FeaturedCollections() {
                   </div>
                 </div>
                 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                {/* Gradient Overlay - Always visible */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
               </div>
 
-              {/* Content */}
-              <div className="absolute bottom-0 left-0 right-0 p-8 text-white transform translate-y-4 transition-transform duration-500 group-hover:translate-y-0">
+              {/* Content - Always visible */}
+              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
                 <h3 className="mb-2 font-serif text-2xl font-bold" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
                   {collection.title}
                 </h3>
-                <p className="mb-4 text-sm text-white/80 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <p className="mb-4 text-sm text-white/90">
                   {collection.subtitle}
                 </p>
                 <div className="inline-flex items-center gap-2 text-sm font-semibold opacity-0 transition-opacity duration-500 group-hover:opacity-100">
