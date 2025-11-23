@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,6 +8,8 @@ import { API_BASE_URL } from '@/lib/api';
 import { getAuthToken } from '@/lib/auth';
 import { formatToman } from '@/lib/format';
 import { Icon } from '@/components/icons/Icon';
+
+export const dynamic = 'force-dynamic';
 
 type OrderItem = {
   id: string;
@@ -49,7 +51,7 @@ type OrderSummary = {
 
 const STORAGE_KEY = 'narmine_last_order';
 
-export default function OrderSuccessPage() {
+function OrderSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
@@ -294,5 +296,17 @@ export default function OrderSuccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OrderSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-[#f8f5f2]">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#f1e7df] border-t-[#c9a896]"></div>
+      </div>
+    }>
+      <OrderSuccessContent />
+    </Suspense>
   );
 }

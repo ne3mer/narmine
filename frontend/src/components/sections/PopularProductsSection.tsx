@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { CompactProductCard, type CompactProduct } from '@/components/cards/CompactProductCard';
+import { CompactProductCard } from '@/components/cards/CompactProductCard';
+import type { CompactProduct } from '@/types/admin';
 import { API_BASE_URL } from '@/lib/api';
 import type { GameCardContent } from '@/data/home';
 
@@ -104,12 +105,9 @@ export const PopularProductsSection = () => {
               product={{
                 id: game.id,
                 slug: game.slug || game.id,
-                cover: game.cover,
-                price: game.price,
-                platform: game.platform || 'PC',
-                title: game.title,
-                tag: 'Popular',
-                productType: game.productType
+                coverUrl: game.coverUrl,
+                basePrice: game.basePrice,
+                title: game.title
               } satisfies CompactProduct}
             />
           ))}

@@ -82,7 +82,7 @@ export function LuxuryHero({ content = defaultHomeContent.hero, slides = default
         <div className="animate-fade-in delay-400 mt-16 flex flex-wrap items-center justify-center gap-8 text-sm text-[#4a3f3a]/60">
           {content.stats.map((stat) => (
             <div key={stat.id} className="flex items-center gap-2">
-              <Icon name="check-circle" size={18} className="text-[#c9a896]" />
+              <Icon name="check" size={18} className="text-[#c9a896]" />
               <span>{`${stat.label}: ${stat.value}`}</span>
             </div>
           ))}

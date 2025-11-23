@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Icon } from '@/components/icons/Icon';
-import { GameFilters } from '@/components/filters/GameFilters';
+import { ProductFilters } from '@/components/filters/ProductFilters';
 import { ActiveFilters } from '@/components/filters/ActiveFilters';
 
 interface FilterAccordionProps {
@@ -61,7 +61,7 @@ export function FilterAccordion({ activeFiltersCount, onClearFilters }: FilterAc
           }`}
         >
           <div className="pb-6 md:pb-8 space-y-6">
-            <GameFilters inline />
+            <ProductFilters inline />
             
             {activeFiltersCount > 0 && (
               <div className="pt-4 border-t border-slate-100">

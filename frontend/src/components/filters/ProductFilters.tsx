@@ -26,8 +26,8 @@ const SORT_OPTIONS = [
 ];
 
 type ProductFiltersProps = {
-  activeFiltersCount: number;
-  onClearFilters: () => void;
+  activeFiltersCount?: number;
+  onClearFilters?: () => void;
   inline?: boolean;
 };
 

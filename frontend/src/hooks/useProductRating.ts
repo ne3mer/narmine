@@ -78,7 +78,7 @@ export function useProductRatings(productIds: string[]) {
           // Check cache first
           const cached = ratingCache.get(productId);
           if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-            return { productId, ...cached };
+            return cached;
           }
 
           try {
