@@ -2,7 +2,7 @@ import { PageModel } from '../models/page.model';
 import { ApiError } from '../middleware/errorHandler';
 
 export const getAllPages = async () => {
-  return PageModel.find({ isActive: true }).select('-__v').sort({ pageSlug: 1 });
+  return PageModel.find().select('-__v').sort({ pageSlug: 1 });
 };
 
 export const getPageBySlug = async (slug: string) => {
@@ -16,11 +16,12 @@ export const getPageBySlug = async (slug: string) => {
 export const updatePage = async (slug: string, updates: any, userId: string) => {
   const page = await PageModel.findOneAndUpdate(
     { pageSlug: slug },
-    { 
+    {
       ...updates,
+      pageSlug: slug,
       updatedBy: userId
     },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true, upsert: true, setDefaultsOnInsert: true }
   );
   
   if (!page) {

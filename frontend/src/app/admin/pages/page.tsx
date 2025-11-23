@@ -19,6 +19,74 @@ type Page = {
   updatedAt: string;
 };
 
+const DEFAULT_PAGES: Page[] = [
+  {
+    _id: 'contact',
+    pageSlug: 'contact',
+    title: 'تماس با ما',
+    subtitle: 'راه‌های ارتباط با تیم پشتیبانی نرمینه خواب',
+    sections: [],
+    seo: {
+      metaTitle: 'تماس با نرمینه خواب',
+      metaDescription: 'ارتباط با پشتیبانی نرمینه خواب برای پیگیری سفارش و مشاوره خرید'
+    },
+    isActive: true,
+    updatedAt: '2024-01-01T00:00:00.000Z'
+  },
+  {
+    _id: 'shipping',
+    pageSlug: 'shipping',
+    title: 'ارسال و تحویل',
+    subtitle: 'اطلاعات روش‌های ارسال و زمان تحویل سفارش‌ها',
+    sections: [],
+    seo: {
+      metaTitle: 'روش‌های ارسال نرمینه خواب',
+      metaDescription: 'جزئیات ارسال، زمان‌بندی و هزینه‌های تحویل سفارش در نرمینه خواب'
+    },
+    isActive: true,
+    updatedAt: '2024-01-01T00:00:00.000Z'
+  },
+  {
+    _id: 'returns',
+    pageSlug: 'returns',
+    title: 'شرایط بازگشت کالا',
+    subtitle: 'ضمانت ۷ روزه بازگشت کالا و فرآیند مرجوعی',
+    sections: [],
+    seo: {
+      metaTitle: 'بازگشت کالا در نرمینه خواب',
+      metaDescription: 'آشنایی با شرایط و مراحل بازگشت کالا و بازگشت وجه در نرمینه خواب'
+    },
+    isActive: true,
+    updatedAt: '2024-01-01T00:00:00.000Z'
+  },
+  {
+    _id: 'faq',
+    pageSlug: 'faq',
+    title: 'سوالات متداول',
+    subtitle: 'پاسخ به پرتکرارترین سوال‌های مشتریان',
+    sections: [],
+    seo: {
+      metaTitle: 'سوالات متداول نرمینه خواب',
+      metaDescription: 'جواب پرسش‌های پرتکرار درباره محصولات، سفارش و خدمات نرمینه خواب'
+    },
+    isActive: true,
+    updatedAt: '2024-01-01T00:00:00.000Z'
+  },
+  {
+    _id: 'privacy',
+    pageSlug: 'privacy',
+    title: 'حریم خصوصی',
+    subtitle: 'چگونگی محافظت از اطلاعات شخصی مشتریان',
+    sections: [],
+    seo: {
+      metaTitle: 'سیاست حریم خصوصی نرمینه خواب',
+      metaDescription: 'اطلاعات مربوط به نگهداری و استفاده از داده‌های کاربران نرمینه خواب'
+    },
+    isActive: true,
+    updatedAt: '2024-01-01T00:00:00.000Z'
+  }
+];
+
 export default function AdminPagesPage() {
   const [pages, setPages] = useState<Page[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +115,7 @@ export default function AdminPagesPage() {
     contact: 'mail',
     shipping: 'truck',
     returns: 'refresh',
-    faq: 'help-circle',
+    faq: 'info',
     privacy: 'shield'
   };
 
@@ -72,6 +140,17 @@ export default function AdminPagesPage() {
     return classes[color];
   };
 
+  const ensuredBasePages = DEFAULT_PAGES.map((defaultPage) => {
+    const existing = pages.find((page) => page.pageSlug === defaultPage.pageSlug);
+    return existing ?? { ...defaultPage };
+  });
+
+  const extraPages = pages.filter(
+    (page) => !DEFAULT_PAGES.some((defaultPage) => defaultPage.pageSlug === page.pageSlug)
+  );
+
+  const displayPages = [...ensuredBasePages, ...extraPages];
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -87,7 +166,7 @@ export default function AdminPagesPage() {
         <div className="flex items-center justify-center py-20">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-emerald-500" />
         </div>
-      ) : pages.length === 0 ? (
+      ) : displayPages.length === 0 ? (
         <div className="rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 p-12 text-center">
           <Icon name="file" size={48} className="mx-auto mb-4 text-slate-400" />
           <p className="text-slate-600 font-semibold mb-2">هیچ صفحه‌ای یافت نشد</p>
@@ -95,9 +174,9 @@ export default function AdminPagesPage() {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {pages.map((page) => (
+          {displayPages.map((page) => (
             <div
-              key={page._id}
+              key={page._id || page.pageSlug}
               className="group rounded-3xl border-2 border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-emerald-300 hover:shadow-lg"
             >
               {/* Icon & Status */}
@@ -162,15 +241,37 @@ export default function AdminPagesPage() {
       )}
 
       {/* Info Box */}
-      <div className="rounded-3xl border-2 border-blue-200 bg-blue-50 p-6">
+      <div className="rounded-3xl border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100/70 p-6">
         <div className="flex items-start gap-4">
-          <Icon name="info" size={24} className="mt-0.5 flex-shrink-0 text-blue-600" />
-          <div>
-            <h3 className="mb-2 font-bold text-blue-900">نکته مهم</h3>
-            <p className="text-sm text-blue-800 leading-relaxed">
-              صفحات به صورت خودکار از فایل‌های فرانت‌اند ایجاد می‌شوند. برای ویرایش محتوا، روی دکمه "ویرایش" کلیک کنید.
-              تغییرات شما در دیتابیس ذخیره می‌شود و می‌توانید محتوای صفحات را بدون تغییر کد مدیریت کنید.
-            </p>
+          <div className="relative">
+            <span className="absolute -top-2 -left-2 rounded-full bg-white px-2 py-0.5 text-[10px] font-black text-blue-500 shadow-sm">
+              نکته مهم
+            </span>
+            <Icon name="info" size={28} className="mt-2 flex-shrink-0 text-blue-600" />
+          </div>
+          <div className="space-y-3 text-sm text-blue-900">
+            <div>
+              <p className="font-bold">صفحات از دل فرانت‌اند ساخته می‌شوند</p>
+              <p className="leading-relaxed text-blue-800/80">
+                هر زمان یک فایل صفحه در پروژه وجود داشته باشد، در اینجا هم نسخه‌ای برای مدیریت محتوای همان صفحه ساخته می‌شود.
+              </p>
+            </div>
+            <div className="rounded-2xl bg-white/70 p-4 shadow-sm ring-1 ring-blue-100">
+              <p className="mb-2 text-xs font-semibold text-blue-500">چطور ویرایش کنیم؟</p>
+              <ul className="list-disc space-y-1 pr-4 text-[13px] text-blue-900/90">
+                <li>روی «ویرایش» هر کارت کلیک کن تا وارد ویرایشگر زنده همان صفحه شوی.</li>
+                <li>تمام تغییراتت در دیتابیس ذخیره می‌شود و نیاز به دیپلوی جدید نداری.</li>
+                <li>با پیش‌نمایش می‌توانی نسخه نهایی را قبل از انتشار ببینی.</li>
+              </ul>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 text-xs">
+              <span className="rounded-full bg-blue-200/80 px-3 py-1 font-semibold text-blue-900">
+                بدون دستکاری کد
+              </span>
+              <span className="rounded-full bg-white/70 px-3 py-1 font-semibold text-blue-600">
+                مناسب تیم محتوا
+              </span>
+            </div>
           </div>
         </div>
       </div>

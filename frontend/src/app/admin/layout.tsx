@@ -113,6 +113,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       title: 'محتوا و طراحی',
       items: [
         { href: '/admin/home', label: 'صفحه اصلی', icon: 'home' },
+        { href: '/admin/pages', label: 'صفحات سایت', icon: 'file' },
         { href: '/admin/banners', label: 'بنرها', icon: 'palette' }
       ]
     },
