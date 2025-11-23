@@ -196,7 +196,7 @@ export default function EditPagePage() {
               target="_blank"
               className="flex items-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50"
             >
-              <Icon name="external-link" size={16} />
+              <Icon name="link" size={16} />
               <span className="hidden sm:inline">پیش‌نمایش</span>
             </a>
             <button
@@ -218,7 +218,7 @@ export default function EditPagePage() {
               : 'border-rose-200 bg-rose-50 text-rose-800'
           }`}>
             <div className="flex items-center gap-2">
-              <Icon name={message.type === 'success' ? 'check' : 'alert-circle'} size={20} />
+              <Icon name={message.type === 'success' ? 'check' : 'x'} size={20} />
               <p className="text-sm font-semibold">{message.text}</p>
             </div>
           </div>
