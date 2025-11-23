@@ -1,0 +1,1 @@
+{"version":3,"file":"telegram.route.js","sourceRoot":"","sources":["../../src/routes/telegram.route.ts"],"names":[],"mappings":";;AAAA,qCAAiC;AACjC,4EAAqF;AACrF,qEAAkE;AAElE,MAAM,MAAM,GAAG,IAAA,gBAAM,GAAE,CAAC;AAExB,MAAM,CAAC,GAAG,CAAC,OAAO,EAAE,mCAAgB,EAAE,qCAAe,CAAC,CAAC;AACvD,MAAM,CAAC,IAAI,CAAC,SAAS,EAAE,mCAAgB,EAAE,oCAAc,CAAC,CAAC;AAEzD,kBAAe,MAAM,CAAC"}

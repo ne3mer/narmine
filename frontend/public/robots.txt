@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Disallow admin routes
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://nextplay.ir/sitemap.xml
