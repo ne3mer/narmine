@@ -35,6 +35,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HomepageSettings = exports.DEFAULT_SECTIONS = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+const homepageContent_1 = require("../config/homepageContent");
 const SectionConfigSchema = new mongoose_1.Schema({
     id: { type: String, required: true },
     enabled: { type: Boolean, default: true },
@@ -44,7 +45,8 @@ const SectionConfigSchema = new mongoose_1.Schema({
 const HomepageSettingsSchema = new mongoose_1.Schema({
     sections: [SectionConfigSchema],
     updatedAt: { type: Date, default: Date.now },
-    updatedBy: { type: String }
+    updatedBy: { type: String },
+    content: { type: mongoose_1.Schema.Types.Mixed, default: homepageContent_1.DEFAULT_HOME_CONTENT }
 }, {
     timestamps: true
 });

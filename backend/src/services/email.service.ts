@@ -53,43 +53,8 @@ class EmailService {
     }
   }
 
-  public getRegistrationTemplate(userName: string, tournamentTitle: string) {
-    return `
-      <div dir="rtl" style="font-family: Tahoma, Arial, sans-serif; line-height: 1.6; color: #333;">
-        <h2 style="color: #7c3aed;">ثبت‌نام موفقیت‌آمیز! 🎉</h2>
-        <p>سلام ${userName} عزیز،</p>
-        <p>ثبت‌نام شما در تورنمنت <strong>${tournamentTitle}</strong> با موفقیت انجام شد.</p>
-        <p>لطفاً برای تکمیل فرآیند و پرداخت هزینه ورودی (در صورت وجود)، به پنل کاربری خود مراجعه کنید.</p>
-        <br>
-        <a href="${process.env.NEXT_PUBLIC_FRONTEND_URL}/dashboard" style="background-color: #7c3aed; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">ورود به پنل کاربری</a>
-        <br><br>
-        <p>با آرزوی موفقیت،<br>تیم نکست‌پلی آرنا</p>
-      </div>
-    `;
-  }
-
-  public getPayoutTemplate(userName: string, amount: number, status: 'paid' | 'failed', reason?: string) {
-    const isPaid = status === 'paid';
-    return `
-      <div dir="rtl" style="font-family: Tahoma, Arial, sans-serif; line-height: 1.6; color: #333;">
-        <h2 style="color: ${isPaid ? '#10b981' : '#f43f5e'};">
-          ${isPaid ? 'واریز جایزه انجام شد! 💰' : 'مشکل در واریز جایزه ⚠️'}
-        </h2>
-        <p>سلام ${userName} عزیز،</p>
-        ${isPaid ? `
-          <p>مبلغ <strong>${amount.toLocaleString()} تومان</strong> به حساب شما واریز شد.</p>
-          <p>از شرکت شما در مسابقات سپاسگزاریم.</p>
-        ` : `
-          <p>متاسفانه درخواست واریز مبلغ <strong>${amount.toLocaleString()} تومان</strong> با مشکل مواجه شد.</p>
-          <p>دلیل: ${reason || 'نامشخص'}</p>
-          <p>لطفاً اطلاعات بانکی خود را بررسی کرده و مجدداً درخواست دهید.</p>
-        `}
-        <br>
-        <p>تیم نکست‌پلی آرنا</p>
-      </div>
-    `;
-  }
 }
+
 
 export const emailService = new EmailService();
 

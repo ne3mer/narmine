@@ -7,9 +7,9 @@ const gameSchema = new mongoose_1.Schema({
     slug: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     detailedDescription: { type: String }, // Rich text HTML
-    genre: [{ type: String, required: true }],
-    platform: { type: String, required: true },
-    regionOptions: [{ type: String, required: true }],
+    genre: [{ type: String }], // Optional for physical
+    platform: { type: String }, // Optional for physical
+    regionOptions: [{ type: String }], // Optional for physical
     basePrice: { type: Number, required: true },
     safeAccountAvailable: { type: Boolean, default: false },
     coverUrl: { type: String },
@@ -41,7 +41,7 @@ const gameSchema = new mongoose_1.Schema({
     productType: {
         type: String,
         enum: ['digital_game', 'physical_product', 'digital_content', 'gaming_gear', 'collectible', 'bundle'],
-        default: 'digital_game'
+        default: 'physical_product' // Changed default
     },
     // Dynamic custom fields
     customFields: {
@@ -50,7 +50,7 @@ const gameSchema = new mongoose_1.Schema({
     },
     // Inventory management
     inventory: {
-        trackInventory: { type: Boolean, default: false },
+        trackInventory: { type: Boolean, default: true }, // Default true for physical
         quantity: { type: Number, default: 0 },
         reserved: { type: Number, default: 0 },
         lowStockThreshold: { type: Number, default: 5 },
@@ -58,7 +58,7 @@ const gameSchema = new mongoose_1.Schema({
     },
     // Shipping information
     shipping: {
-        requiresShipping: { type: Boolean, default: false },
+        requiresShipping: { type: Boolean, default: true }, // Default true for physical
         weight: { type: Number }, // grams
         dimensions: {
             length: { type: Number }, // cm

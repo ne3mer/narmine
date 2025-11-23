@@ -1,7 +1,6 @@
 import type { Request, Response } from 'express';
 import * as notificationService from '../services/notification.service';
 import { UserModel } from '../models/user.model';
-import TournamentParticipant from '../models/tournament-participant.model';
 import { emailService } from '../services/email.service';
 import { telegramService } from '../services/telegram.service';
 
@@ -72,9 +71,6 @@ export const sendAdminNotification = async (req: Request, res: Response) => {
     // 1. Fetch Target Users
     if (target === 'all') {
       users = await UserModel.find({});
-    } else if (target === 'tournament' && targetId) {
-      const participants = await TournamentParticipant.find({ tournamentId: targetId }).populate('userId');
-      users = participants.map(p => p.userId).filter(u => u);
     } else if (target === 'user' && targetId) {
       const user = await UserModel.findById(targetId);
       if (user) users = [user];

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const homepageSettings_model_1 = require("../models/homepageSettings.model");
+const homepageContent_1 = require("../config/homepageContent");
 const adminAuth_1 = require("../middleware/adminAuth");
 const router = (0, express_1.Router)();
 /**
@@ -11,16 +12,39 @@ const router = (0, express_1.Router)();
 router.get('/', async (req, res) => {
     try {
         let settings = await homepageSettings_model_1.HomepageSettings.findOne();
+        let contentNeedsSave = false;
         // If no settings exist, create default
         if (!settings) {
             settings = await homepageSettings_model_1.HomepageSettings.create({
                 sections: homepageSettings_model_1.DEFAULT_SECTIONS,
-                updatedAt: new Date()
+                updatedAt: new Date(),
+                content: homepageContent_1.DEFAULT_HOME_CONTENT
             });
         }
+        if (!settings.content) {
+            settings.content = homepageContent_1.DEFAULT_HOME_CONTENT;
+            await settings.save();
+        }
+        const rawContent = settings.content?.toJSON?.() ?? settings.content ?? {};
+        const normalizedContent = {
+            ...rawContent,
+            shippingMethods: Array.isArray(rawContent.shippingMethods) && rawContent.shippingMethods.length > 0
+                ? rawContent.shippingMethods
+                : homepageContent_1.DEFAULT_HOME_CONTENT.shippingMethods
+        };
+        if (!Array.isArray(rawContent.shippingMethods) ||
+            rawContent.shippingMethods.length === 0) {
+            settings.content = normalizedContent;
+            contentNeedsSave = true;
+        }
+        if (contentNeedsSave) {
+            await settings.save();
+        }
+        const responseSettings = settings.toObject();
+        responseSettings.content = normalizedContent;
         res.json({
             success: true,
-            data: settings
+            data: responseSettings
         });
     }
     catch (error) {
@@ -37,32 +61,31 @@ router.get('/', async (req, res) => {
  */
 router.put('/', adminAuth_1.adminAuth, async (req, res) => {
     try {
-        const { sections } = req.body;
-        if (!sections || !Array.isArray(sections)) {
-            return res.status(400).json({
-                success: false,
-                message: 'بخش‌ها باید یک آرایه باشند'
-            });
-        }
-        // Validate sections
-        for (const section of sections) {
-            if (!section.id || typeof section.enabled !== 'boolean' || typeof section.order !== 'number') {
-                return res.status(400).json({
-                    success: false,
-                    message: 'فرمت بخش‌ها نامعتبر است'
-                });
-            }
-        }
+        const { sections, content } = req.body;
         let settings = await homepageSettings_model_1.HomepageSettings.findOne();
         if (settings) {
-            settings.sections = sections;
+            if (sections) {
+                if (!Array.isArray(sections)) {
+                    return res.status(400).json({ success: false, message: 'بخش‌ها باید آرایه باشند' });
+                }
+                for (const section of sections) {
+                    if (!section.id || typeof section.enabled !== 'boolean' || typeof section.order !== 'number') {
+                        return res.status(400).json({ success: false, message: 'فرمت بخش‌ها نامعتبر است' });
+                    }
+                }
+                settings.sections = sections;
+            }
+            if (content) {
+                settings.content = { ...settings.content?.toJSON?.() ?? settings.content, ...content };
+            }
             settings.updatedAt = new Date();
             settings.updatedBy = req.user?.email || 'admin';
             await settings.save();
         }
         else {
             settings = await homepageSettings_model_1.HomepageSettings.create({
-                sections,
+                sections: sections ?? homepageSettings_model_1.DEFAULT_SECTIONS,
+                content: content ?? homepageContent_1.DEFAULT_HOME_CONTENT,
                 updatedAt: new Date(),
                 updatedBy: req.user?.email || 'admin'
             });
@@ -90,6 +113,7 @@ router.post('/reset', adminAuth_1.adminAuth, async (req, res) => {
         let settings = await homepageSettings_model_1.HomepageSettings.findOne();
         if (settings) {
             settings.sections = homepageSettings_model_1.DEFAULT_SECTIONS;
+            settings.content = homepageContent_1.DEFAULT_HOME_CONTENT;
             settings.updatedAt = new Date();
             settings.updatedBy = req.user?.email || 'admin';
             await settings.save();
@@ -97,6 +121,7 @@ router.post('/reset', adminAuth_1.adminAuth, async (req, res) => {
         else {
             settings = await homepageSettings_model_1.HomepageSettings.create({
                 sections: homepageSettings_model_1.DEFAULT_SECTIONS,
+                content: homepageContent_1.DEFAULT_HOME_CONTENT,
                 updatedAt: new Date(),
                 updatedBy: req.user?.email || 'admin'
             });

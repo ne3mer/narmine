@@ -16,7 +16,16 @@ const orderSchema = new mongoose_1.Schema({
     customerInfo: {
         name: { type: String },
         email: { type: String, required: true },
-        phone: { type: String, required: true }
+        phone: { type: String, required: true },
+        // Shipping Address
+        shippingAddress: {
+            province: { type: String },
+            city: { type: String },
+            address: { type: String },
+            postalCode: { type: String },
+            recipientName: { type: String },
+            recipientPhone: { type: String }
+        }
     },
     note: { type: String },
     items: [
@@ -45,8 +54,24 @@ const orderSchema = new mongoose_1.Schema({
     deliveryInfo: {
         message: { type: String },
         credentials: { type: String },
+        trackingCode: { type: String }, // Added tracking code
         deliveredAt: { type: Date },
         updatedBy: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }
+    },
+    shippingMethod: {
+        id: { type: String },
+        name: { type: String },
+        price: { type: Number },
+        priceLabel: { type: String },
+        eta: { type: String },
+        badge: { type: String },
+        icon: { type: String },
+        perks: [{ type: String }],
+        freeThreshold: { type: Number }
+    },
+    shippingPreferences: {
+        deliveryDate: { type: Date },
+        instructions: { type: String }
     },
     customerAcknowledgement: {
         acknowledged: { type: Boolean, default: false },
@@ -70,7 +95,7 @@ orderSchema.pre('validate', async function (next) {
 orderSchema.index({ userId: 1, createdAt: -1 });
 orderSchema.index({ 'customerInfo.email': 1 });
 orderSchema.index({ 'customerInfo.phone': 1 });
-orderSchema.index({ orderNumber: 1 }, { unique: true });
+// orderSchema.index({ orderNumber: 1 }, { unique: true }); // Already defined in schema
 orderSchema.index({ orderNumber: 1, createdAt: -1 });
 exports.OrderModel = (0, mongoose_1.model)('Order', orderSchema);
 //# sourceMappingURL=order.model.js.map

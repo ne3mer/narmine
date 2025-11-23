@@ -54,7 +54,7 @@ categorySchema.pre('save', function (next) {
 categorySchema.set('toJSON', {
     transform: (_doc, ret) => {
         const { _id, __v, ...rest } = ret;
-        return { ...rest, id: _id };
+        return { ...rest, id: _id, _id };
     }
 });
 exports.CategoryModel = (0, mongoose_1.model)('Category', categorySchema);

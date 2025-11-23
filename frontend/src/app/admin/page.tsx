@@ -271,15 +271,13 @@ export default function AdminDashboard() {
           color="amber"
           loading={loading}
         />
-        <Link href="/admin/arena/tournaments">
-          <StatCard
-            label="تورنمنت‌های فعال"
-            value="12"
-            icon="award"
-            color="purple"
-            loading={false}
-          />
-        </Link>
+        <StatCard
+          label="کل درآمد"
+          value={formatToman(stats.totalRevenue)}
+          icon="dollar"
+          color="purple"
+          loading={loading}
+        />
         <StatCard
           label="کاربران جدید"
           value={stats.newUsers}
@@ -426,7 +424,7 @@ export default function AdminDashboard() {
           <Icon name="zap" size={20} className="text-emerald-600 sm:w-6 sm:h-6" />
           دسترسی سریع
         </h2>
-        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           <Link
             href="/admin/products/new"
             className="flex items-center gap-3 rounded-2xl border-2 border-emerald-200 bg-gradient-to-br from-white to-emerald-50/50 p-5 hover:border-emerald-300 hover:shadow-lg hover:scale-105 transition-all duration-200 group"
@@ -463,30 +461,7 @@ export default function AdminDashboard() {
               <p className="text-xs text-slate-500 mt-0.5">ویرایش محتوا</p>
             </div>
           </Link>
-          <Link
-            href="/admin/marketing"
-            className="flex items-center gap-3 rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-white to-indigo-50/50 p-5 hover:border-indigo-300 hover:shadow-lg hover:scale-105 transition-all duration-200 group"
-          >
-            <div className="rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 p-3 group-hover:scale-110 transition-transform shadow-lg shadow-indigo-500/30">
-              <Icon name="megaphone" size={20} className="text-white" />
-            </div>
-            <div>
-              <p className="text-sm font-black text-slate-900">بازاریابی</p>
-              <p className="text-xs text-slate-500 mt-0.5">کمپین و تبلیغات</p>
-            </div>
-          </Link>
-          <Link
-            href="/admin/arena/tournaments"
-            className="flex items-center gap-3 rounded-2xl border-2 border-pink-200 bg-gradient-to-br from-white to-pink-50/50 p-5 hover:border-pink-300 hover:shadow-lg hover:scale-105 transition-all duration-200 group"
-          >
-            <div className="rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 p-3 group-hover:scale-110 transition-transform shadow-lg shadow-purple-500/30">
-              <Icon name="award" size={20} className="text-white" />
-            </div>
-            <div>
-              <p className="text-sm font-black text-slate-900">آرنا</p>
-              <p className="text-xs text-slate-500 mt-0.5">مدیریت تورنمنت‌ها</p>
-            </div>
-          </Link>
+
         </div>
       </section>
     </div>

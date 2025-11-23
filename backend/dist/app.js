@@ -40,6 +40,9 @@ const createApp = () => {
     app.get('/health', (_req, res) => {
         res.json({ status: 'ok', timestamp: new Date().toISOString() });
     });
+    app.get('/', (_req, res) => {
+        res.json({ message: 'Narmine Backend API is running', version: '1.0.0' });
+    });
     // Serve static files from uploads directory
     app.use('/uploads', express_1.default.static('public/uploads'));
     app.use('/api', routes_1.default);

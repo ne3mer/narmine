@@ -27,7 +27,7 @@ const couponSchema = new mongoose_1.Schema({
     totalOrders: { type: Number, default: 0 }
 }, { timestamps: true });
 // Indexes for performance
-couponSchema.index({ code: 1 });
+// couponSchema.index({ code: 1 }); // Already unique in schema
 couponSchema.index({ isActive: 1, startDate: 1, endDate: 1 });
 couponSchema.index({ applicableTo: 1 });
 // Validation

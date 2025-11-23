@@ -18,13 +18,7 @@ import profileRouter from "./profile.route";
 
 import categoryRouter from "./category.route";
 import gameRequestRouter from "./game-request.route";
-import tournamentRouter from "./tournament.route";
 
-import arenaUploadRouter from "./arena-upload.route";
-import matchRouter from "./match.route";
-import bracketRouter from "./bracket.route";
-import disputeRouter from "./dispute.route";
-import payoutRouter from "./payout.route";
 import telegramRouter from "./telegram.route";
 import homepageSettingsRouter from "./homepageSettings.routes";
 import shippingMethodRouter from "./shipping-method.route";
@@ -49,12 +43,7 @@ router.use("/analytics", analyticsRouter);
 router.use("/profile", profileRouter);
 router.use("/categories", categoryRouter);
 router.use("/game-requests", gameRequestRouter);
-router.use("/arena/tournaments", tournamentRouter);
-router.use("/arena/upload", arenaUploadRouter);
-router.use("/arena/matches", matchRouter);
-router.use("/arena/brackets", bracketRouter);
-router.use("/arena/disputes", disputeRouter);
-router.use("/arena/payouts", payoutRouter);
+
 router.use("/telegram", telegramRouter);
 router.use("/homepage-settings", homepageSettingsRouter);
 router.use("/shipping-methods", shippingMethodRouter);

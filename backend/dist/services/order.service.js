@@ -61,6 +61,21 @@ const createOrder = async (input) => {
     if (input.discountAmount && input.discountAmount > 0) {
         orderData.discountAmount = input.discountAmount;
     }
+    if (input.shippingMethod) {
+        orderData.shippingMethod = {
+            ...input.shippingMethod,
+            price: Math.max(0, input.shippingMethod.price ?? 0)
+        };
+    }
+    if (input.shippingPreferences) {
+        const { deliveryDate, instructions } = input.shippingPreferences;
+        if (deliveryDate || instructions) {
+            orderData.shippingPreferences = {
+                instructions,
+                deliveryDate: deliveryDate ? new Date(deliveryDate) : undefined
+            };
+        }
+    }
     if (input.userId) {
         orderData.userId = input.userId;
     }

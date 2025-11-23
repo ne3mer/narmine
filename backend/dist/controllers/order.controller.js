@@ -41,7 +41,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const env_1 = require("../config/env");
 const orderService = __importStar(require("../services/order.service"));
 const createOrder = async (req, res) => {
-    const { customerInfo, items, totalAmount, couponCode, discountAmount, note, paymentMethod } = req.body;
+    const { customerInfo, items, totalAmount, couponCode, discountAmount, note, paymentMethod, shippingMethod, shippingPreferences } = req.body;
     let userId = req.user?.id;
     if (!userId) {
         const authHeader = req.headers.authorization;
@@ -57,15 +57,39 @@ const createOrder = async (req, res) => {
         }
     }
     try {
+        const normalizedCustomerInfo = {
+            ...customerInfo
+        };
+        if (!normalizedCustomerInfo.shippingAddress) {
+            const legacyAddressExists = normalizedCustomerInfo.address || normalizedCustomerInfo.city || normalizedCustomerInfo.postalCode;
+            if (legacyAddressExists) {
+                normalizedCustomerInfo.shippingAddress = {
+                    province: normalizedCustomerInfo.province,
+                    city: normalizedCustomerInfo.city,
+                    address: normalizedCustomerInfo.address,
+                    postalCode: normalizedCustomerInfo.postalCode,
+                    recipientName: normalizedCustomerInfo.recipientName ?? normalizedCustomerInfo.name,
+                    recipientPhone: normalizedCustomerInfo.recipientPhone ?? normalizedCustomerInfo.phone
+                };
+            }
+        }
+        const sanitizedShippingMethod = shippingMethod && shippingMethod.name
+            ? {
+                ...shippingMethod,
+                price: Number.isFinite(shippingMethod.price) ? shippingMethod.price : 0
+            }
+            : undefined;
         const order = await orderService.createOrder({
             userId,
-            customerInfo,
+            customerInfo: normalizedCustomerInfo,
             items,
             totalAmount,
             couponCode,
             discountAmount,
             note,
-            paymentMethod
+            paymentMethod,
+            shippingMethod: sanitizedShippingMethod,
+            shippingPreferences
         });
         // Record coupon usage if coupon was applied
         if (couponCode && discountAmount && discountAmount > 0) {

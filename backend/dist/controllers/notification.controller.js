@@ -32,14 +32,10 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendAdminNotification = exports.deleteNotification = exports.markAllAsRead = exports.markAsRead = exports.getUnreadCount = exports.getUserNotifications = void 0;
 const notificationService = __importStar(require("../services/notification.service"));
 const user_model_1 = require("../models/user.model");
-const tournament_participant_model_1 = __importDefault(require("../models/tournament-participant.model"));
 const email_service_1 = require("../services/email.service");
 const telegram_service_1 = require("../services/telegram.service");
 const getUserNotifications = async (req, res) => {
@@ -97,10 +93,6 @@ const sendAdminNotification = async (req, res) => {
         // 1. Fetch Target Users
         if (target === 'all') {
             users = await user_model_1.UserModel.find({});
-        }
-        else if (target === 'tournament' && targetId) {
-            const participants = await tournament_participant_model_1.default.find({ tournamentId: targetId }).populate('userId');
-            users = participants.map(p => p.userId).filter(u => u);
         }
         else if (target === 'user' && targetId) {
             const user = await user_model_1.UserModel.findById(targetId);
