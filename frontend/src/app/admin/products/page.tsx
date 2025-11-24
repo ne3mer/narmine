@@ -210,36 +210,23 @@ export default function ProductsPage() {
                         className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-mono focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
                       />
                     </label>
-                    <div className="flex flex-wrap gap-2 text-xs">
-                      <span className="text-slate-500">پلتفرم:</span>
-                      <span className="font-semibold text-slate-700">{product.platform}</span>
-                      {product.genre.length > 0 && (
-                        <>
-                          <span className="text-slate-300">•</span>
-                          <span className="text-slate-500">ژانر:</span>
-                          <span className="font-semibold text-slate-700">{product.genre.slice(0, 2).join(', ')}</span>
-                        </>
-                      )}
-                    </div>
+                    {product.genre.length > 0 && (
+                      <div className="flex flex-wrap gap-2 text-xs">
+                        <span className="text-slate-500">ژانر:</span>
+                        <span className="font-semibold text-slate-700">{product.genre.slice(0, 2).join(', ')}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Details */}
                   <div className="md:col-span-4 space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3">
                       <label className="block">
                         <span className="text-xs text-slate-500 mb-1 block">قیمت پایه</span>
                         <input
                           type="number"
                           value={product.basePrice}
                           onChange={(e) => updateProductDraft(product.id, 'basePrice', e.target.value)}
-                          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                        />
-                      </label>
-                      <label className="block">
-                        <span className="text-xs text-slate-500 mb-1 block">پلتفرم</span>
-                        <input
-                          value={product.platform}
-                          onChange={(e) => updateProductDraft(product.id, 'platform', e.target.value)}
                           className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
                         />
                       </label>

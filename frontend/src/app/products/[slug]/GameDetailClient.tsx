@@ -235,12 +235,6 @@ export default function GameDetailClient({ game }: Props) {
               </h1>
               
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-[#4a3f3a]/80">
-                {game.platform && (
-                  <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-xl border border-[#c9a896]/20">
-                    <Icon name="game" size={20} />
-                    <span className="font-bold">{game.platform}</span>
-                  </div>
-                )}
                 <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-xl border border-[#c9a896]/20 cursor-pointer hover:bg-white/80 transition-colors">
                   <Icon name="star" size={20} className="text-amber-500 fill-amber-500" />
                   <span className="font-bold">{gameRating.toFixed(1)}</span>
