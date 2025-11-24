@@ -40,7 +40,7 @@ const addPatternFromEnv = (url?: string | null) => {
   }
 };
 
-addPatternFromEnv(process.env.NEXT_PUBLIC_API_BASE_URL);
+addPatternFromEnv(process.env.NEXT_PUBLIC_API_URL);
 addPatternFromEnv(process.env.NEXT_PUBLIC_UPLOAD_BASE_URL);
 
 const shouldDisableOptimization =
