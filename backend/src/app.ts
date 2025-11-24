@@ -14,28 +14,6 @@ import hpp from 'hpp';
 export const createApp = () => {
   const app = express();
 
-  // Security Headers
-  app.use(helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" } // Allow loading images from uploads
-  }));
-
-  // Rate Limiting
-  const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per windowMs
-    message: 'Too many requests from this IP, please try again later'
-  });
-  app.use('/api', limiter);
-
-  // Data Sanitization against NoSQL query injection
-  app.use(mongoSanitize());
-
-  // Data Sanitization against XSS
-  app.use(xss());
-
-  // Prevent Parameter Pollution
-  app.use(hpp());
-
   // CORS configuration - support multiple origins in production
   const allowedOrigins = [
     'https://narmineh.com',
@@ -54,7 +32,23 @@ export const createApp = () => {
     optionsSuccessStatus: 200
   };
 
+  // CORS MUST be the first middleware to ensure headers are always present
   app.use(cors(corsOptions));
+
+  // Security Headers
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" } // Allow loading images from uploads
+  }));
+
+  // Rate Limiting
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 1000, // Increased limit for SPA: 1000 requests per 15 mins
+    message: 'Too many requests from this IP, please try again later',
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+  app.use('/api', limiter);
   
   app.use((_req, res, next) => {
     res.header('Vary', 'Origin');
