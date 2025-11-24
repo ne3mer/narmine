@@ -11,6 +11,5 @@ const router = (0, express_1.Router)();
 router.use(authenticateUser_1.authenticateUser);
 router.get('/', (0, asyncHandler_1.asyncHandler)(profile_controller_1.getProfile));
 router.patch('/', (0, validateResource_1.validateResource)(profile_schema_1.updateProfileSchema), (0, asyncHandler_1.asyncHandler)(profile_controller_1.updateProfile));
-router.patch('/arena-settings', (0, asyncHandler_1.asyncHandler)(profile_controller_1.updateArenaSettings));
 exports.default = router;
 //# sourceMappingURL=profile.route.js.map

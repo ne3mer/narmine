@@ -62,7 +62,14 @@ const sendNotification = async (options) => {
             };
         }
         if (emailContent) {
-            results.emailSent = await (0, email_service_1.sendEmail)(emailContent);
+            try {
+                await (0, email_service_1.sendEmail)(emailContent);
+                results.emailSent = true;
+            }
+            catch (error) {
+                console.error('Failed to send email:', error);
+                results.emailSent = false;
+            }
         }
     }
     // Send Telegram message

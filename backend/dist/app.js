@@ -11,8 +11,30 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const routes_1 = __importDefault(require("./routes"));
 const env_1 = require("./config/env");
 const errorHandler_1 = require("./middleware/errorHandler");
+const helmet_1 = __importDefault(require("helmet"));
+const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
+const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
+const xss_clean_1 = __importDefault(require("xss-clean"));
+const hpp_1 = __importDefault(require("hpp"));
 const createApp = () => {
     const app = (0, express_1.default)();
+    // Security Headers
+    app.use((0, helmet_1.default)({
+        crossOriginResourcePolicy: { policy: "cross-origin" } // Allow loading images from uploads
+    }));
+    // Rate Limiting
+    const limiter = (0, express_rate_limit_1.default)({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // Limit each IP to 100 requests per windowMs
+        message: 'Too many requests from this IP, please try again later'
+    });
+    app.use('/api', limiter);
+    // Data Sanitization against NoSQL query injection
+    app.use((0, express_mongo_sanitize_1.default)());
+    // Data Sanitization against XSS
+    app.use((0, xss_clean_1.default)());
+    // Prevent Parameter Pollution
+    app.use((0, hpp_1.default)());
     // CORS configuration - support multiple origins in production
     const allowedOrigins = env_1.env.NODE_ENV === 'production'
         ? env_1.env.CLIENT_URL.split(',').map(url => url.trim())

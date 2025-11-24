@@ -69,7 +69,27 @@ exports.createGameSchema = zod_1.z.object({
             selectedOptions: zod_1.z.record(zod_1.z.string(), zod_1.z.string()),
             price: zod_1.z.number().positive(),
             stock: zod_1.z.number().int().nonnegative().default(10)
-        })).default([])
+        })).default([]),
+        // Multi-product fields
+        productType: zod_1.z.enum(['digital_game', 'physical_product', 'digital_content', 'gaming_gear', 'collectible', 'bundle']).default('physical_product'),
+        customFields: zod_1.z.record(zod_1.z.string(), zod_1.z.any()).optional(),
+        inventory: zod_1.z.object({
+            trackInventory: zod_1.z.boolean(),
+            quantity: zod_1.z.number().int().nonnegative(),
+            lowStockThreshold: zod_1.z.number().int().nonnegative(),
+            sku: zod_1.z.string().optional()
+        }).optional(),
+        shipping: zod_1.z.object({
+            requiresShipping: zod_1.z.boolean(),
+            weight: zod_1.z.number().positive().optional(),
+            dimensions: zod_1.z.object({
+                length: zod_1.z.number().positive(),
+                width: zod_1.z.number().positive(),
+                height: zod_1.z.number().positive()
+            }).optional(),
+            shippingCost: zod_1.z.number().nonnegative().optional(),
+            freeShippingThreshold: zod_1.z.number().nonnegative().optional()
+        }).optional()
     }),
     query: empty,
     params: empty
@@ -128,7 +148,27 @@ const updateGameBody = zod_1.z
         selectedOptions: zod_1.z.record(zod_1.z.string(), zod_1.z.string()),
         price: zod_1.z.number().positive(),
         stock: zod_1.z.number().int().nonnegative().default(10)
-    })).optional()
+    })).optional(),
+    // Multi-product fields
+    productType: zod_1.z.enum(['digital_game', 'physical_product', 'digital_content', 'gaming_gear', 'collectible', 'bundle']).optional(),
+    customFields: zod_1.z.record(zod_1.z.string(), zod_1.z.any()).optional(),
+    inventory: zod_1.z.object({
+        trackInventory: zod_1.z.boolean(),
+        quantity: zod_1.z.number().int().nonnegative(),
+        lowStockThreshold: zod_1.z.number().int().nonnegative(),
+        sku: zod_1.z.string().optional()
+    }).optional(),
+    shipping: zod_1.z.object({
+        requiresShipping: zod_1.z.boolean(),
+        weight: zod_1.z.number().positive().optional(),
+        dimensions: zod_1.z.object({
+            length: zod_1.z.number().positive(),
+            width: zod_1.z.number().positive(),
+            height: zod_1.z.number().positive()
+        }).optional(),
+        shippingCost: zod_1.z.number().nonnegative().optional(),
+        freeShippingThreshold: zod_1.z.number().nonnegative().optional()
+    }).optional()
 })
     .strict();
 exports.getGameSchema = zod_1.z.object({

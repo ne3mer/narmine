@@ -9,12 +9,6 @@ const userSchema = new mongoose_1.Schema({
     phone: { type: String },
     telegram: { type: String },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
-    // Tournament fields
-    gameTag: {
-        psn: { type: String, trim: true },
-        activision: { type: String, trim: true },
-        epic: { type: String, trim: true }
-    },
     telegramChatId: { type: String },
     bankInfo: {
         accountNumber: { type: String, trim: true },
@@ -29,11 +23,6 @@ const userSchema = new mongoose_1.Schema({
         until: { type: Date },
         permanent: { type: Boolean, default: false }
     },
-    warnings: [{
-            reason: { type: String, required: true },
-            date: { type: Date, default: Date.now },
-            tournamentId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Tournament' }
-        }]
 }, { timestamps: true });
 userSchema.set('toJSON', {
     transform: (_doc, ret) => {
