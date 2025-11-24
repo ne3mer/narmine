@@ -14,10 +14,10 @@ import hpp from 'hpp';
 export const createApp = () => {
   const app = express();
 
-  // Security Headers - TEMPORARILY DISABLED FOR DEBUGGING
-  // app.use(helmet({
-  //   crossOriginResourcePolicy: { policy: "cross-origin" } // Allow loading images from uploads
-  // }));
+  // Security Headers
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" } // Allow loading images from uploads
+  }));
 
   // Rate Limiting
   const limiter = rateLimit({
@@ -36,11 +36,16 @@ export const createApp = () => {
   // Prevent Parameter Pollution
   app.use(hpp());
 
-  // CORS configuration - TEMPORARILY PERMISSIVE FOR DEBUGGING
-  console.log('⚠️ WARNING: CORS is set to permissive mode for debugging');
-  
+  // CORS configuration - support multiple origins in production
+  const allowedOrigins = [
+    'https://narmineh.com',
+    'https://www.narmineh.com',
+    ...(env.CLIENT_URL ? env.CLIENT_URL.split(',').map((url) => url.trim()) : []),
+    'http://localhost:3000'
+  ];
+
   const corsOptions = {
-    origin: true, // Reflects the request origin
+    origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key', 'x-client-version', 'x-requested-with'],
@@ -61,13 +66,6 @@ export const createApp = () => {
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
   app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
-  
-  // Debug middleware to log all requests
-  app.use((req, _res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-    console.log('Headers:', JSON.stringify(req.headers));
-    next();
-  });
 
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
