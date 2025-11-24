@@ -1,10 +1,11 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { API_BASE_URL } from '@/lib/api';
 import { Icon } from '@/components/icons/Icon';
 import { MinimalProductCard } from '@/components/products/MinimalProductCard';
+import { ProductFilters, type FilterState } from '@/components/products/ProductFilters';
 
 type BackendGame = {
   id: string;
@@ -15,9 +16,11 @@ type BackendGame = {
   platform: string;
   regionOptions: string[];
   basePrice: number;
-
+  salePrice?: number;
+  onSale?: boolean;
   coverUrl?: string;
   productType?: string;
+  rating?: number;
 };
 
 type Product = {
@@ -33,59 +36,75 @@ const mapGame = (game: BackendGame): Product => ({
   id: game.id,
   slug: game.slug,
   title: game.title,
-  price: game.basePrice,
+  price: game.onSale && game.salePrice ? game.salePrice : game.basePrice,
   cover: game.coverUrl || '',
-  rating: 4.5,
+  rating: game.rating || 4.5,
 });
 
 function ProductsContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
   const params = useSearchParams();
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const searchParams = new URLSearchParams();
-        const search = params?.get('q');
-        if (search) searchParams.set('search', search);
-        
-        const queryString = searchParams.toString();
-        const url = queryString 
-          ? `${API_BASE_URL}/api/games?${queryString}`
-          : `${API_BASE_URL}/api/games`;
-        
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Failed to load products');
-        const payload = await response.json();
-        const backendGames: BackendGame[] = payload?.data ?? [];
-        setProducts(backendGames.map(mapGame));
-      } catch (err) {
-        console.error('Error loading products:', err);
-      } finally {
-        setLoading(false);
+  const fetchProducts = useCallback(async (filters: FilterState) => {
+    setLoading(true);
+    try {
+      const searchParams = new URLSearchParams();
+      
+      if (filters.search) searchParams.set('search', filters.search);
+      if (filters.category) searchParams.set('genre', filters.category); // Assuming genre maps to category slug
+      if (filters.sort) searchParams.set('sort', filters.sort);
+      
+      // Note: Backend might need updates to support min/max price and onSale filters if not already present
+      // For now, we'll handle what we can via existing API params or add them if supported
+      
+      const queryString = searchParams.toString();
+      const url = queryString 
+        ? `${API_BASE_URL}/api/games?${queryString}`
+        : `${API_BASE_URL}/api/games`;
+      
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to load products');
+      const payload = await response.json();
+      let backendGames: BackendGame[] = payload?.data ?? [];
+
+      // Client-side filtering for features not yet in API (optional, but good for immediate feedback)
+      if (filters.onSale) {
+        backendGames = backendGames.filter(g => g.onSale);
       }
-    };
+      if (filters.minPrice > 0 || filters.maxPrice < 50000000) {
+        backendGames = backendGames.filter(g => {
+          const price = g.onSale && g.salePrice ? g.salePrice : g.basePrice;
+          return price >= filters.minPrice && price <= filters.maxPrice;
+        });
+      }
 
-    fetchProducts();
-  }, [params]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/products?q=${encodeURIComponent(searchQuery)}`);
-    } else {
-      router.push('/products');
+      setProducts(backendGames.map(mapGame));
+    } catch (err) {
+      console.error('Error loading products:', err);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
+
+  // Initial load based on URL params
+  useEffect(() => {
+    const initialFilters: FilterState = {
+      search: params?.get('q') || '',
+      category: params?.get('category') || '',
+      minPrice: 0,
+      maxPrice: 50000000,
+      sort: '-createdAt',
+      onSale: false
+    };
+    fetchProducts(initialFilters);
+  }, [params, fetchProducts]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8f5f2] to-white">
       {/* Hero Section */}
-      <div className="border-b border-[#c9a896]/20 bg-white px-6 py-16">
+      <div className="bg-white px-6 pt-16 pb-8">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 text-center">
             <h1 className="mb-3 font-serif text-5xl font-bold text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
@@ -96,29 +115,19 @@ function ProductsContent() {
             </p>
           </div>
 
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="mx-auto max-w-2xl">
-            <div className="relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="جستجوی محصولات..."
-                className="w-full rounded-full border border-[#c9a896]/30 bg-white px-6 py-4 pr-14 text-[#4a3f3a] placeholder:text-[#4a3f3a]/40 focus:border-[#c9a896] focus:outline-none focus:ring-2 focus:ring-[#c9a896]/20"
-              />
-              <button
-                type="submit"
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#c9a896]"
-              >
-                <Icon name="search" size={20} />
-              </button>
-            </div>
-          </form>
+          {/* New Creative Filters */}
+          <ProductFilters 
+            initialFilters={{
+              search: params?.get('q') || '',
+              category: params?.get('category') || ''
+            }}
+            onFilterChange={fetchProducts}
+          />
         </div>
       </div>
 
       {/* Products Grid */}
-      <div className="px-6 py-16">
+      <div className="px-6 pb-16">
         <div className="mx-auto max-w-7xl">
           {loading ? (
             <div className="flex min-h-[400px] items-center justify-center">
@@ -137,8 +146,8 @@ function ProductsContent() {
               </p>
               <button
                 onClick={() => {
-                  setSearchQuery('');
                   router.push('/products');
+                  // Reset filters logic would go here if we lifted state up further
                 }}
                 className="rounded-full bg-gradient-to-r from-[#4a3f3a] to-[#c9a896] px-6 py-3 font-semibold text-white shadow-lg transition-all hover:shadow-xl"
               >
@@ -147,19 +156,10 @@ function ProductsContent() {
             </div>
           ) : (
             <>
-              <div className="mb-8 flex items-center justify-between">
-                <p className="text-[#4a3f3a]/60">
+              <div className="mb-6 flex items-center justify-between px-2">
+                <p className="text-[#4a3f3a]/60 font-medium">
                   {products.length} محصول یافت شد
                 </p>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-[#4a3f3a]/60">مرتب‌سازی:</span>
-                  <select className="rounded-full border border-[#c9a896]/30 bg-white px-4 py-2 text-sm text-[#4a3f3a] focus:border-[#c9a896] focus:outline-none">
-                    <option>جدیدترین</option>
-                    <option>ارزان‌ترین</option>
-                    <option>گران‌ترین</option>
-                    <option>محبوب‌ترین</option>
-                  </select>
-                </div>
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

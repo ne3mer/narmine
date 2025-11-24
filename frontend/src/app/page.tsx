@@ -67,119 +67,155 @@ export default async function HomePage() {
   const categoriesDisplay = categories.length > 0 ? categories : defaultCategories;
   const homepageSettings = await fetchHomepageSettings();
   const homeContent = homepageSettings?.content ?? defaultHomeContent;
+  
+  // Use settings sections if available, otherwise fallback to default order
+  const sections = homepageSettings?.sections?.length 
+    ? [...homepageSettings.sections].sort((a, b) => a.order - b.order)
+    : [
+        { id: 'hero-carousel', enabled: true },
+        { id: 'dynamic-banners', enabled: true },
+        { id: 'featured-collections', enabled: true },
+        { id: 'new-arrivals', enabled: true },
+        { id: 'categories', enabled: true },
+        { id: 'trust-signals', enabled: true },
+        { id: 'shipping-experience', enabled: true },
+        { id: 'testimonials', enabled: true },
+        { id: 'newsletter', enabled: true },
+      ];
+
+  const renderSection = (section: any) => {
+    if (!section.enabled) return null;
+
+    switch (section.id) {
+      case 'hero-carousel':
+        return <LuxuryHero key={section.id} content={homeContent.hero} slides={homeContent.heroSlides ?? defaultHomeContent.heroSlides} />;
+      
+      case 'dynamic-banners':
+        return <DynamicBannersSection key={section.id} />;
+      
+      case 'featured-collections':
+      case 'popular-games': // Backward compatibility
+        return <FeaturedCollections key={section.id} />;
+      
+      case 'new-arrivals':
+        return (
+          <section key={section.id} className="w-full bg-white py-20">
+            <div className="mx-auto max-w-7xl px-6">
+              <NewArrivalsSection />
+            </div>
+          </section>
+        );
+      
+      case 'categories':
+        return (
+          <section key={section.id} className="w-full bg-gradient-to-b from-[#f8f5f2] to-white py-20">
+            <div className="mx-auto max-w-7xl px-6">
+              <CategoriesSection categories={categoriesDisplay} />
+            </div>
+          </section>
+        );
+      
+      case 'trust-signals':
+        return (
+          <section key={section.id} className="w-full bg-white py-20">
+            <div className="mx-auto max-w-7xl px-6">
+              <div className="text-center mb-16">
+                <p className="mb-3 text-sm font-medium tracking-widest text-[#8b6f47] uppercase">چرا نرمینه خواب؟</p>
+                <h2 className="font-serif text-4xl font-bold text-[#4a3f3a] md:text-5xl" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
+                  تجربه‌ای متفاوت از خرید
+                </h2>
+              </div>
+
+              <div className="grid gap-8 md:grid-cols-3">
+                <div className="text-center p-8 rounded-2xl bg-[#f8f5f2]/50 transition-all hover:bg-[#f8f5f2] hover:shadow-lg">
+                  <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-md">
+                    <span className="text-3xl">🚚</span>
+                  </div>
+                  <h3 className="mb-3 font-serif text-xl font-bold text-[#4a3f3a]">ارسال رایگان</h3>
+                  <p className="text-sm text-[#4a3f3a]/70 leading-relaxed">
+                    ارسال رایگان به سراسر کشور برای سفارش‌های بالای ۵۰۰ هزار تومان
+                  </p>
+                </div>
+
+                <div className="text-center p-8 rounded-2xl bg-[#f8f5f2]/50 transition-all hover:bg-[#f8f5f2] hover:shadow-lg">
+                  <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-md">
+                    <span className="text-3xl">✨</span>
+                  </div>
+                  <h3 className="mb-3 font-serif text-xl font-bold text-[#4a3f3a]">کیفیت برتر</h3>
+                  <p className="text-sm text-[#4a3f3a]/70 leading-relaxed">
+                    تمامی محصولات با بهترین مواد اولیه و استانداردهای جهانی تولید می‌شوند
+                  </p>
+                </div>
+
+                <div className="text-center p-8 rounded-2xl bg-[#f8f5f2]/50 transition-all hover:bg-[#f8f5f2] hover:shadow-lg">
+                  <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-md">
+                    <span className="text-3xl">🛡️</span>
+                  </div>
+                  <h3 className="mb-3 font-serif text-xl font-bold text-[#4a3f3a]">گارانتی اصالت</h3>
+                  <p className="text-sm text-[#4a3f3a]/70 leading-relaxed">
+                    ضمانت اصالت و کیفیت کالا با امکان بازگشت ۷ روزه
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      
+      case 'shipping-experience':
+        return (
+          <section key={section.id} className="w-full bg-[#f8f5f2] py-20">
+            <div className="mx-auto max-w-7xl px-6">
+              <ShippingExperience methods={homeContent.shippingMethods} />
+            </div>
+          </section>
+        );
+      
+      case 'testimonials':
+        return (
+          <section key={section.id} className="w-full bg-white py-20">
+            <div className="mx-auto max-w-7xl px-6">
+              <TestimonialsSection testimonials={homeContent.testimonials} />
+            </div>
+          </section>
+        );
+      
+      case 'newsletter':
+        return (
+          <section key={section.id} className="w-full bg-[#4a3f3a] py-20">
+            <div className="mx-auto max-w-4xl px-6 text-center">
+              <h2 className="mb-4 font-serif text-3xl font-bold text-white md:text-4xl" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
+                از جدیدترین محصولات باخبر شوید
+              </h2>
+              <p className="mb-8 text-white/80">
+                با عضویت در خبرنامه، از تخفیف‌ها و محصولات جدید مطلع شوید
+              </p>
+              <form className="mx-auto flex max-w-md gap-3">
+                <input
+                  type="email"
+                  placeholder="ایمیل شما"
+                  className="flex-1 rounded-full border-2 border-white/20 bg-white/10 px-6 py-3 text-white placeholder:text-white/50 focus:border-white/40 focus:outline-none backdrop-blur-sm"
+                />
+                <button
+                  type="submit"
+                  className="rounded-full bg-white px-8 py-3 font-semibold text-[#4a3f3a] transition-all hover:bg-[#f8f5f2]"
+                >
+                  عضویت
+                </button>
+              </form>
+            </div>
+          </section>
+        );
+      
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
       <main className="min-h-screen">
-        {/* Luxury Hero Section */}
-        <LuxuryHero content={homeContent.hero} slides={homeContent.heroSlides ?? defaultHomeContent.heroSlides} />
-
-        {/* Dynamic Banners (Admin Managed) */}
-        <DynamicBannersSection />
-
-        {/* Featured Collections */}
-        <FeaturedCollections />
-
-        {/* New Arrivals */}
-        <section className="w-full bg-white py-20">
-          <div className="mx-auto max-w-7xl px-6">
-            <NewArrivalsSection />
-          </div>
-        </section>
-
-        {/* Categories Section */}
-        <section className="w-full bg-gradient-to-b from-[#f8f5f2] to-white py-20">
-          <div className="mx-auto max-w-7xl px-6">
-            <CategoriesSection categories={categoriesDisplay} />
-          </div>
-        </section>
-
-        {/* Why Choose Us */}
-        <section className="w-full bg-white py-20">
-          <div className="mx-auto max-w-7xl px-6">
-            <div className="text-center mb-16">
-              <p className="mb-3 text-sm font-medium tracking-widest text-[#8b6f47] uppercase">چرا نرمینه خواب؟</p>
-              <h2 className="font-serif text-4xl font-bold text-[#4a3f3a] md:text-5xl" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
-                تجربه‌ای متفاوت از خرید
-              </h2>
-            </div>
-
-            <div className="grid gap-8 md:grid-cols-3">
-              <div className="text-center p-8 rounded-2xl bg-[#f8f5f2]/50 transition-all hover:bg-[#f8f5f2] hover:shadow-lg">
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-md">
-                  <span className="text-3xl">🚚</span>
-                </div>
-                <h3 className="mb-3 font-serif text-xl font-bold text-[#4a3f3a]">ارسال رایگان</h3>
-                <p className="text-sm text-[#4a3f3a]/70 leading-relaxed">
-                  ارسال رایگان به سراسر کشور برای سفارش‌های بالای ۵۰۰ هزار تومان
-                </p>
-              </div>
-
-              <div className="text-center p-8 rounded-2xl bg-[#f8f5f2]/50 transition-all hover:bg-[#f8f5f2] hover:shadow-lg">
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-md">
-                  <span className="text-3xl">✨</span>
-                </div>
-                <h3 className="mb-3 font-serif text-xl font-bold text-[#4a3f3a]">کیفیت برتر</h3>
-                <p className="text-sm text-[#4a3f3a]/70 leading-relaxed">
-                  تمامی محصولات با بهترین مواد اولیه و استانداردهای جهانی تولید می‌شوند
-                </p>
-              </div>
-
-              <div className="text-center p-8 rounded-2xl bg-[#f8f5f2]/50 transition-all hover:bg-[#f8f5f2] hover:shadow-lg">
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-md">
-                  <span className="text-3xl">🛡️</span>
-                </div>
-                <h3 className="mb-3 font-serif text-xl font-bold text-[#4a3f3a]">گارانتی اصالت</h3>
-                <p className="text-sm text-[#4a3f3a]/70 leading-relaxed">
-                  ضمانت اصالت و کیفیت کالا با امکان بازگشت ۷ روزه
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-
-
-        {/* Shipping Experience */}
-        <section className="w-full bg-[#f8f5f2] py-20">
-          <div className="mx-auto max-w-7xl px-6">
-            <ShippingExperience methods={homeContent.shippingMethods} />
-          </div>
-        </section>
-
-        {/* Testimonials */}
-        <section className="w-full bg-white py-20">
-          <div className="mx-auto max-w-7xl px-6">
-            <TestimonialsSection testimonials={homeContent.testimonials} />
-          </div>
-        </section>
-
-        {/* Newsletter */}
-        <section className="w-full bg-[#4a3f3a] py-20">
-          <div className="mx-auto max-w-4xl px-6 text-center">
-            <h2 className="mb-4 font-serif text-3xl font-bold text-white md:text-4xl" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
-              از جدیدترین محصولات باخبر شوید
-            </h2>
-            <p className="mb-8 text-white/80">
-              با عضویت در خبرنامه، از تخفیف‌ها و محصولات جدید مطلع شوید
-            </p>
-            <form className="mx-auto flex max-w-md gap-3">
-              <input
-                type="email"
-                placeholder="ایمیل شما"
-                className="flex-1 rounded-full border-2 border-white/20 bg-white/10 px-6 py-3 text-white placeholder:text-white/50 focus:border-white/40 focus:outline-none backdrop-blur-sm"
-              />
-              <button
-                type="submit"
-                className="rounded-full bg-white px-8 py-3 font-semibold text-[#4a3f3a] transition-all hover:bg-[#f8f5f2]"
-              >
-                عضویت
-              </button>
-            </form>
-          </div>
-        </section>
+        {sections.map(renderSection)}
       </main>
-
       <SiteFooter />
     </>
   );

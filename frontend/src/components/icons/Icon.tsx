@@ -72,7 +72,8 @@ import {
   Instagram,
   Phone,
   Video,
-  Box
+  Box,
+  Grid
 } from 'lucide-react';
 import { type LucideIcon } from 'lucide-react';
 
@@ -149,7 +150,8 @@ export type IconName =
   | 'instagram'
   | 'phone'
   | 'video'
-  | 'box';
+  | 'box'
+  | 'grid';
 
 const iconMap: Record<IconName, LucideIcon> = {
   dashboard: LayoutDashboard,
@@ -224,7 +226,8 @@ const iconMap: Record<IconName, LucideIcon> = {
   instagram: Instagram,
   phone: Phone,
   video: Video,
-  box: Box
+  box: Box,
+  grid: Grid
 };
 
 interface IconProps {

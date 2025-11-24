@@ -46,19 +46,24 @@ export const DEFAULT_SECTIONS: SectionConfig[] = [
     }
   },
   {
-    id: 'popular-games',
+    id: 'dynamic-banners',
     enabled: true,
     order: 2,
+    settings: {}
+  },
+  {
+    id: 'featured-collections',
+    enabled: true,
+    order: 3,
     settings: {
       itemCount: 8,
-      sortBy: 'sales',
-      categoryFilter: null
+      sortBy: 'sales'
     }
   },
   {
     id: 'new-arrivals',
     enabled: true,
-    order: 3,
+    order: 4,
     settings: {
       itemCount: 8,
       daysThreshold: 14
@@ -67,43 +72,37 @@ export const DEFAULT_SECTIONS: SectionConfig[] = [
   {
     id: 'categories',
     enabled: true,
-    order: 4,
+    order: 5,
     settings: {
       layout: 'grid',
       categoryCount: 6
     }
   },
   {
-    id: 'gaming-gear',
-    enabled: true,
-    order: 5,
-    settings: {
-      itemCount: 4,
-      productTypes: ['gaming_gear']
-    }
-  },
-  {
-    id: 'collectibles',
+    id: 'trust-signals',
     enabled: true,
     order: 6,
-    settings: {
-      itemCount: 4,
-      productTypes: ['action_figure', 'collectible_card']
-    }
+    settings: {}
+  },
+  {
+    id: 'shipping-experience',
+    enabled: true,
+    order: 7,
+    settings: {}
   },
   {
     id: 'testimonials',
     enabled: true,
-    order: 7,
+    order: 8,
     settings: {
       itemCount: 3,
       autoRotate: false
     }
   },
   {
-    id: 'trust-signals',
+    id: 'newsletter',
     enabled: true,
-    order: 8,
+    order: 9,
     settings: {}
   }
 ];
