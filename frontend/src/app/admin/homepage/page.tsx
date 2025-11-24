@@ -20,14 +20,15 @@ interface SectionConfig {
 }
 
 const SECTION_INFO: Record<string, { name: string; icon: IconName; description: string }> = {
-  'hero-carousel': { name: 'اسلایدر اصلی', icon: 'image', description: 'قهرمان و معرفی برند' },
-  'popular-games': { name: 'محصولات محبوب', icon: 'trending', description: 'پرفروش‌ترین‌ها' },
-  'new-arrivals': { name: 'تازه‌ها', icon: 'star', description: 'جدیدترین محصولات' },
-  'categories': { name: 'دسته‌بندی‌ها', icon: 'dashboard', description: 'دسته‌های مورد علاقه' }, // 'grid' is not in IconName, using 'dashboard' as placeholder or need to add 'grid'
-  'gaming-gear': { name: 'لوازم خواب تکمیلی', icon: 'cpu', description: 'جانبی‌های خواب' },
-  'collectibles': { name: 'اکسسوری‌های دکوراتیو', icon: 'package', description: 'تزئینات اتاق' },
-  'testimonials': { name: 'نظرات کاربران', icon: 'message', description: 'بازخورد مشتریان' }, // 'message-circle' -> 'message'
-  'trust-signals': { name: 'نشانه‌های اعتماد', icon: 'shield', description: 'گارانتی و پشتیبانی' }
+  'hero-carousel': { name: 'اسلایدر اصلی', icon: 'image', description: 'بنر اصلی و خوش‌آمدگویی' },
+  'dynamic-banners': { name: 'بنرهای پویا', icon: 'grid', description: 'بنرهای تبلیغاتی و کمپین‌ها' },
+  'featured-collections': { name: 'کالکشن‌های ویژه', icon: 'star', description: 'مجموعه‌های منتخب' },
+  'new-arrivals': { name: 'تازه‌ها', icon: 'clock', description: 'جدیدترین محصولات' },
+  'categories': { name: 'دسته‌بندی‌ها', icon: 'layers', description: 'لیست دسته‌بندی‌های محصولات' },
+  'trust-signals': { name: 'چرا ما؟', icon: 'shield', description: 'مزایای خرید از ما' },
+  'shipping-experience': { name: 'تجربه ارسال', icon: 'truck', description: 'روش‌های ارسال و تحویل' },
+  'testimonials': { name: 'نظرات مشتریان', icon: 'message', description: 'دیدگاه‌های خریداران' },
+  'newsletter': { name: 'خبرنامه', icon: 'mail', description: 'عضویت در خبرنامه' }
 };
 
 const normalizeContent = (incoming?: HomeContent): HomeContent => ({
