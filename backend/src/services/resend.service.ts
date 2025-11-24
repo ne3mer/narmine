@@ -1,7 +1,8 @@
 import { Resend } from 'resend';
 import { env } from '../config/env';
 
-const resend = new Resend(env.RESEND_API_KEY);
+// Initialize Resend only if API key is provided
+const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
 export const sendContactEmail = async (data: {
   name: string;
@@ -11,6 +12,11 @@ export const sendContactEmail = async (data: {
   message: string;
 }) => {
   try {
+    if (!resend) {
+      console.warn('Resend API key not configured, skipping email send');
+      throw new Error('سرویس ایمیل پیکربندی نشده است');
+    }
+    
     const result = await resend.emails.send({
       from: 'نرمینه خواب <noreply@narmineh.com>', // باید دامنه خودتون رو verify کنید
       to: env.CONTACT_EMAIL || 'info@narmineh.com',
@@ -86,6 +92,11 @@ export const sendContactEmail = async (data: {
 // ارسال ایمیل تایید به کاربر
 export const sendContactConfirmation = async (email: string, name: string) => {
   try {
+    if (!resend) {
+      console.warn('Resend API key not configured, skipping confirmation email');
+      return;
+    }
+    
     await resend.emails.send({
       from: 'نرمینه خواب <noreply@narmineh.com>',
       to: email,
