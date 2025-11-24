@@ -34,6 +34,7 @@
     "typescript": "^5"
   },
   "optionalDependencies": {
-    "@next/swc-linux-x64-gnu": "^16.0.3"
+    "@next/swc-linux-x64-gnu": "^16.0.3",
+    "lightningcss-linux-x64-gnu": "^1.30.2"
   }
 }
