@@ -56,16 +56,18 @@ export const createApp = () => {
     next();
   });
   
+  // Body parsers and cookie parser MUST come before other middleware
+  app.use(express.json({ limit: '1mb' }));
+  app.use(express.urlencoded({ extended: true }));
+  app.use(cookieParser());
+  app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+  
   // Debug middleware to log all requests
   app.use((req, _res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     console.log('Headers:', JSON.stringify(req.headers));
     next();
   });
-  app.use(express.json({ limit: '1mb' }));
-  app.use(express.urlencoded({ extended: true }));
-  app.use(cookieParser());
-  app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
