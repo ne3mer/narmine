@@ -22,10 +22,13 @@ export const validateResource = (schema: ZodTypeAny) => {
 
     req.body = data.body;
 
-    // In Express 5, req.query and req.params are read-only getters
-    // We need to replace them entirely instead of modifying in place
-    (req as any).query = data.query;
-    (req as any).params = data.params;
+    const currentQuery = req.query as Record<string, unknown>;
+    Object.keys(currentQuery).forEach((key) => delete currentQuery[key]);
+    Object.assign(currentQuery, data.query);
+
+    const currentParams = req.params as Record<string, unknown>;
+    Object.keys(currentParams).forEach((key) => delete currentParams[key]);
+    Object.assign(currentParams, data.params);
 
     next();
   };
