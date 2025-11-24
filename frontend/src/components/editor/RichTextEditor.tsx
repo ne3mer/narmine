@@ -3,7 +3,7 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
-import Link from '@tiptap/extension-link';
+
 import { useCallback, useRef } from 'react';
 import { API_BASE_URL, adminHeaders } from '@/lib/api';
 
@@ -22,10 +22,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
         inline: true,
         allowBase64: true,
       }),
-      Link.configure({
-        openOnClick: false,
-        autolink: true,
-      }),
+
     ],
     content,
     immediatelyRender: false,

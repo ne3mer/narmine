@@ -67,7 +67,27 @@ export const createGameSchema = z.object({
       selectedOptions: z.record(z.string(), z.string()),
       price: z.number().positive(),
       stock: z.number().int().nonnegative().default(10)
-    })).default([])
+    })).default([]),
+    // Multi-product fields
+    productType: z.enum(['digital_game', 'physical_product', 'digital_content', 'gaming_gear', 'collectible', 'bundle']).default('physical_product'),
+    customFields: z.record(z.string(), z.any()).optional(),
+    inventory: z.object({
+      trackInventory: z.boolean(),
+      quantity: z.number().int().nonnegative(),
+      lowStockThreshold: z.number().int().nonnegative(),
+      sku: z.string().optional()
+    }).optional(),
+    shipping: z.object({
+      requiresShipping: z.boolean(),
+      weight: z.number().positive().optional(),
+      dimensions: z.object({
+        length: z.number().positive(),
+        width: z.number().positive(),
+        height: z.number().positive()
+      }).optional(),
+      shippingCost: z.number().nonnegative().optional(),
+      freeShippingThreshold: z.number().nonnegative().optional()
+    }).optional()
   }),
   query: empty,
   params: empty
@@ -129,7 +149,27 @@ const updateGameBody = z
       selectedOptions: z.record(z.string(), z.string()),
       price: z.number().positive(),
       stock: z.number().int().nonnegative().default(10)
-    })).optional()
+    })).optional(),
+    // Multi-product fields
+    productType: z.enum(['digital_game', 'physical_product', 'digital_content', 'gaming_gear', 'collectible', 'bundle']).optional(),
+    customFields: z.record(z.string(), z.any()).optional(),
+    inventory: z.object({
+      trackInventory: z.boolean(),
+      quantity: z.number().int().nonnegative(),
+      lowStockThreshold: z.number().int().nonnegative(),
+      sku: z.string().optional()
+    }).optional(),
+    shipping: z.object({
+      requiresShipping: z.boolean(),
+      weight: z.number().positive().optional(),
+      dimensions: z.object({
+        length: z.number().positive(),
+        width: z.number().positive(),
+        height: z.number().positive()
+      }).optional(),
+      shippingCost: z.number().nonnegative().optional(),
+      freeShippingThreshold: z.number().nonnegative().optional()
+    }).optional()
   })
   .strict();
 
