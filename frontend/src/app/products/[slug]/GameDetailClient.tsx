@@ -144,8 +144,8 @@ export default function GameDetailClient({ game }: Props) {
     ? Math.round(((game.basePrice - currentPrice) / game.basePrice) * 100)
     : 0;
 
-  // Use coverUrl OR cover, falling back to placeholder
-  const coverImage = game.coverUrl || game.cover;
+  // Image resolution - prioritize cover over coverUrl as it's more reliable
+  const coverImage = game.cover || game.coverUrl;
   const defaultCover = coverImage 
     ? resolveImageUrl(coverImage) 
     : 'https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.webp';
@@ -160,7 +160,7 @@ export default function GameDetailClient({ game }: Props) {
   const gameplayEmbedUrl = getVideoEmbedUrl(game.gameplayVideoUrl || '');
 
   // Calculate rating
-  const { rating: dynamicRating } = useProductRating(game.id);
+  const { rating: dynamicRating, refetch: refetchRating } = useProductRating(game.id);
   const gameRating = dynamicRating !== null && dynamicRating > 0 ? dynamicRating : (game.rating || 0);
   const reviewCount = 0; // TODO: Fetch real review count
 
@@ -235,8 +235,12 @@ export default function GameDetailClient({ game }: Props) {
               </h1>
               
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-[#4a3f3a]/80">
-                {/* Platform removed as requested */}
-                
+                {game.platform && (
+                  <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-xl border border-[#c9a896]/20">
+                    <Icon name="game" size={20} />
+                    <span className="font-bold">{game.platform}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-xl border border-[#c9a896]/20 cursor-pointer hover:bg-white/80 transition-colors">
                   <Icon name="star" size={20} className="text-amber-500 fill-amber-500" />
                   <span className="font-bold">{gameRating.toFixed(1)}</span>
@@ -262,7 +266,7 @@ export default function GameDetailClient({ game }: Props) {
               {[
                 { id: 'overview', label: 'بررسی اجمالی', icon: 'file' },
                 { id: 'media', label: 'ویدیوها', icon: 'video' },
-                { id: 'specs', label: 'مشخصات فنی', icon: 'cpu' },
+                { id: 'specs', label: 'مشخصات محصول', icon: 'file' },
                 { id: 'reviews', label: 'نظرات کاربران', icon: 'message' }
               ].map((tab) => (
                 <button
@@ -321,20 +325,6 @@ export default function GameDetailClient({ game }: Props) {
                       </div>
                     </div>
                   )}
-                  
-                  {/* Features */}
-                  {game.features && game.features.length > 0 && (
-                    <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
-                      {game.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-center gap-3 p-4 rounded-2xl bg-[#f8f5f2] border border-[#c9a896]/10">
-                          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-[#4a3f3a]">
-                            <Icon name="check" size={16} />
-                          </div>
-                          <span className="font-medium text-[#4a3f3a]">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               )}
 
@@ -379,37 +369,68 @@ export default function GameDetailClient({ game }: Props) {
 
               {activeTab === 'specs' && (
                 <div className="space-y-8">
-                  {game.systemRequirements ? (
-                    <div className="grid md:grid-cols-2 gap-8">
-                      {game.systemRequirements.minimum && (
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-2 text-rose-500 font-bold text-lg border-b pb-2">
-                            <Icon name="cpu" size={24} />
-                            <h3>حداقل سیستم مورد نیاز</h3>
-                          </div>
-                          <div 
-                            className="prose prose-sm prose-slate bg-slate-50 p-6 rounded-2xl border border-slate-100"
-                            dangerouslySetInnerHTML={{ __html: game.systemRequirements.minimum }}
-                          />
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {/* Features */}
+                    {game.features && game.features.length > 0 && (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 text-[#4a3f3a] font-bold text-lg border-b border-[#c9a896]/20 pb-2">
+                          <Icon name="check" size={24} />
+                          <h3>ویژگی‌های محصول</h3>
                         </div>
-                      )}
-                      {game.systemRequirements.recommended && (
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-2 text-emerald-600 font-bold text-lg border-b pb-2">
-                            <Icon name="zap" size={24} />
-                            <h3>سیستم پیشنهادی</h3>
-                          </div>
-                          <div 
-                            className="prose prose-sm prose-slate bg-slate-50 p-6 rounded-2xl border border-slate-100"
-                            dangerouslySetInnerHTML={{ __html: game.systemRequirements.recommended }}
-                          />
+                        <div className="bg-[#f8f5f2] rounded-2xl p-6 border border-[#c9a896]/10 space-y-3">
+                          {game.features.map((feature, idx) => (
+                            <div key={idx} className="flex items-start gap-3">
+                              <div className="mt-1.5 w-2 h-2 rounded-full bg-[#c9a896]" />
+                              <span className="text-slate-700 leading-relaxed">{feature}</span>
+                            </div>
+                          ))}
                         </div>
-                      )}
-                    </div>
-                  ) : (
+                      </div>
+                    )}
+
+                    {/* Shipping & Dimensions */}
+                    {game.shipping && (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 text-[#4a3f3a] font-bold text-lg border-b border-[#c9a896]/20 pb-2">
+                          <Icon name="box" size={24} />
+                          <h3>مشخصات فیزیکی و ارسال</h3>
+                        </div>
+                        <div className="bg-[#f8f5f2] rounded-2xl p-6 border border-[#c9a896]/10 space-y-4">
+                          {game.shipping.weight && (
+                            <div className="flex justify-between items-center border-b border-[#c9a896]/10 pb-3 last:border-0 last:pb-0">
+                              <span className="text-slate-600 font-medium">وزن</span>
+                              <span className="text-[#4a3f3a] font-bold">{game.shipping.weight} گرم</span>
+                            </div>
+                          )}
+                          {game.shipping.dimensions && (
+                            <div className="flex justify-between items-center border-b border-[#c9a896]/10 pb-3 last:border-0 last:pb-0">
+                              <span className="text-slate-600 font-medium">ابعاد</span>
+                              <span className="text-[#4a3f3a] font-bold" dir="ltr">
+                                {game.shipping.dimensions.length} x {game.shipping.dimensions.width} x {game.shipping.dimensions.height} cm
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex justify-between items-center border-b border-[#c9a896]/10 pb-3 last:border-0 last:pb-0">
+                            <span className="text-slate-600 font-medium">قابلیت ارسال</span>
+                            <span className="text-[#4a3f3a] font-bold">
+                              {game.shipping.requiresShipping ? 'دارد' : 'ندارد (محصول دیجیتال)'}
+                            </span>
+                          </div>
+                          {game.shipping.freeShipping && (
+                            <div className="flex justify-between items-center border-b border-[#c9a896]/10 pb-3 last:border-0 last:pb-0">
+                              <span className="text-slate-600 font-medium">هزینه ارسال</span>
+                              <span className="text-emerald-600 font-bold">رایگان</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {(!game.features?.length && !game.shipping) && (
                     <div className="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                      <Icon name="cpu" size={48} className="mx-auto text-slate-300 mb-4" />
-                      <p className="text-slate-500 font-medium">مشخصات فنی ثبت نشده است</p>
+                      <Icon name="file" size={48} className="mx-auto text-slate-300 mb-4" />
+                      <p className="text-slate-500 font-medium">مشخصات تکمیلی برای این محصول ثبت نشده است</p>
                     </div>
                   )}
                 </div>
@@ -450,7 +471,7 @@ export default function GameDetailClient({ game }: Props) {
                     <ReviewForm 
                       gameId={game.id} 
                       onSuccess={() => {
-                        // Invalidate cache logic here if needed
+                        refetchRating();
                       }} 
                     />
                   </div>

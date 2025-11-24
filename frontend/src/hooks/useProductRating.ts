@@ -59,7 +59,32 @@ export function useProductRating(productId: string | undefined) {
     fetchRating();
   }, [productId]);
 
-  return { rating, reviewCount, loading };
+  const refetch = async () => {
+    if (!productId) return;
+    invalidateRatingCache(productId);
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/reviews/stats?gameId=${productId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setRating(data.averageRating || 0);
+        setReviewCount(data.totalReviews || 0);
+        
+        ratingCache.set(productId, {
+          productId,
+          rating: data.averageRating || 0,
+          reviewCount: data.totalReviews || 0,
+          timestamp: Date.now()
+        });
+      }
+    } catch (error) {
+      console.error('Failed to refetch rating:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { rating, reviewCount, loading, refetch };
 }
 
 // Hook for multiple products

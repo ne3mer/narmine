@@ -20,6 +20,7 @@ export const MainNav = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
   const [showCategoriesDropdown, setShowCategoriesDropdown] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dropdownCloseTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -204,34 +205,45 @@ export const MainNav = () => {
 
             {/* Account */}
             {user ? (
-              <div className="relative group">
+              <div 
+                className="relative"
+                onMouseEnter={() => {
+                  if (dropdownCloseTimeout.current) clearTimeout(dropdownCloseTimeout.current);
+                  setShowUserDropdown(true);
+                }}
+                onMouseLeave={() => {
+                  dropdownCloseTimeout.current = setTimeout(() => setShowUserDropdown(false), 150);
+                }}
+              >
                 <button className="flex items-center gap-2 rounded-full border border-[#c9a896]/20 bg-white px-4 py-2 text-sm font-medium text-[#4a3f3a] transition-all hover:border-[#c9a896]/40">
                   <Icon name="user" size={16} />
                   <span className="hidden sm:inline">{accountLabel}</span>
                 </button>
-                <div className="absolute left-0 top-full mt-2 hidden w-48 rounded-2xl border border-[#c9a896]/20 bg-white p-2 shadow-xl group-hover:block">
-                  <Link
-                    href="/account"
-                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#4a3f3a] transition-all hover:bg-[#f8f5f2]"
-                  >
-                    <Icon name="user" size={16} />
-                    <span>حساب کاربری</span>
-                  </Link>
-                  <Link
-                    href="/orders"
-                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#4a3f3a] transition-all hover:bg-[#f8f5f2]"
-                  >
-                    <Icon name="package" size={16} />
-                    <span>سفارش‌ها</span>
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-600 transition-all hover:bg-red-50"
-                  >
-                    <Icon name="log-out" size={16} />
-                    <span>خروج</span>
-                  </button>
-                </div>
+                {showUserDropdown && (
+                  <div className="absolute left-0 top-full mt-2 w-48 rounded-2xl border border-[#c9a896]/20 bg-white p-2 shadow-xl z-50">
+                    <Link
+                      href="/account"
+                      className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#4a3f3a] transition-all hover:bg-[#f8f5f2]"
+                    >
+                      <Icon name="user" size={16} />
+                      <span>حساب کاربری</span>
+                    </Link>
+                    <Link
+                      href="/orders"
+                      className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#4a3f3a] transition-all hover:bg-[#f8f5f2]"
+                    >
+                      <Icon name="package" size={16} />
+                      <span>سفارش‌ها</span>
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-600 transition-all hover:bg-red-50"
+                    >
+                      <Icon name="log-out" size={16} />
+                      <span>خروج</span>
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <Link
