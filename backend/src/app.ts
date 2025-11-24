@@ -14,10 +14,10 @@ import hpp from 'hpp';
 export const createApp = () => {
   const app = express();
 
-  // Security Headers
-  app.use(helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" } // Allow loading images from uploads
-  }));
+  // Security Headers - TEMPORARILY DISABLED FOR DEBUGGING
+  // app.use(helmet({
+  //   crossOriginResourcePolicy: { policy: "cross-origin" } // Allow loading images from uploads
+  // }));
 
   // Rate Limiting
   const limiter = rateLimit({
@@ -36,31 +36,30 @@ export const createApp = () => {
   // Prevent Parameter Pollution
   app.use(hpp());
 
-  // CORS configuration - support multiple origins in production
-  // Always allow these origins regardless of environment
-  const allowedOrigins = [
-    'https://narmineh.com',
-    'https://www.narmineh.com',
-    ...(env.CLIENT_URL ? env.CLIENT_URL.split(',').map((url) => url.trim()) : []),
-    'http://localhost:3000'
-  ];
-
-  console.log('Allowed CORS Origins:', allowedOrigins);
-
+  // CORS configuration - TEMPORARILY PERMISSIVE FOR DEBUGGING
+  console.log('⚠️ WARNING: CORS is set to permissive mode for debugging');
+  
   const corsOptions = {
-    origin: allowedOrigins,
+    origin: true, // Reflects the request origin
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key', 'x-client-version', 'x-requested-with'],
     exposedHeaders: ['Content-Range', 'X-Content-Range'],
     preflightContinue: false,
-    optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+    optionsSuccessStatus: 200
   };
 
   app.use(cors(corsOptions));
   
   app.use((_req, res, next) => {
     res.header('Vary', 'Origin');
+    next();
+  });
+  
+  // Debug middleware to log all requests
+  app.use((req, _res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    console.log('Headers:', JSON.stringify(req.headers));
     next();
   });
   app.use(express.json({ limit: '1mb' }));
