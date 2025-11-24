@@ -5,9 +5,36 @@ import cookieParser from 'cookie-parser';
 import routes from './routes';
 import { env } from './config/env';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize';
+import xss from 'xss-clean';
+import hpp from 'hpp';
 
 export const createApp = () => {
   const app = express();
+
+  // Security Headers
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" } // Allow loading images from uploads
+  }));
+
+  // Rate Limiting
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again later'
+  });
+  app.use('/api', limiter);
+
+  // Data Sanitization against NoSQL query injection
+  app.use(mongoSanitize());
+
+  // Data Sanitization against XSS
+  app.use(xss());
+
+  // Prevent Parameter Pollution
+  app.use(hpp());
 
   // CORS configuration - support multiple origins in production
   const allowedOrigins = env.NODE_ENV === 'production' 
