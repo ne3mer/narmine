@@ -23,6 +23,7 @@ exports.createGameSchema = zod_1.z.object({
         coverUrl: zod_1.z.string().optional(),
         gallery: zod_1.z.array(zod_1.z.string()).optional(),
         tags: zod_1.z.array(zod_1.z.string()).default([]),
+        categories: zod_1.z.array(zod_1.z.string()).optional(),
         // New media fields
         trailerUrl: zod_1.z.string().url().optional().or(zod_1.z.literal('')),
         gameplayVideoUrl: zod_1.z.string().url().optional().or(zod_1.z.literal('')),
@@ -101,6 +102,7 @@ const updateGameBody = zod_1.z
     coverUrl: zod_1.z.string().optional(),
     gallery: zod_1.z.array(zod_1.z.string()).optional(),
     tags: zod_1.z.array(zod_1.z.string()).optional(),
+    categories: zod_1.z.array(zod_1.z.string()).optional(),
     // New media fields
     trailerUrl: zod_1.z.string().url().optional().or(zod_1.z.literal('')),
     gameplayVideoUrl: zod_1.z.string().url().optional().or(zod_1.z.literal('')),
