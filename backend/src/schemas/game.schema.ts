@@ -25,6 +25,7 @@ export const createGameSchema = z.object({
     coverUrl: z.string().optional(),
     gallery: z.array(z.string()).optional(),
     tags: z.array(z.string()).default([]),
+    categories: z.array(z.string()).optional(),
     // New media fields
     trailerUrl: z.string().url().optional().or(z.literal('')),
     gameplayVideoUrl: z.string().url().optional().or(z.literal('')),
@@ -107,6 +108,7 @@ const updateGameBody = z
     coverUrl: z.string().optional(),
     gallery: z.array(z.string()).optional(),
     tags: z.array(z.string()).optional(),
+    categories: z.array(z.string()).optional(),
     // New media fields
     trailerUrl: z.string().url().optional().or(z.literal('')),
     gameplayVideoUrl: z.string().url().optional().or(z.literal('')),
