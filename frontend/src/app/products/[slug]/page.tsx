@@ -119,7 +119,7 @@ export default async function ProductPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <GameDetailClient initialGame={game} />
+      <GameDetailClient game={game} />
     </>
   );
 }
