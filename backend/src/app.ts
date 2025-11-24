@@ -38,8 +38,12 @@ export const createApp = () => {
 
   // CORS configuration - support multiple origins in production
   const allowedOrigins = env.NODE_ENV === 'production' 
-    ? env.CLIENT_URL.split(',').map(url => url.trim())
-    : [env.CLIENT_URL];
+    ? [
+        ...env.CLIENT_URL.split(',').map(url => url.trim()),
+        'https://narmineh.com',
+        'https://www.narmineh.com'
+      ]
+    : [env.CLIENT_URL, 'http://localhost:3000'];
 
   app.use(cors({
     origin: (origin, callback) => {

@@ -37,8 +37,12 @@ const createApp = () => {
     app.use((0, hpp_1.default)());
     // CORS configuration - support multiple origins in production
     const allowedOrigins = env_1.env.NODE_ENV === 'production'
-        ? env_1.env.CLIENT_URL.split(',').map(url => url.trim())
-        : [env_1.env.CLIENT_URL];
+        ? [
+            ...env_1.env.CLIENT_URL.split(',').map(url => url.trim()),
+            'https://narmineh.com',
+            'https://www.narmineh.com'
+        ]
+        : [env_1.env.CLIENT_URL, 'http://localhost:3000'];
     app.use((0, cors_1.default)({
         origin: (origin, callback) => {
             // Allow requests with no origin (like mobile apps or curl requests)
