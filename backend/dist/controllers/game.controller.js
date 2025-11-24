@@ -4,11 +4,10 @@ exports.seedGames = exports.removeGame = exports.patchGame = exports.getGame = e
 const errorHandler_1 = require("../middleware/errorHandler");
 const game_service_1 = require("../services/game.service");
 const getGames = async (req, res) => {
-    const { genre, region, safeOnly, search, sort, limit } = req.query;
+    const { genre, region, search, sort, limit } = req.query;
     const games = await (0, game_service_1.listGames)({
         genre: genre || undefined,
         region: region || undefined,
-        safeOnly: typeof safeOnly === 'boolean' ? safeOnly : safeOnly ? safeOnly === 'true' : undefined,
         search: search || undefined,
         sort: sort || undefined,
         limit: limit ? parseInt(limit, 10) : undefined

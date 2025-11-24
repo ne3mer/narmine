@@ -45,9 +45,6 @@ const listGames = async (filters) => {
     if (filters.region) {
         query.regionOptions = filters.region;
     }
-    if (typeof filters.safeOnly === 'boolean') {
-        query.safeAccountAvailable = filters.safeOnly;
-    }
     if (filters.search) {
         query.$text = { $search: filters.search };
     }

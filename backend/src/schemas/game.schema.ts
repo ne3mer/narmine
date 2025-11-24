@@ -5,17 +5,7 @@ const empty = z.object({}).optional().transform(() => ({}));
 const gameQuery = z.object({
   genre: z.string().optional(),
   region: z.string().optional(),
-  safeOnly: z
-    .union([z.string(), z.boolean()])
-    .optional()
-    .transform((value) => {
-      if (typeof value === 'boolean') return value;
-      if (typeof value === 'string') {
-        if (!value) return undefined;
-        return value === 'true';
-      }
-      return undefined;
-    }),
+
   search: z.string().optional(),
   sort: z.string().optional(),
   limit: z.string().optional().transform((val) => val ? parseInt(val, 10) : undefined)
@@ -31,7 +21,7 @@ export const createGameSchema = z.object({
     platform: z.string().default('PS5'),
     regionOptions: z.array(z.string()).default([]),
     basePrice: z.number().positive(),
-    safeAccountAvailable: z.boolean().default(false),
+
     coverUrl: z.string().optional(),
     gallery: z.array(z.string()).optional(),
     tags: z.array(z.string()).default([]),
@@ -113,7 +103,7 @@ const updateGameBody = z
     platform: z.string().optional(),
     regionOptions: z.array(z.string()).optional(),
     basePrice: z.number().positive().optional(),
-    safeAccountAvailable: z.boolean().optional(),
+
     coverUrl: z.string().optional(),
     gallery: z.array(z.string()).optional(),
     tags: z.array(z.string()).optional(),

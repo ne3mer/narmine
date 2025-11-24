@@ -10,7 +10,7 @@ export const sampleGames: CreateGameInput[] = [
     platform: 'Bedding',
     regionOptions: ['IR'],
     basePrice: 25000000,
-    safeAccountAvailable: false,
+
     coverUrl: '/uploads/sample-bed-1.jpg',
     tags: ['ضمانت ۵ ساله', 'چوب راش'],
     options: [],
@@ -46,7 +46,7 @@ export const sampleGames: CreateGameInput[] = [
     platform: 'Mattress',
     regionOptions: ['IR'],
     basePrice: 8500000,
-    safeAccountAvailable: false,
+
     coverUrl: '/uploads/sample-mattress-1.jpg',
     tags: ['طبی', 'ضد حساسیت'],
     options: [],
@@ -83,7 +83,7 @@ export const sampleGames: CreateGameInput[] = [
     platform: 'Pillow',
     regionOptions: ['IR'],
     basePrice: 1200000,
-    safeAccountAvailable: false,
+
     coverUrl: '/uploads/sample-pillow-1.jpg',
     tags: ['نرم', 'لوکس'],
     options: [],
@@ -119,7 +119,7 @@ export const sampleGames: CreateGameInput[] = [
     platform: 'Bedding',
     regionOptions: ['TR'],
     basePrice: 3800000,
-    safeAccountAvailable: false,
+
     coverUrl: '/uploads/sample-duvet-1.jpg',
     tags: ['ساتن', 'وارداتی'],
     options: [],

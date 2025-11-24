@@ -11,7 +11,7 @@ export type UpdateGameInput = z.infer<typeof updateGameSchema>['body'];
 export interface GameFilters {
   genre?: string;
   region?: string;
-  safeOnly?: boolean;
+
   search?: string;
   sort?: string;
   limit?: number;
@@ -28,9 +28,7 @@ export const listGames = async (filters: GameFilters) => {
     query.regionOptions = filters.region;
   }
 
-  if (typeof filters.safeOnly === 'boolean') {
-    query.safeAccountAvailable = filters.safeOnly;
-  }
+
 
   if (filters.search) {
     query.$text = { $search: filters.search };

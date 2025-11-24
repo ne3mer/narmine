@@ -6,19 +6,6 @@ const empty = zod_1.z.object({}).optional().transform(() => ({}));
 const gameQuery = zod_1.z.object({
     genre: zod_1.z.string().optional(),
     region: zod_1.z.string().optional(),
-    safeOnly: zod_1.z
-        .union([zod_1.z.string(), zod_1.z.boolean()])
-        .optional()
-        .transform((value) => {
-        if (typeof value === 'boolean')
-            return value;
-        if (typeof value === 'string') {
-            if (!value)
-                return undefined;
-            return value === 'true';
-        }
-        return undefined;
-    }),
     search: zod_1.z.string().optional(),
     sort: zod_1.z.string().optional(),
     limit: zod_1.z.string().optional().transform((val) => val ? parseInt(val, 10) : undefined)
@@ -33,7 +20,6 @@ exports.createGameSchema = zod_1.z.object({
         platform: zod_1.z.string().default('PS5'),
         regionOptions: zod_1.z.array(zod_1.z.string()).default([]),
         basePrice: zod_1.z.number().positive(),
-        safeAccountAvailable: zod_1.z.boolean().default(false),
         coverUrl: zod_1.z.string().optional(),
         gallery: zod_1.z.array(zod_1.z.string()).optional(),
         tags: zod_1.z.array(zod_1.z.string()).default([]),
@@ -112,7 +98,6 @@ const updateGameBody = zod_1.z
     platform: zod_1.z.string().optional(),
     regionOptions: zod_1.z.array(zod_1.z.string()).optional(),
     basePrice: zod_1.z.number().positive().optional(),
-    safeAccountAvailable: zod_1.z.boolean().optional(),
     coverUrl: zod_1.z.string().optional(),
     gallery: zod_1.z.array(zod_1.z.string()).optional(),
     tags: zod_1.z.array(zod_1.z.string()).optional(),

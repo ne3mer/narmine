@@ -76,7 +76,7 @@ export default function EditProductPage() {
         platform: product.platform ?? '',
         regionOptions: product.regionOptions?.join(', ') ?? '',
         basePrice: product.basePrice != null ? String(product.basePrice) : '',
-        safeAccountAvailable: Boolean(product.safeAccountAvailable),
+
         coverUrl: product.coverUrl ?? '',
         gallery: product.gallery ?? [],
         tags: product.tags?.join(', ') ?? '',
@@ -252,7 +252,7 @@ export default function EditProductPage() {
       platform: formState.platform,
       regionOptions: parseList(formState.regionOptions),
       basePrice: priceNum,
-      safeAccountAvailable: formState.safeAccountAvailable,
+
       coverUrl: formState.coverUrl || undefined,
       gallery: formState.gallery,
       tags: parseList(formState.tags),
@@ -577,19 +577,6 @@ export default function EditProductPage() {
                   onChange={(categories) => handleFieldChange('categories', categories as any)}
                 />
               </div>
-
-              <label className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={formState.safeAccountAvailable}
-                  onChange={(event) => handleFieldChange('safeAccountAvailable', event.target.checked)}
-                  className="h-5 w-5 rounded border-slate-300 accent-emerald-500"
-                />
-                <div>
-                  <span className="text-sm font-bold text-slate-700">Safe Account موجود است</span>
-                  <p className="text-xs text-slate-500 mt-1">اگر این گزینه فعال باشد، کاربران می‌توانند Safe Account خریداری کنند</p>
-                </div>
-              </label>
             </div>
           </div>
         )}

@@ -11,7 +11,6 @@ const gameSchema = new mongoose_1.Schema({
     platform: { type: String }, // Optional for physical
     regionOptions: [{ type: String }], // Optional for physical
     basePrice: { type: Number, required: true },
-    safeAccountAvailable: { type: Boolean, default: false },
     coverUrl: { type: String },
     gallery: [{ type: String }],
     tags: [{ type: String }],

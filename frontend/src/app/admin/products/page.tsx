@@ -46,9 +46,8 @@ export default function ProductsPage() {
         if (field === 'regionOptions' || field === 'tags' || field === 'genre') {
           return { ...product, [field]: parseList(String(value)) };
         }
-        if (field === 'safeAccountAvailable') {
-          return { ...product, safeAccountAvailable: Boolean(value) };
-        }
+
+
         return { ...product, [field]: value as ProductRow[keyof ProductRow] };
       })
     );
@@ -71,7 +70,7 @@ export default function ProductsPage() {
       platform: product.platform,
       regionOptions: product.regionOptions,
       basePrice: product.basePrice,
-      safeAccountAvailable: product.safeAccountAvailable,
+
       coverUrl: product.coverUrl,
       tags: product.tags
     };
@@ -257,15 +256,6 @@ export default function ProductsPage() {
 
                   {/* Actions */}
                   <div className="md:col-span-3 flex flex-col justify-between gap-3">
-                    <label className="flex items-center gap-2 text-sm text-slate-600 p-2 rounded-lg bg-slate-50">
-                      <input
-                        type="checkbox"
-                        checked={product.safeAccountAvailable}
-                        onChange={(e) => updateProductDraft(product.id, 'safeAccountAvailable', e.target.checked)}
-                        className="h-4 w-4 rounded border-slate-300 accent-emerald-500"
-                      />
-                      <span className="text-xs">Safe Account</span>
-                    </label>
                     
                     <div className="flex flex-wrap gap-2">
                       <Link

@@ -8,7 +8,7 @@ export type ProductRow = {
   platform: string;
   regionOptions: string[];
   basePrice: number;
-  safeAccountAvailable: boolean;
+
   coverUrl?: string;
   gallery?: string[];
   tags: string[];
@@ -55,7 +55,7 @@ export type NewProductState = {
   platform: string;
   regionOptions: string;
   basePrice: string;
-  safeAccountAvailable: boolean;
+
   coverUrl: string;
   gallery: string[];
   tags: string;
@@ -100,7 +100,7 @@ export const initialNewProduct: NewProductState = {
   platform: 'PS5',
   regionOptions: 'R2',
   basePrice: '1500000',
-  safeAccountAvailable: true,
+
   coverUrl: '',
   gallery: [],
   tags: 'حماسی,Safe',

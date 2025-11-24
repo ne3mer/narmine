@@ -54,7 +54,7 @@ export function ActiveFilters() {
     ...genres.map(g => ({ type: 'genres', label: `ژانر: ${g}`, value: g })),
     ...regions.map(r => ({ type: 'regions', label: `منطقه: ${r}`, value: r })),
     ...(minPrice || maxPrice ? [{ type: 'price', label: `قیمت: ${minPrice || 0} - ${maxPrice || '∞'} تومان` }] : []),
-    ...(safeOnly ? [{ type: 'safeOnly', label: 'فقط Safe Account' }] : [])
+
   ];
 
   if (allFilters.length === 0) return null;

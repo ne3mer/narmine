@@ -188,7 +188,7 @@ export default function NewProductPage() {
       platform: newProduct.platform,
       regionOptions: parseList(newProduct.regionOptions),
       basePrice: priceNum,
-      safeAccountAvailable: newProduct.safeAccountAvailable,
+
       coverUrl: newProduct.coverUrl || undefined,
       gallery: newProduct.gallery,
       tags: parseList(newProduct.tags),
@@ -580,19 +580,6 @@ export default function NewProductPage() {
                   onChange={(categories) => handleNewProductChange('categories', categories as any)}
                 />
               </div>
-
-              <label className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={newProduct.safeAccountAvailable}
-                  onChange={(event) => handleNewProductChange('safeAccountAvailable', event.target.checked)}
-                  className="h-5 w-5 rounded border-slate-300 accent-emerald-500"
-                />
-                <div>
-                  <span className="text-sm font-bold text-slate-700">Safe Account موجود است</span>
-                  <p className="text-xs text-slate-500 mt-1">اگر این گزینه فعال باشد، کاربران می‌توانند Safe Account خریداری کنند</p>
-                </div>
-              </label>
             </div>
           </div>
           </div>

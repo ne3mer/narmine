@@ -35,17 +35,6 @@ exports.defaultMarketingSettings = {
             cvr: 1.4,
             startDate: '1403/09/15',
             endDate: '1403/09/30'
-        },
-        {
-            id: 'cmp-email',
-            name: 'ایمیل Safe Account VIP',
-            channel: 'ایمیل',
-            status: 'draft',
-            budget: 18,
-            ctr: 6.4,
-            cvr: 4.1,
-            startDate: '1403/10/20',
-            endDate: '1403/11/01'
         }
     ],
     utmBuilder: {

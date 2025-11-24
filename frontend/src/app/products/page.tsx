@@ -15,7 +15,7 @@ type BackendGame = {
   platform: string;
   regionOptions: string[];
   basePrice: number;
-  safeAccountAvailable: boolean;
+
   coverUrl?: string;
   productType?: string;
 };

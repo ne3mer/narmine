@@ -9,7 +9,7 @@ export interface GameDocument extends Document {
   platform: string;
   regionOptions: string[];
   basePrice: number;
-  safeAccountAvailable: boolean;
+
   coverUrl?: string;
   gallery?: string[]; // Additional product images
   tags: string[];
@@ -92,7 +92,7 @@ const gameSchema = new Schema<GameDocument>(
     platform: { type: String }, // Optional for physical
     regionOptions: [{ type: String }], // Optional for physical
     basePrice: { type: Number, required: true },
-    safeAccountAvailable: { type: Boolean, default: false },
+
     coverUrl: { type: String },
     gallery: [{ type: String }],
     tags: [{ type: String }],

@@ -24,7 +24,7 @@ export type BackendGame = {
   platform: string;
   regionOptions: string[];
   basePrice: number;
-  safeAccountAvailable: boolean;
+
   coverUrl?: string;
   gallery?: string[];
   tags: string[];
@@ -472,14 +472,7 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                   </button>
                 </div>
 
-                {game.safeAccountAvailable && (
-                  <div className="mt-4 rounded-xl bg-white/70 backdrop-blur p-3 border border-orange-200">
-                    <p className="text-xs font-semibold text-rose-500 flex items-center gap-2">
-                      <Icon name="shield" size={16} />
-                      Safe Account موجود است
-                    </p>
-                  </div>
-                )}
+
               </div>
 
               {/* Guarantee Card */}

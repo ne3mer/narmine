@@ -10,7 +10,7 @@ type FilterState = {
   genres: string[];
   regions: string[];
   priceRange: { min: number; max: number };
-  safeOnly: boolean;
+
   sort: string;
 };
 
@@ -40,7 +40,7 @@ export function ProductFilters({ activeFiltersCount, onClearFilters, inline = fa
     genres: [],
     regions: [],
     priceRange: { min: 0, max: 10000000 },
-    safeOnly: false,
+
     sort: 'newest'
   });
 
@@ -50,7 +50,7 @@ export function ProductFilters({ activeFiltersCount, onClearFilters, inline = fa
     const regions = params?.get('regions')?.split(',').filter(Boolean) || [];
     const minPrice = params?.get('minPrice') ? Number(params.get('minPrice')) : 0;
     const maxPrice = params?.get('maxPrice') ? Number(params.get('maxPrice')) : 10000000;
-    const safeOnly = params?.get('safeOnly') === 'true';
+
     const sort = params?.get('sort') || 'newest';
 
     setFilters({
@@ -58,7 +58,7 @@ export function ProductFilters({ activeFiltersCount, onClearFilters, inline = fa
       genres,
       regions,
       priceRange: { min: minPrice, max: maxPrice },
-      safeOnly,
+
       sort
     });
   }, [params]);
@@ -81,9 +81,7 @@ export function ProductFilters({ activeFiltersCount, onClearFilters, inline = fa
     if (newFilters.priceRange.max < 10000000) {
       searchParams.set('maxPrice', newFilters.priceRange.max.toString());
     }
-    if (newFilters.safeOnly) {
-      searchParams.set('safeOnly', 'true');
-    }
+
     if (newFilters.sort !== 'newest') {
       searchParams.set('sort', newFilters.sort);
     }
@@ -117,10 +115,7 @@ export function ProductFilters({ activeFiltersCount, onClearFilters, inline = fa
     updateURL(newFilters);
   };
 
-  const handleSafeToggle = () => {
-    const newFilters = { ...filters, safeOnly: !filters.safeOnly };
-    updateURL(newFilters);
-  };
+
 
   const handleSortChange = (value: string) => {
     const newFilters = { ...filters, sort: value };
@@ -136,7 +131,7 @@ export function ProductFilters({ activeFiltersCount, onClearFilters, inline = fa
     filters.platforms.length +
     filters.genres.length +
     filters.regions.length +
-    (filters.safeOnly ? 1 : 0) +
+
     (filters.priceRange.min > 0 || filters.priceRange.max < 10000000 ? 1 : 0);
 
   const filterControls = (
@@ -252,22 +247,6 @@ export function ProductFilters({ activeFiltersCount, onClearFilters, inline = fa
         </div>
       </div>
 
-      <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
-        <div>
-          <p className="text-sm font-bold text-slate-700">فقط Safe Account</p>
-          <p className="text-xs text-slate-500">نمایش نتایج دارای گارانتی ضد بن</p>
-        </div>
-        <button
-          onClick={handleSafeToggle}
-          className={`relative h-6 w-11 rounded-full transition ${filters.safeOnly ? 'bg-emerald-500' : 'bg-slate-300'}`}
-        >
-          <span
-            className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-white transition ${
-              filters.safeOnly ? 'left-6' : 'left-1'
-            }`}
-          />
-        </button>
-      </div>
     </div>
   );
 

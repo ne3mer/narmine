@@ -20,7 +20,7 @@ export function CatalogProductCard({ game }: { game: GameCardContent }) {
   const tags =
     (game.tags && game.tags.length > 0
       ? game.tags
-      : [game.safe ? 'Safe Account' : 'Standard', `ریجن ${game.region || 'Global'}`, game.platform || 'PC']).slice(0, 3);
+      : [`ریجن ${game.region || 'Global'}`, game.platform || 'PC']).slice(0, 3);
 
   return (
     <article className="group flex h-full w-full flex-col rounded-[32px] border border-[#e5e5ea] bg-white/95 p-5 shadow-[0_15px_50px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1 hover:border-[#0a84ff]/20 hover:shadow-[0_30px_90px_rgba(15,23,42,0.15)]">

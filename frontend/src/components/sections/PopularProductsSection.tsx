@@ -16,7 +16,7 @@ type BackendGame = {
   platform: string;
   regionOptions: string[];
   basePrice: number;
-  safeAccountAvailable: boolean;
+
   coverUrl?: string;
   tags: string[];
   productType?: string;
@@ -32,7 +32,7 @@ const mapBackendGameToCard = (game: BackendGame): GameCardContent => ({
   finalPrice: game.basePrice,
   monthlyPrice: Math.round(game.basePrice * 0.3),
   region: game.regionOptions?.[0] ?? 'Global',
-  safe: game.safeAccountAvailable,
+
   category: game.genre?.[0] ?? 'general',
   rating: 4.5, // Changed from 0 to 4.5 as per instruction
   cover: game.coverUrl || '', // Changed default cover as per instruction
