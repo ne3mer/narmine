@@ -47,6 +47,6 @@ const cartSchema = new mongoose_1.Schema({
     }
 });
 // Index for faster queries
-cartSchema.index({ userId: 1 });
+// cartSchema.index({ userId: 1 }); // Removed duplicate index (already defined as unique in schema)
 exports.CartModel = (0, mongoose_1.model)('Cart', cartSchema);
 //# sourceMappingURL=cart.model.js.map
