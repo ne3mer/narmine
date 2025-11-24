@@ -70,10 +70,17 @@ export const createApp = () => {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key', 'x-client-version', 'x-requested-with']
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key', 'x-client-version', 'x-requested-with'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
   };
 
   app.use(cors(corsOptions));
+  
+  // Explicitly handle preflight requests
+  app.options('*', cors(corsOptions));
+  
   app.use((_req, res, next) => {
     res.header('Vary', 'Origin');
     next();
