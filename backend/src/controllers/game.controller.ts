@@ -12,17 +12,25 @@ type GameQuery = {
 };
 
 export const getGames = async (req: Request<unknown, unknown, unknown, GameQuery>, res: Response) => {
-  const { genre, region, search, sort, limit } = req.query;
-  const games = await listGames({
-    genre: genre || undefined,
-    region: region || undefined,
+  try {
+    const { genre, region, search, sort, limit } = req.query;
+    const games = await listGames({
+      genre: genre || undefined,
+      region: region || undefined,
 
-    search: search || undefined,
-    sort: sort || undefined,
-    limit: limit ? parseInt(limit, 10) : undefined
-  });
+      search: search || undefined,
+      sort: sort || undefined,
+      limit: limit ? parseInt(limit, 10) : undefined
+    });
 
-  res.json({ data: games });
+    res.json({ data: games });
+  } catch (error) {
+    console.error('Error fetching games:', error);
+    res.status(500).json({ 
+      message: 'Error fetching games',
+      error: error instanceof Error ? error.message : String(error)
+    });
+  }
 };
 
 export const postGame = async (req: Request, res: Response) => {
