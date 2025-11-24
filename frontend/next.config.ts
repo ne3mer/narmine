@@ -59,6 +59,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Remove powered-by header for security
   poweredByHeader: false,
+  outputFileTracingRoot: __dirname,
   turbopack: {
     // Explicitly pin the project root so Next patches the correct lockfile
     root: __dirname,
