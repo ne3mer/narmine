@@ -41,16 +41,27 @@ export const createApp = () => {
   const allowedOrigins = [
     'https://narmineh.com',
     'https://www.narmineh.com',
-    ...(env.CLIENT_URL ? env.CLIENT_URL.split(',').map(url => url.trim()) : []),
+    ...(env.CLIENT_URL ? env.CLIENT_URL.split(',').map((url) => url.trim()) : []),
     'http://localhost:3000'
   ];
+
+  const normalizeOrigin = (origin?: string) => origin?.replace(/\/$/, '').toLowerCase();
+
+  const normalizedAllowed = allowedOrigins
+    .map(normalizeOrigin)
+    .filter((origin): origin is string => Boolean(origin));
 
   const corsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      
-      if (allowedOrigins.includes(origin) || env.NODE_ENV === 'development') {
+
+      const normalizedOrigin = normalizeOrigin(origin);
+      const isAllowed =
+        !!normalizedOrigin &&
+        (env.NODE_ENV === 'development' || normalizedAllowed.includes(normalizedOrigin));
+
+      if (isAllowed) {
         callback(null, true);
       } else {
         console.warn(`Blocked by CORS: ${origin}`);
@@ -59,10 +70,14 @@ export const createApp = () => {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key']
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key', 'x-client-version', 'x-requested-with']
   };
 
   app.use(cors(corsOptions));
+  app.use((_req, res, next) => {
+    res.header('Vary', 'Origin');
+    next();
+  });
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
