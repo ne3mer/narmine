@@ -167,7 +167,7 @@ export default function GameDetailClient({ game }: Props) {
   const handleAddToCart = async () => {
     setAddingToCart(true);
     try {
-      await addToCart(game.id, currentVariant?.id, selectedOptions);
+      await addToCart(game.id, 1, currentVariant?.id, selectedOptions);
     } catch (error) {
       console.error('Failed to add to cart:', error);
     } finally {
@@ -261,7 +261,7 @@ export default function GameDetailClient({ game }: Props) {
             <div className="bg-white rounded-2xl shadow-sm border border-[#c9a896]/20 p-2 flex overflow-x-auto">
               {[
                 { id: 'overview', label: 'بررسی اجمالی', icon: 'file' },
-                { id: 'media', label: 'ویدیوها', icon: 'film' },
+                { id: 'media', label: 'ویدیوها', icon: 'video' },
                 { id: 'specs', label: 'مشخصات فنی', icon: 'cpu' },
                 { id: 'reviews', label: 'نظرات کاربران', icon: 'message' }
               ].map((tab) => (
@@ -342,7 +342,7 @@ export default function GameDetailClient({ game }: Props) {
                 <div className="space-y-8">
                   {!trailerEmbedUrl && !gameplayEmbedUrl && (
                     <div className="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                      <Icon name="film" size={48} className="mx-auto text-slate-300 mb-4" />
+                      <Icon name="video" size={48} className="mx-auto text-slate-300 mb-4" />
                       <p className="text-slate-500 font-medium">ویدیویی برای این محصول ثبت نشده است</p>
                     </div>
                   )}
@@ -443,12 +443,12 @@ export default function GameDetailClient({ game }: Props) {
                     </button>
                   </div>
 
-                  <ReviewsList productId={game.id} key={0} />
+                  <ReviewsList gameId={game.id} key={0} />
                   
                   <div id="review-form" className="pt-8 border-t border-slate-100">
                     <h3 className="text-xl font-bold text-[#4a3f3a] mb-6">نظر خود را بنویسید</h3>
                     <ReviewForm 
-                      productId={game.id} 
+                      gameId={game.id} 
                       onSuccess={() => {
                         // Invalidate cache logic here if needed
                       }} 
@@ -611,8 +611,8 @@ export default function GameDetailClient({ game }: Props) {
       <PriceAlertModal
         isOpen={showPriceAlert}
         onClose={() => setShowPriceAlert(false)}
-        productId={game.id}
-        productName={game.title}
+        gameId={game.id}
+        gameTitle={game.title}
         currentPrice={currentPrice}
       />
     </div>
