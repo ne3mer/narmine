@@ -329,13 +329,19 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
             </div>
 
             {/* Cover Image */}
-            <div className="relative aspect-square sm:aspect-[4/3] md:aspect-auto md:h-full overflow-hidden rounded-2xl border border-[#c9a896]/30 bg-[#f8f5f2] shadow-lg">
+            <button
+              onClick={() => {
+                setSelectedImageIndex(0);
+                setShowImageModal(true);
+              }}
+              className="relative aspect-square sm:aspect-[4/3] md:aspect-auto md:h-full overflow-hidden rounded-2xl border border-[#c9a896]/30 bg-[#f8f5f2] shadow-lg group cursor-pointer"
+            >
               <Image 
                 src={defaultCover} 
                 alt={game.title} 
                 fill 
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
+                className="object-cover transition-transform group-hover:scale-105"
                 priority
                 unoptimized
               />
@@ -344,7 +350,18 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                   {discountPercent}% تخفیف
                 </div>
               )}
-            </div>
+              {allImages.length > 1 && (
+                <div className="absolute bottom-4 right-4 rounded-full bg-black/60 backdrop-blur-sm px-3 py-1.5 text-xs font-bold text-white flex items-center gap-1">
+                  <Icon name="image" size={14} />
+                  {allImages.length} عکس
+                </div>
+              )}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 rounded-full p-3">
+                  <Icon name="search" size={24} className="text-[#4a3f3a]" />
+                </div>
+              </div>
+            </button>
           </div>
         </div>
 
@@ -534,6 +551,42 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                       />
                     )}
                     
+                    {/* Product Images Gallery */}
+                    {allImages.length > 1 && (
+                      <div className="mt-8">
+                        <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                          <Icon name="image" size={20} />
+                          تصاویر محصول
+                        </h3>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+                          {allImages.map((img, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                setSelectedImageIndex(idx);
+                                setShowImageModal(true);
+                              }}
+                              className="relative aspect-square rounded-xl overflow-hidden group hover:scale-105 transition-transform shadow-md hover:shadow-xl"
+                            >
+                              <Image
+                                src={img}
+                                alt={`${game.title} - تصویر ${idx + 1}`}
+                                fill
+                                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                                className="object-cover"
+                                unoptimized
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="absolute bottom-2 right-2 bg-white/90 rounded-full p-1.5">
+                                  <Icon name="search" size={16} className="text-[#4a3f3a]" />
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
                     {game.features && game.features.length > 0 && (
                       <div>
                         <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">ویژگی‌های محصول</h3>
@@ -573,6 +626,13 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                 {/* Media Tab */}
                 {activeTab === 'media' && (
                   <div className="space-y-8">
+                    {!trailerEmbedUrl && !gameplayEmbedUrl && (
+                      <div className="text-center py-12">
+                        <Icon name="image" size={48} className="mx-auto text-slate-300 mb-4" />
+                        <p className="text-slate-500">هیچ ویدیویی برای این محصول موجود نیست</p>
+                      </div>
+                    )}
+                    
                     {/* Trailer */}
                     {trailerEmbedUrl && (
                       <div>
@@ -599,63 +659,6 @@ export default function GameDetailClient({ initialGame }: GameDetailClientProps)
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
                           />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Screenshots Gallery */}
-                    {screenshots.length > 0 && (
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-4">اسکرین‌شات‌ها</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                          {screenshots.map((screenshot, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => {
-                                setSelectedImageIndex(allImages.indexOf(screenshot));
-                                setShowImageModal(true);
-                              }}
-                              className="relative aspect-video rounded-xl overflow-hidden group hover:scale-105 transition-transform shadow-lg"
-                            >
-                              <Image
-                                src={screenshot}
-                                alt={`Screenshot ${idx + 1}`}
-                                fill
-                                sizes="(max-width: 768px) 50vw, 33vw"
-                                className="object-cover"
-                              />
-                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition"></div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Image Gallery */}
-                    {allImages.length > 1 && (
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-4">گالری تصاویر</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {allImages.map((img, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => {
-                                setSelectedImageIndex(idx);
-                                setShowImageModal(true);
-                              }}
-                              className="relative aspect-square rounded-xl overflow-hidden group hover:scale-105 transition-transform shadow-lg"
-                            >
-                              <Image
-                                src={img}
-                                alt={`Gallery ${idx + 1}`}
-                                fill
-                                sizes="(max-width: 768px) 50vw, 25vw"
-                                className="object-cover"
-                                unoptimized
-                              />
-                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition"></div>
-                            </button>
-                          ))}
                         </div>
                       </div>
                     )}
