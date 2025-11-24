@@ -40,15 +40,22 @@ const createApp = () => {
     const allowedOrigins = [
         'https://narmineh.com',
         'https://www.narmineh.com',
-        ...(env_1.env.CLIENT_URL ? env_1.env.CLIENT_URL.split(',').map(url => url.trim()) : []),
+        ...(env_1.env.CLIENT_URL ? env_1.env.CLIENT_URL.split(',').map((url) => url.trim()) : []),
         'http://localhost:3000'
     ];
+    const normalizeOrigin = (origin) => origin?.replace(/\/$/, '').toLowerCase();
+    const normalizedAllowed = allowedOrigins
+        .map(normalizeOrigin)
+        .filter((origin) => Boolean(origin));
     const corsOptions = {
         origin: (origin, callback) => {
             // Allow requests with no origin (like mobile apps or curl requests)
             if (!origin)
                 return callback(null, true);
-            if (allowedOrigins.includes(origin) || env_1.env.NODE_ENV === 'development') {
+            const normalizedOrigin = normalizeOrigin(origin);
+            const isAllowed = !!normalizedOrigin &&
+                (env_1.env.NODE_ENV === 'development' || normalizedAllowed.includes(normalizedOrigin));
+            if (isAllowed) {
                 callback(null, true);
             }
             else {
@@ -58,9 +65,18 @@ const createApp = () => {
         },
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key']
+        allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key', 'x-client-version', 'x-requested-with'],
+        exposedHeaders: ['Content-Range', 'X-Content-Range'],
+        preflightContinue: false,
+        optionsSuccessStatus: 204
     };
     app.use((0, cors_1.default)(corsOptions));
+    // Explicitly handle preflight requests
+    app.options('*', (0, cors_1.default)(corsOptions));
+    app.use((_req, res, next) => {
+        res.header('Vary', 'Origin');
+        next();
+    });
     app.use(express_1.default.json({ limit: '1mb' }));
     app.use(express_1.default.urlencoded({ extended: true }));
     app.use((0, cookie_parser_1.default)());
