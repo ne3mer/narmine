@@ -71,8 +71,6 @@ const createApp = () => {
         optionsSuccessStatus: 204
     };
     app.use((0, cors_1.default)(corsOptions));
-    // Explicitly handle preflight requests
-    app.options('*', (0, cors_1.default)(corsOptions));
     app.use((_req, res, next) => {
         res.header('Vary', 'Origin');
         next();
