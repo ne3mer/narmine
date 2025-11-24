@@ -37,29 +37,33 @@ export const createApp = () => {
   app.use(hpp());
 
   // CORS configuration - support multiple origins in production
-  const allowedOrigins = env.NODE_ENV === 'production' 
-    ? [
-        ...env.CLIENT_URL.split(',').map(url => url.trim()),
-        'https://narmineh.com',
-        'https://www.narmineh.com'
-      ]
-    : [env.CLIENT_URL, 'http://localhost:3000'];
+  // Always allow these origins regardless of environment
+  const allowedOrigins = [
+    'https://narmineh.com',
+    'https://www.narmineh.com',
+    ...(env.CLIENT_URL ? env.CLIENT_URL.split(',').map(url => url.trim()) : []),
+    'http://localhost:3000'
+  ];
 
-  app.use(cors({
-    origin: (origin, callback) => {
+  const corsOptions = {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
       
       if (allowedOrigins.includes(origin) || env.NODE_ENV === 'development') {
         callback(null, true);
       } else {
+        console.warn(`Blocked by CORS: ${origin}`);
         callback(new Error('Not allowed by CORS'));
       }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key']
-  }));
+  };
+
+  app.use(cors(corsOptions));
+  app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
