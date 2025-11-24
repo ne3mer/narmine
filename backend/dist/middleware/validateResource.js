@@ -14,12 +14,10 @@ const validateResource = (schema) => {
         }
         const data = result.data;
         req.body = data.body;
-        const currentQuery = req.query;
-        Object.keys(currentQuery).forEach((key) => delete currentQuery[key]);
-        Object.assign(currentQuery, data.query);
-        const currentParams = req.params;
-        Object.keys(currentParams).forEach((key) => delete currentParams[key]);
-        Object.assign(currentParams, data.params);
+        // In Express 5, req.query and req.params are read-only getters
+        // We need to replace them entirely instead of modifying in place
+        req.query = data.query;
+        req.params = data.params;
         next();
     };
 };
