@@ -27,7 +27,8 @@ const getAllCategories = async (req, res) => {
         console.error('Error fetching categories:', error);
         res.status(500).json({
             success: false,
-            message: 'خطا در دریافت دسته‌بندی‌ها'
+            message: 'خطا در دریافت دسته‌بندی‌ها',
+            error: error instanceof Error ? error.message : String(error)
         });
     }
 };
@@ -101,7 +102,8 @@ const getCategoryGames = async (req, res) => {
         console.error('Error fetching category games:', error);
         res.status(500).json({
             success: false,
-            message: 'خطا در دریافت محصولات'
+            message: 'خطا در دریافت محصولات',
+            error: error instanceof Error ? error.message : String(error)
         });
     }
 };

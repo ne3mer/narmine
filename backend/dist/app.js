@@ -43,32 +43,15 @@ const createApp = () => {
         ...(env_1.env.CLIENT_URL ? env_1.env.CLIENT_URL.split(',').map((url) => url.trim()) : []),
         'http://localhost:3000'
     ];
-    const normalizeOrigin = (origin) => origin?.replace(/\/$/, '').toLowerCase();
-    const normalizedAllowed = allowedOrigins
-        .map(normalizeOrigin)
-        .filter((origin) => Boolean(origin));
+    console.log('Allowed CORS Origins:', allowedOrigins);
     const corsOptions = {
-        origin: (origin, callback) => {
-            // Allow requests with no origin (like mobile apps or curl requests)
-            if (!origin)
-                return callback(null, true);
-            const normalizedOrigin = normalizeOrigin(origin);
-            const isAllowed = !!normalizedOrigin &&
-                (env_1.env.NODE_ENV === 'development' || normalizedAllowed.includes(normalizedOrigin));
-            if (isAllowed) {
-                callback(null, true);
-            }
-            else {
-                console.warn(`Blocked by CORS: ${origin}`);
-                callback(new Error('Not allowed by CORS'));
-            }
-        },
+        origin: allowedOrigins,
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key', 'x-client-version', 'x-requested-with'],
         exposedHeaders: ['Content-Range', 'X-Content-Range'],
         preflightContinue: false,
-        optionsSuccessStatus: 204
+        optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
     };
     app.use((0, cors_1.default)(corsOptions));
     app.use((_req, res, next) => {
