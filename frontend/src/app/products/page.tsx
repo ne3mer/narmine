@@ -30,6 +30,9 @@ type Product = {
   price: number;
   cover: string;
   rating?: number;
+  onSale?: boolean;
+  salePrice?: number;
+  basePrice?: number;
 };
 
 const mapGame = (game: BackendGame): Product => ({
@@ -39,6 +42,9 @@ const mapGame = (game: BackendGame): Product => ({
   price: game.onSale && game.salePrice ? game.salePrice : game.basePrice,
   cover: game.coverUrl || '',
   rating: game.rating || 4.5,
+  onSale: game.onSale,
+  salePrice: game.salePrice,
+  basePrice: game.basePrice,
 });
 
 function ProductsContent() {
@@ -172,6 +178,9 @@ function ProductsContent() {
                     price={product.price}
                     slug={product.slug}
                     rating={product.rating}
+                    onSale={product.onSale}
+                    salePrice={product.salePrice}
+                    basePrice={product.basePrice}
                   />
                 ))}
               </div>

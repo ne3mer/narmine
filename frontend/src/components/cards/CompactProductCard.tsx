@@ -12,6 +12,10 @@ type CompactProductCardProps = {
 
 export const CompactProductCard = ({ product }: CompactProductCardProps) => {
   const productSlug = product.slug ?? product.id ?? product._id;
+  
+  const discountPercent = product.onSale && product.basePrice && (product.salePrice || product.basePrice)
+    ? Math.round(((product.basePrice - (product.salePrice || product.basePrice)) / product.basePrice) * 100)
+    : 0;
 
   return (
     <Link
@@ -27,6 +31,14 @@ export const CompactProductCard = ({ product }: CompactProductCardProps) => {
           sizes="96px"
           className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
+        
+        {/* Discount Badge */}
+        {product.onSale && discountPercent > 0 && (
+          <div className="absolute top-1 right-1 z-10 flex items-center gap-0.5 rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-bold text-white shadow-md animate-pulse">
+            <Icon name="zap" size={10} className="fill-white" />
+            <span>{discountPercent}%</span>
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -43,10 +55,28 @@ export const CompactProductCard = ({ product }: CompactProductCardProps) => {
           )}
         </div>
         <div className="flex items-baseline gap-1">
-          <span className="font-serif text-base font-bold text-[#4a3f3a]">
-            {formatToman(product.salePrice || product.basePrice)}
-          </span>
-          <span className="text-xs text-[#4a3f3a]/60">تومان</span>
+          {product.onSale ? (
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <span className="text-[10px] text-slate-400 line-through decoration-slate-400/50">
+                  {formatToman(product.basePrice)}
+                </span>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="font-serif text-base font-bold text-rose-600">
+                  {formatToman(product.salePrice || product.basePrice)}
+                </span>
+                <span className="text-xs text-rose-600/80">تومان</span>
+              </div>
+            </div>
+          ) : (
+            <>
+              <span className="font-serif text-base font-bold text-[#4a3f3a]">
+                {formatToman(product.basePrice)}
+              </span>
+              <span className="text-xs text-[#4a3f3a]/60">تومان</span>
+            </>
+          )}
         </div>
       </div>
     </Link>

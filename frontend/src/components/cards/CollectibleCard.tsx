@@ -10,6 +10,11 @@ interface CollectibleCardProps {
 
 export function CollectibleCard({ product }: CollectibleCardProps) {
   const isOutOfStock = product.inventory?.status === 'out_of_stock';
+  const discountPercent = product.onSale && product.basePrice && (product.salePrice || product.finalPrice)
+    ? Math.round(((product.basePrice - (product.salePrice || product.finalPrice)) / product.basePrice) * 100)
+    : (product.basePrice > product.finalPrice 
+      ? Math.round(((product.basePrice - product.finalPrice) / product.basePrice) * 100)
+      : 0);
 
   return (
     <Link
@@ -41,6 +46,12 @@ export function CollectibleCard({ product }: CollectibleCardProps) {
               Action Figure
             </span>
           )}
+          {discountPercent > 0 && (
+            <div className="flex items-center gap-1 rounded-full bg-rose-500 px-3 py-1 text-xs font-bold text-white shadow-lg animate-pulse">
+              <Icon name="zap" size={14} className="fill-white" />
+              <span>{discountPercent}%</span>
+            </div>
+          )}
           {product.inventory?.status === 'low_stock' && (
             <span className="rounded-full bg-amber-400/90 px-3 py-1 text-xs font-bold text-amber-900 backdrop-blur-md">
               موجودی محدود
@@ -56,13 +67,13 @@ export function CollectibleCard({ product }: CollectibleCardProps) {
           
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              {product.basePrice > product.finalPrice && (
-                <span className="text-sm text-white/70 line-through">
+              {discountPercent > 0 && (
+                <span className="text-sm text-white/70 line-through decoration-rose-500/80 decoration-2">
                   {formatToman(product.basePrice)}
                 </span>
               )}
-              <span className="text-2xl font-black text-white drop-shadow-md">
-                {formatToman(product.finalPrice)}
+              <span className={`text-2xl font-black drop-shadow-md ${discountPercent > 0 ? 'text-rose-400' : 'text-white'}`}>
+                {formatToman(product.salePrice || product.finalPrice)}
                 <span className="mr-1 text-sm font-normal text-white/80">تومان</span>
               </span>
             </div>

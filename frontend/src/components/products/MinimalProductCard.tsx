@@ -14,13 +14,30 @@ type MinimalProductCardProps = {
   price: number;
   slug?: string;
   rating?: number;
+  onSale?: boolean;
+  salePrice?: number;
+  basePrice?: number;
 };
 
-export const MinimalProductCard = ({ id, title, cover, price, slug, rating: staticRating }: MinimalProductCardProps) => {
+export const MinimalProductCard = ({ 
+  id, 
+  title, 
+  cover, 
+  price, 
+  slug, 
+  rating: staticRating,
+  onSale,
+  salePrice,
+  basePrice
+}: MinimalProductCardProps) => {
   const { rating: dynamicRating } = useProductRating(id);
   const displayRating = dynamicRating !== null && dynamicRating > 0 ? dynamicRating : (staticRating || 0);
   const productSlug = slug ?? id;
   const imageSrc = cover && cover.trim() !== '' ? resolveImageUrl(cover) : '/placeholder-product.jpg';
+
+  const discountPercent = onSale && basePrice && (salePrice || price)
+    ? Math.round(((basePrice - (salePrice || price)) / basePrice) * 100)
+    : 0;
 
   return (
     <Link
@@ -42,6 +59,15 @@ export const MinimalProductCard = ({ id, title, cover, price, slug, rating: stat
             🛏️
           </div>
         )}
+        
+        {/* Discount Badge */}
+        {onSale && discountPercent > 0 && (
+          <div className="absolute top-2 right-2 z-10 flex items-center gap-0.5 rounded-full bg-rose-500 px-2 py-1 text-[10px] font-bold text-white shadow-md animate-pulse">
+            <Icon name="zap" size={10} className="fill-white" />
+            <span>{discountPercent}%</span>
+          </div>
+        )}
+
         {displayRating > 0 && (
           <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full border border-white/40 bg-white/90 backdrop-blur-sm px-2 py-1 shadow-sm">
             <Icon name="star" size={12} className="text-amber-500" strokeWidth={0} />
@@ -56,8 +82,26 @@ export const MinimalProductCard = ({ id, title, cover, price, slug, rating: stat
           {title || 'بدون عنوان'}
         </h3>
         <div className="flex items-baseline gap-1">
-          <span className="font-serif text-lg font-bold text-[#4a3f3a]">{formatToman(price)}</span>
-          <span className="text-xs text-[#4a3f3a]/60">تومان</span>
+          {onSale ? (
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <span className="text-[10px] text-slate-400 line-through decoration-slate-400/50">
+                  {basePrice ? formatToman(basePrice) : ''}
+                </span>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="font-serif text-lg font-bold text-rose-600">
+                  {formatToman(salePrice || price)}
+                </span>
+                <span className="text-xs text-rose-600/80">تومان</span>
+              </div>
+            </div>
+          ) : (
+            <>
+              <span className="font-serif text-lg font-bold text-[#4a3f3a]">{formatToman(price)}</span>
+              <span className="text-xs text-[#4a3f3a]/60">تومان</span>
+            </>
+          )}
         </div>
       </div>
     </Link>

@@ -22,6 +22,10 @@ export function CatalogProductCard({ game }: { game: GameCardContent }) {
       ? game.tags
       : [`ریجن ${game.region || 'Global'}`, game.platform || 'PC']).slice(0, 3);
 
+  const discountPercent = game.onSale && game.basePrice && (game.salePrice || game.price)
+    ? Math.round(((game.basePrice - (game.salePrice || game.price)) / game.basePrice) * 100)
+    : 0;
+
   return (
     <article className="group flex h-full w-full flex-col rounded-[32px] border border-[#e5e5ea] bg-white/95 p-5 shadow-[0_15px_50px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1 hover:border-[#0a84ff]/20 hover:shadow-[0_30px_90px_rgba(15,23,42,0.15)]">
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[28px]">
@@ -41,6 +45,14 @@ export function CatalogProductCard({ game }: { game: GameCardContent }) {
           <span className="absolute right-4 top-4 z-20 rounded-full bg-gradient-to-r from-[#34c759] to-[#30d158] px-4 py-1 text-xs font-black text-white shadow-lg">
             SAFE
           </span>
+        )}
+        
+        {/* Discount Badge */}
+        {game.onSale && discountPercent > 0 && (
+          <div className="absolute right-4 top-12 z-20 flex items-center gap-1 rounded-full bg-rose-500 px-3 py-1 text-xs font-bold text-white shadow-lg animate-pulse">
+            <Icon name="zap" size={14} className="fill-white" />
+            <span>{discountPercent}%</span>
+          </div>
         )}
       </div>
 
@@ -72,8 +84,26 @@ export function CatalogProductCard({ game }: { game: GameCardContent }) {
         <div className="rounded-2xl border border-[#e5e5ea] bg-[#f7f8fb] p-4 space-y-1">
           <p className="text-xs font-semibold text-slate-500">شروع قیمت</p>
           <div className="flex items-baseline gap-1">
-            <span className="text-3xl font-black text-slate-900">{formatToman(game.price)}</span>
-            <span className="text-sm font-medium text-slate-500">تومان</span>
+            {game.onSale ? (
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs text-slate-400 line-through decoration-slate-400/50 decoration-2">
+                    {formatToman(game.basePrice)}
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black text-rose-600">
+                    {formatToman(game.salePrice || game.price)}
+                  </span>
+                  <span className="text-sm font-medium text-rose-600/80">تومان</span>
+                </div>
+              </div>
+            ) : (
+              <>
+                <span className="text-3xl font-black text-slate-900">{formatToman(game.price)}</span>
+                <span className="text-sm font-medium text-slate-500">تومان</span>
+              </>
+            )}
           </div>
           {game.monthlyPrice && game.monthlyPrice > 0 && (
             <p className="text-xs text-slate-500">

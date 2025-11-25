@@ -20,6 +20,8 @@ type BackendGame = {
   coverUrl?: string;
   tags: string[];
   productType?: string;
+  onSale?: boolean;
+  salePrice?: number;
 };
 
 const mapBackendGameToCard = (game: BackendGame): GameCardContent => ({
@@ -29,7 +31,7 @@ const mapBackendGameToCard = (game: BackendGame): GameCardContent => ({
   platform: game.platform || 'PC', // Default to PC if undefined
   price: game.basePrice, // Keeping 'price' for compatibility if GameCardContent still expects it
   basePrice: game.basePrice,
-  finalPrice: game.basePrice,
+  finalPrice: game.onSale && game.salePrice ? game.salePrice : game.basePrice,
   monthlyPrice: Math.round(game.basePrice * 0.3),
   region: game.regionOptions?.[0] ?? 'Global',
 
@@ -38,7 +40,9 @@ const mapBackendGameToCard = (game: BackendGame): GameCardContent => ({
   cover: game.coverUrl || '', // Changed default cover as per instruction
   coverUrl: game.coverUrl || '', // Added coverUrl as per instruction
   description: game.description, // Added description as per instruction
-  productType: game.productType as any
+  productType: game.productType as any,
+  onSale: game.onSale,
+  salePrice: game.salePrice
 });
 
 export const PopularProductsSection = () => {
@@ -107,7 +111,9 @@ export const PopularProductsSection = () => {
                 slug: game.slug || game.id,
                 coverUrl: game.coverUrl,
                 basePrice: game.basePrice,
-                title: game.title
+                title: game.title,
+                onSale: game.onSale,
+                salePrice: game.salePrice
               } satisfies CompactProduct}
             />
           ))}

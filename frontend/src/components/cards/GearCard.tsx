@@ -10,9 +10,11 @@ interface GearCardProps {
 
 export function GearCard({ product }: GearCardProps) {
   const isOutOfStock = product.inventory?.status === 'out_of_stock';
-  const discount = product.basePrice > product.finalPrice 
-    ? Math.round(((product.basePrice - product.finalPrice) / product.basePrice) * 100)
-    : 0;
+  const discountPercent = product.onSale && product.basePrice && (product.salePrice || product.finalPrice)
+    ? Math.round(((product.basePrice - (product.salePrice || product.finalPrice)) / product.basePrice) * 100)
+    : (product.basePrice > product.finalPrice 
+      ? Math.round(((product.basePrice - product.finalPrice) / product.basePrice) * 100)
+      : 0);
 
   return (
     <Link
@@ -47,10 +49,11 @@ export function GearCard({ product }: GearCardProps) {
             </span>
           ) : (
             <>
-              {discount > 0 && (
-                <span className="rounded bg-emerald-500/90 px-2 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
-                  {discount}% تخفیف
-                </span>
+              {discountPercent > 0 && (
+                <div className="flex items-center gap-1 rounded-full bg-rose-500 px-2 py-1 text-[10px] font-bold text-white shadow-lg animate-pulse">
+                  <Icon name="zap" size={12} className="fill-white" />
+                  <span>{discountPercent}%</span>
+                </div>
               )}
               {product.shipping?.freeShipping && (
                 <span className="rounded bg-blue-500/90 px-2 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
@@ -88,14 +91,19 @@ export function GearCard({ product }: GearCardProps) {
         {/* Price & Action */}
         <div className="flex items-end justify-between border-t border-slate-800 pt-4">
           <div>
-            {discount > 0 && (
-              <p className="text-xs text-slate-500 line-through decoration-rose-500/50">
-                {formatToman(product.basePrice)}
-              </p>
+            {discountPercent > 0 && (
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs text-slate-500 line-through decoration-rose-500/50">
+                  {formatToman(product.basePrice)}
+                </span>
+              </div>
             )}
-            <p className="text-lg font-black text-white">
-              {formatToman(product.finalPrice)} <span className="text-xs font-normal text-slate-400">تومان</span>
-            </p>
+            <div className="flex items-baseline gap-1">
+              <span className={`text-lg font-black ${discountPercent > 0 ? 'text-rose-500' : 'text-white'}`}>
+                {formatToman(product.salePrice || product.finalPrice)}
+              </span>
+              <span className="text-xs font-normal text-slate-400">تومان</span>
+            </div>
           </div>
           
           <div className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
