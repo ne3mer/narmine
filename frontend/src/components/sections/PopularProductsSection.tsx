@@ -53,7 +53,7 @@ export const PopularProductsSection = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/games`);
+        const response = await fetch(`${API_BASE_URL}/api/games`, { cache: 'no-store' });
         if (!response.ok) throw new Error('خطا در دریافت محصولات');
         
         const data = await response.json();

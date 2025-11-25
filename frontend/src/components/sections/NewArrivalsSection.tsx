@@ -53,7 +53,7 @@ export const NewArrivalsSection = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/games?sort=-createdAt`);
+        const response = await fetch(`${API_BASE_URL}/api/games?sort=-createdAt`, { cache: 'no-store' });
         if (!response.ok) throw new Error('خطا در دریافت محصولات');
         
         const data = await response.json();

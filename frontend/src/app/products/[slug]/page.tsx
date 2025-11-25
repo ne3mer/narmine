@@ -12,7 +12,7 @@ async function getGame(slug: string): Promise<BackendGame | null> {
   try {
     const decodedSlug = decodeURIComponent(slug);
     const response = await fetch(`${API_BASE_URL}/api/games/${decodedSlug}`, {
-      next: { revalidate: 60 }, // Revalidate every minute
+      next: { revalidate: 0 }, // Disable caching for immediate updates
     });
 
     if (!response.ok) {
