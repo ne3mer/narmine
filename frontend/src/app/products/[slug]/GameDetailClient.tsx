@@ -143,6 +143,7 @@ export default function GameDetailClient({ game }: Props) {
   const discountPercent = game.basePrice > currentPrice 
     ? Math.round(((game.basePrice - currentPrice) / game.basePrice) * 100)
     : 0;
+  const savings = game.basePrice > currentPrice ? game.basePrice - currentPrice : 0;
 
   // Image resolution - prioritize cover over coverUrl as it's more reliable
   const coverImage = game.cover || game.coverUrl;
@@ -160,9 +161,8 @@ export default function GameDetailClient({ game }: Props) {
   const gameplayEmbedUrl = getVideoEmbedUrl(game.gameplayVideoUrl || '');
 
   // Calculate rating
-  const { rating: dynamicRating, refetch: refetchRating } = useProductRating(game.id);
+  const { rating: dynamicRating, reviewCount, refetch: refetchRating } = useProductRating(game.id);
   const gameRating = dynamicRating !== null && dynamicRating > 0 ? dynamicRating : (game.rating || 0);
-  const reviewCount = 0; // TODO: Fetch real review count
 
   const handleAddToCart = async () => {
     setAddingToCart(true);
@@ -480,14 +480,25 @@ export default function GameDetailClient({ game }: Props) {
               <div className="space-y-2">
                 <div className="flex items-baseline justify-between">
                   <span className="text-[#4a3f3a]/60 font-medium">قیمت نهایی:</span>
-                  {game.onSale ? (
+                  {game.onSale || discountPercent > 0 ? (
                     <div className="text-right">
-                      <div className="text-sm text-rose-500 line-through decoration-2 opacity-60">
-                        {formatToman(game.basePrice)}
+                      <div className="flex items-center justify-end gap-2 mb-1">
+                        <span className="text-sm text-rose-500 line-through decoration-2 opacity-60">
+                          {formatToman(game.basePrice)}
+                        </span>
+                        <span className="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-600">
+                          {discountPercent}% تخفیف
+                        </span>
                       </div>
                       <div className="text-3xl font-black text-[#4a3f3a]">
                         {formatToman(currentPrice)} <span className="text-sm font-medium text-[#4a3f3a]/60">تومان</span>
                       </div>
+                      {savings > 0 && (
+                        <div className="mt-2 flex items-center justify-end gap-1 text-sm font-bold text-emerald-600 animate-pulse">
+                          <Icon name="trending-down" size={16} />
+                          <span>سود شما از این خرید: {formatToman(savings)} تومان</span>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="text-3xl font-black text-[#4a3f3a]">

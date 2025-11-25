@@ -51,6 +51,7 @@ export type NewProductState = {
   title: string;
   slug: string;
   description: string;
+  detailedDescription?: string;
   genre: string;
   platform: string;
   regionOptions: string;
@@ -96,6 +97,7 @@ export const initialNewProduct: NewProductState = {
   title: '',
   slug: '',
   description: '',
+  detailedDescription: '',
   genre: 'اکشن',
   platform: 'PS5',
   regionOptions: 'R2',

@@ -27,6 +27,8 @@ export type ProductCardContent = {
   // New standardized fields
   basePrice: number;
   finalPrice: number;
+  onSale?: boolean;
+  salePrice?: number;
   coverUrl?: string;
   customFields?: Record<string, any>;
 };

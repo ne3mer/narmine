@@ -9,6 +9,20 @@ import { Icon } from '@/components/icons/Icon';
 export default function CartPage() {
   const { cart, loading, updateQuantity, removeFromCart, totalPrice, shippingCost, finalTotal } = useCart();
 
+  // Calculate total savings
+  const totalSavings = cart?.items.reduce((acc, item) => {
+    // Check if gameId exists and has basePrice
+    if (!item.gameId || !item.gameId.basePrice) return acc;
+    
+    const basePrice = item.gameId.basePrice;
+    const currentPrice = item.priceAtAdd;
+    
+    if (basePrice > currentPrice) {
+      return acc + (basePrice - currentPrice) * item.quantity;
+    }
+    return acc;
+  }, 0) || 0;
+
   if (loading && !cart) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
@@ -137,8 +151,19 @@ export default function CartPage() {
               </div>
               <div className="flex justify-between text-[#4a3f3a]/70">
                 <span>تخفیف</span>
-                <span className="font-semibold text-green-600">0 تومان</span>
+                <span className={`font-semibold ${totalSavings > 0 ? 'text-rose-600' : 'text-green-600'}`}>
+                  {totalSavings > 0 ? `${formatToman(totalSavings)} تومان` : '0 تومان'}
+                </span>
               </div>
+              
+              {totalSavings > 0 && (
+                <div className="mt-4 rounded-xl bg-emerald-50 p-3 text-center text-sm font-bold text-emerald-600 border border-emerald-100 animate-pulse">
+                  <div className="flex items-center justify-center gap-2">
+                    <Icon name="sparkles" size={16} />
+                    <span>سود شما از این خرید: {formatToman(totalSavings)} تومان</span>
+                  </div>
+                </div>
+              )}
               <div className="flex justify-between text-[#4a3f3a]/70">
                 <span>هزینه ارسال</span>
                 <span className="font-semibold text-[#4a3f3a]">

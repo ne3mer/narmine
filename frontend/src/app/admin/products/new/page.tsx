@@ -38,6 +38,7 @@ export default function NewProductPage() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('basic');
+  const [discountPercent, setDiscountPercent] = useState<string>('');
 
   // Multi-product state
   const [productType, setProductType] = useState('physical_product');
@@ -57,7 +58,40 @@ export default function NewProductPage() {
   });
 
   const handleNewProductChange = (field: keyof NewProductState, value: string | boolean) => {
-    setNewProduct((prev) => ({ ...prev, [field]: value }));
+    setNewProduct((prev) => {
+      const newState = { ...prev, [field]: value };
+      
+      // Auto-calculate discount percentage if sale price or base price changes
+      if (field === 'salePrice' || field === 'basePrice') {
+        const base = Number(field === 'basePrice' ? value : prev.basePrice);
+        const sale = Number(field === 'salePrice' ? value : prev.salePrice);
+        
+        if (base > 0 && sale > 0 && sale < base) {
+          const percent = Math.round(((base - sale) / base) * 100);
+          setDiscountPercent(String(percent));
+        } else if (field === 'salePrice' && !value) {
+          setDiscountPercent('');
+        }
+      }
+      
+      return newState;
+    });
+  };
+
+  const handleDiscountChange = (percentStr: string) => {
+    setDiscountPercent(percentStr);
+    const percent = Number(percentStr);
+    const base = Number(newProduct.basePrice);
+    
+    if (base > 0 && percent > 0 && percent <= 100) {
+      const sale = Math.round(base * (1 - percent / 100));
+      // Round to nearest 1000 for cleaner prices
+      const roundedSale = Math.round(sale / 1000) * 1000;
+      handleNewProductChange('salePrice', String(roundedSale));
+      handleNewProductChange('onSale', true);
+    } else if (!percentStr) {
+      handleNewProductChange('salePrice', '');
+    }
   };
 
   const handleScreenshotsChange = (value: string) => {
@@ -710,18 +744,37 @@ export default function NewProductPage() {
               </div>
 
               {newProduct.onSale && (
-                <label>
-                  <span className="text-sm font-bold text-slate-700 mb-2 block">قیمت تخفیف (تومان)</span>
-                  <input
-                    type="number"
-                    value={newProduct.salePrice}
-                    onChange={(event) => handleNewProductChange('salePrice', event.target.value)}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                    min="0"
-                    placeholder="1200000"
-                  />
-                  <p className="text-xs text-slate-500 mt-1">قیمت با تخفیف (باید کمتر از قیمت پایه باشد)</p>
-                </label>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <label>
+                    <span className="text-sm font-bold text-slate-700 mb-2 block">درصد تخفیف (%)</span>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={discountPercent}
+                        onChange={(event) => handleDiscountChange(event.target.value)}
+                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition pl-10"
+                        min="0"
+                        max="100"
+                        placeholder="20"
+                      />
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                        <Icon name="trending-down" size={16} />
+                      </div>
+                    </div>
+                  </label>
+                  <label>
+                    <span className="text-sm font-bold text-slate-700 mb-2 block">قیمت تخفیف (تومان)</span>
+                    <input
+                      type="number"
+                      value={newProduct.salePrice}
+                      onChange={(event) => handleNewProductChange('salePrice', event.target.value)}
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
+                      min="0"
+                      placeholder="1200000"
+                    />
+                    <p className="text-xs text-slate-500 mt-1">قیمت با تخفیف (باید کمتر از قیمت پایه باشد)</p>
+                  </label>
+                </div>
               )}
             </div>
           </div>

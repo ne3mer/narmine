@@ -23,6 +23,10 @@ export const ProductCard = ({ game }: Props) => {
   const { rating: dynamicRating, reviewCount } = useProductRating(game.id);
   
   const displayRating = dynamicRating !== null && dynamicRating > 0 ? dynamicRating : (game.rating || 0);
+  
+  const discountPercent = game.onSale && game.basePrice && (game.salePrice || game.price)
+    ? Math.round(((game.basePrice - (game.salePrice || game.price)) / game.basePrice) * 100)
+    : 0;
 
   const handleCardClick = () => {
     router.push(`/products/${slug}`);
@@ -71,6 +75,14 @@ export const ProductCard = ({ game }: Props) => {
           )}
         </div>
 
+        {/* Discount Badge */}
+        {game.onSale && discountPercent > 0 && (
+          <div className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-rose-500 px-3 py-1.5 text-xs font-bold text-white shadow-lg animate-pulse">
+            <Icon name="zap" size={14} className="fill-white" />
+            <span>{discountPercent}%</span>
+          </div>
+        )}
+
         {/* Rating */}
         {displayRating > 0 && (
           <div className="absolute bottom-3 left-3 z-10 flex items-center gap-1 rounded-full border border-white/40 bg-white/90 backdrop-blur-sm px-3 py-1.5 shadow-sm">
@@ -96,10 +108,31 @@ export const ProductCard = ({ game }: Props) => {
 
         {/* Price */}
         <div className="mb-4 mt-auto">
-          <div className="flex items-baseline gap-2">
-            <span className="font-serif text-2xl font-bold text-[#4a3f3a]">{formatToman(game.price)}</span>
-            <span className="text-sm text-[#4a3f3a]/60">تومان</span>
-          </div>
+          {game.onSale ? (
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs text-slate-400 line-through decoration-slate-400/50 decoration-2">
+                  {formatToman(game.basePrice)}
+                </span>
+                <span className="rounded-md bg-rose-100 px-1.5 py-0.5 text-[10px] font-bold text-rose-600">
+                  {discountPercent}%
+                </span>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-serif text-2xl font-bold text-rose-600">
+                  {formatToman(game.salePrice || game.price)}
+                </span>
+                <span className="text-sm text-rose-600/80">تومان</span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-baseline gap-2">
+              <span className="font-serif text-2xl font-bold text-[#4a3f3a]">
+                {formatToman(game.price)}
+              </span>
+              <span className="text-sm text-[#4a3f3a]/60">تومان</span>
+            </div>
+          )}
           {game.monthlyPrice && (
             <p className="mt-1 text-xs text-[#4a3f3a]/60">پرداخت ماهانه: {formatToman(game.monthlyPrice)} تومان</p>
           )}
