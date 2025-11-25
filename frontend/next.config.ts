@@ -14,6 +14,14 @@ const remotePatterns: Required<NonNullable<NextConfig["images"]>>["remotePattern
     hostname: "localhost",
     port: "5050",
   },
+  {
+    protocol: "https",
+    hostname: "narmine-backend.onrender.com",
+  },
+  {
+    protocol: "https",
+    hostname: "api.narmineh.com",
+  },
 ];
 
 const addPatternFromEnv = (url?: string | null) => {

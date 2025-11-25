@@ -69,8 +69,13 @@ export const createApp = () => {
     res.json({ message: 'Narmine Backend API is running', version: '1.0.0' });
   });
 
-  // Serve static files from uploads directory
-  app.use('/uploads', express.static('public/uploads'));
+  // Serve static files from uploads directory with Cache-Control for Cloudflare
+  app.use('/uploads', express.static('public/uploads', {
+    maxAge: '7d', // Cache for 7 days
+    setHeaders: (res, path) => {
+      res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+    }
+  }));
 
   app.use('/api', routes);
 
