@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 import routes from './routes';
 import { env } from './config/env';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -10,6 +11,7 @@ import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
 import xss from 'xss-clean';
 import hpp from 'hpp';
+import fs from 'fs';
 
 export const createApp = () => {
   const app = express();
@@ -69,10 +71,14 @@ export const createApp = () => {
     res.json({ message: 'Narmine Backend API is running', version: '1.0.0' });
   });
 
+  // Resolve uploads directory relative to compiled dist folder
+  const uploadsDir = path.join(__dirname, '../public/uploads');
+  fs.mkdirSync(uploadsDir, { recursive: true });
+
   // Serve static files from uploads directory with Cache-Control for Cloudflare
-  app.use('/uploads', express.static('public/uploads', {
+  app.use('/uploads', express.static(uploadsDir, {
     maxAge: '7d', // Cache for 7 days
-    setHeaders: (res, path) => {
+    setHeaders: (res) => {
       res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
     }
   }));
