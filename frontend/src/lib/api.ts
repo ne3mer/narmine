@@ -12,12 +12,15 @@ const uploadBaseFromEnv = normalizeUrl(process.env.NEXT_PUBLIC_UPLOAD_BASE_URL);
 // If API_BASE_URL ends with /api, remove it to get the root URL for uploads
 const derivedUploadBase = API_BASE_URL.endsWith('/api') ? API_BASE_URL.slice(0, -4) : API_BASE_URL;
 
-// On production, always use the backend URL for uploads if not explicitly set
-export const UPLOAD_BASE_URL = uploadBaseFromEnv || (
-  process.env.NODE_ENV === 'production' 
-    ? 'https://narmine-backend.onrender.com' 
-    : derivedUploadBase
-);
+// Prefer the API host for serving uploads and only fall back to Render when the API
+// still points to localhost in a production environment (e.g. missing env vars).
+const isLocalDerivedBase = /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(derivedUploadBase);
+const fallbackUploadBase =
+  isLocalDerivedBase && process.env.NODE_ENV === 'production'
+    ? 'https://narmine-backend.onrender.com'
+    : derivedUploadBase;
+
+export const UPLOAD_BASE_URL = uploadBaseFromEnv || fallbackUploadBase;
 
 export const resolveImageUrl = (path?: string) => {
   if (!path) return '';
