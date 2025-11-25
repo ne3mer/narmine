@@ -97,7 +97,7 @@ export default function EditProductPage() {
         featured: Boolean(product.featured),
         onSale: Boolean(product.onSale),
         salePrice: product.salePrice != null ? String(product.salePrice) : '',
-        options: product.options ?? [],
+        options: product.options?.map(opt => ({ ...opt, values: opt.values.join(', ') })) ?? [],
         variants: product.variants ?? []
       });
     } catch (err) {
@@ -141,7 +141,7 @@ export default function EditProductPage() {
         ? {
             ...prev,
             options: prev.options.map((opt) =>
-              opt.id === id ? { ...opt, values: parseList(valuesStr) } : opt
+              opt.id === id ? { ...opt, values: valuesStr } : opt
             )
           }
         : prev
@@ -150,7 +150,7 @@ export default function EditProductPage() {
 
   const handleAddOption = () => {
     setFormState((prev) =>
-      prev ? { ...prev, options: [...prev.options, { id: crypto.randomUUID(), name: '', values: [] }] } : prev
+      prev ? { ...prev, options: [...prev.options, { id: crypto.randomUUID(), name: '', values: '' }] } : prev
     );
   };
 
@@ -183,12 +183,12 @@ export default function EditProductPage() {
         }
 
         const option = prev.options[optionIndex];
-        if (!option || !option.values.length || !option.name) {
+        if (!option || !option.values || !option.name) {
           return [];
         }
 
         const combinations: Record<string, string>[] = [];
-        for (const value of option.values) {
+        for (const value of parseList(option.values)) {
           combinations.push(
             ...generateCombinations(optionIndex + 1, {
               ...current,
@@ -257,7 +257,7 @@ export default function EditProductPage() {
       gallery: formState.gallery,
       tags: parseList(formState.tags),
       categories: formState.categories,
-      options: formState.options,
+      options: formState.options.map(opt => ({ ...opt, values: parseList(opt.values) })),
       variants: formState.variants
     };
 
@@ -763,7 +763,7 @@ export default function EditProductPage() {
                     <label className="flex-1">
                       <span className="text-xs text-slate-500 mb-1 block">مقادیر (با کاما)</span>
                       <input
-                        value={opt.values.join(', ')}
+                        value={opt.values}
                         onChange={(e) => handleOptionValuesChange(opt.id, e.target.value)}
                         className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
                         placeholder="R1, R2, R3"

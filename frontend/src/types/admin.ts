@@ -82,7 +82,7 @@ export type NewProductState = {
   options: {
     id: string;
     name: string;
-    values: string[];
+    values: string;
   }[];
   variants: {
     id: string;

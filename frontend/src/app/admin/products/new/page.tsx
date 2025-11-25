@@ -67,7 +67,7 @@ export default function NewProductPage() {
   const handleAddOption = () => {
     setNewProduct((prev) => ({
       ...prev,
-      options: [...prev.options, { id: crypto.randomUUID(), name: '', values: [] }]
+      options: [...prev.options, { id: crypto.randomUUID(), name: '', values: '' }]
     }));
   };
 
@@ -89,7 +89,7 @@ export default function NewProductPage() {
     setNewProduct((prev) => ({
       ...prev,
       options: prev.options.map((opt) =>
-        opt.id === id ? { ...opt, values: parseList(valuesStr) } : opt
+        opt.id === id ? { ...opt, values: valuesStr } : opt
       )
     }));
   };
@@ -101,12 +101,12 @@ export default function NewProductPage() {
       if (optionIndex === newProduct.options.length) return [current];
 
       const option = newProduct.options[optionIndex];
-      if (!option || !option.values.length || !option.name) {
+      if (!option || !option.values || !option.name) {
         return [];
       }
 
       const combinations: Record<string, string>[] = [];
-      for (const value of option.values) {
+      for (const value of parseList(option.values)) {
         combinations.push(...generateCombinations(optionIndex + 1, { ...current, [option.name]: value }));
       }
 
@@ -193,7 +193,7 @@ export default function NewProductPage() {
       gallery: newProduct.gallery,
       tags: parseList(newProduct.tags),
       categories: newProduct.categories,
-      options: newProduct.options,
+      options: newProduct.options.map(opt => ({ ...opt, values: parseList(opt.values) })),
       variants: newProduct.variants,
       
       // Multi-product fields
@@ -767,7 +767,7 @@ export default function NewProductPage() {
                     <label className="flex-1">
                       <span className="text-xs text-slate-500 mb-1 block">مقادیر (با کاما)</span>
                       <input
-                        value={opt.values.join(', ')}
+                        value={opt.values}
                         onChange={(e) => handleOptionValuesChange(opt.id, e.target.value)}
                         className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
                         placeholder="R1, R2, R3"
