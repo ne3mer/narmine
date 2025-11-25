@@ -44,11 +44,26 @@ export const addToCart = async (userId: string, input: AddToCartInput) => {
 
   // Determine price based on variant
   let price = game.basePrice;
+  
+  // Calculate discount percentage from main product
+  const discountPercent = game.onSale && game.basePrice > (game.salePrice || game.basePrice)
+    ? Math.round(((game.basePrice - (game.salePrice || game.basePrice)) / game.basePrice) * 100)
+    : 0;
+
   if (variantId) {
     const variant = game.variants.find((v) => v.id === variantId);
     if (variant) {
       price = variant.price;
+      
+      // Apply discount to variant if main product is on sale
+      if (game.onSale && discountPercent > 0) {
+        const discountedVariantPrice = Math.round(variant.price * (1 - discountPercent / 100));
+        // Round to nearest 1000 for cleaner prices
+        price = Math.round(discountedVariantPrice / 1000) * 1000;
+      }
     }
+  } else if (game.onSale && game.salePrice) {
+    price = game.salePrice;
   }
   
   // Check if item already in cart

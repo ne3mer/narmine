@@ -139,11 +139,26 @@ export default function GameDetailClient({ game }: Props) {
     }
   }, [selectedOptions, game.variants]);
 
-  const currentPrice = currentVariant ? currentVariant.price : (game.salePrice || game.basePrice);
-  const discountPercent = game.basePrice > currentPrice 
-    ? Math.round(((game.basePrice - currentPrice) / game.basePrice) * 100)
+  // Calculate discount percentage from main product
+  const mainProductDiscountPercent = game.onSale && game.basePrice > (game.salePrice || game.basePrice)
+    ? Math.round(((game.basePrice - (game.salePrice || game.basePrice)) / game.basePrice) * 100)
     : 0;
-  const savings = game.basePrice > currentPrice ? game.basePrice - currentPrice : 0;
+
+  // Determine current price based on variant and discount
+  let currentPrice = currentVariant ? currentVariant.price : (game.salePrice || game.basePrice);
+  let basePrice = currentVariant ? currentVariant.price : game.basePrice;
+
+  // Apply discount to variant if main product is on sale
+  if (currentVariant && game.onSale && mainProductDiscountPercent > 0) {
+    const discountedVariantPrice = Math.round(currentVariant.price * (1 - mainProductDiscountPercent / 100));
+    // Round to nearest 1000 for cleaner prices
+    currentPrice = Math.round(discountedVariantPrice / 1000) * 1000;
+  }
+
+  const discountPercent = basePrice > currentPrice 
+    ? Math.round(((basePrice - currentPrice) / basePrice) * 100)
+    : 0;
+  const savings = basePrice > currentPrice ? basePrice - currentPrice : 0;
 
   // Image resolution - prioritize cover over coverUrl as it's more reliable
   const coverImage = game.cover || game.coverUrl;
