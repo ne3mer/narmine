@@ -186,7 +186,6 @@ export default function GameDetailClient({ game }: Props) {
             alt="Background"
             fill
             className="object-cover blur-2xl opacity-50 scale-110"
-            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#f8f5f2]/20 via-[#f8f5f2]/60 to-[#f8f5f2]" />
         </div>
@@ -209,7 +208,6 @@ export default function GameDetailClient({ game }: Props) {
                 fill 
                 className="object-contain p-2"
                 priority
-                unoptimized
               />
               
               {/* Hover Overlay */}
@@ -311,7 +309,6 @@ export default function GameDetailClient({ game }: Props) {
                               alt={`${game.title} - ${idx + 1}`}
                               fill
                               className="object-contain p-2 transition-transform duration-500 group-hover:scale-110"
-                              unoptimized
                             />
                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                           </button>
@@ -594,7 +591,6 @@ export default function GameDetailClient({ game }: Props) {
                 fill
                 className="object-contain"
                 priority
-                unoptimized
               />
             </div>
             
@@ -613,7 +609,6 @@ export default function GameDetailClient({ game }: Props) {
                     alt={`Thumbnail ${idx + 1}`}
                     fill
                     className="object-cover"
-                    unoptimized
                   />
                 </button>
               ))}

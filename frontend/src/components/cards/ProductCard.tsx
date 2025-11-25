@@ -57,7 +57,6 @@ export const ProductCard = ({ game }: Props) => {
           fill
           sizes="(max-width: 768px) 300px, 360px"
           className={`object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
-          unoptimized
         />
         
         {/* Gradient Overlay */}

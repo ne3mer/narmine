@@ -32,7 +32,6 @@ export function CatalogProductCard({ game }: { game: GameCardContent }) {
           fill
           sizes="(max-width: 768px) 100vw, 320px"
           className="object-cover transition duration-700 group-hover:scale-110"
-          unoptimized
         />
         <div className="absolute left-4 top-4 z-20 flex gap-2 text-xs font-bold">
           <InfoChip icon="🎮" label={game.platform || 'PC'} />

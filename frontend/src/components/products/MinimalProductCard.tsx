@@ -36,7 +36,6 @@ export const MinimalProductCard = ({ id, title, cover, price, slug, rating: stat
             fill
             sizes="(max-width: 768px) 200px, 250px"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
-            unoptimized
           />
         ) : (
           <div className="flex h-full items-center justify-center text-6xl text-[#c9a896]/30">
