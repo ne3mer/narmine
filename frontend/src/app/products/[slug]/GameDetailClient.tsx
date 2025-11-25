@@ -123,7 +123,7 @@ export default function GameDetailClient({ game }: Props) {
     if (game.options && game.options.length > 0) {
       const initialOptions: Record<string, string> = {};
       game.options.forEach(opt => {
-        initialOptions[opt.id] = opt.values[0];
+        initialOptions[opt.name] = opt.values[0];
       });
       setSelectedOptions(initialOptions);
     }
@@ -507,9 +507,9 @@ export default function GameDetailClient({ game }: Props) {
                         {option.values.map((value) => (
                           <button
                             key={value}
-                            onClick={() => setSelectedOptions(prev => ({ ...prev, [option.id]: value }))}
+                            onClick={() => setSelectedOptions(prev => ({ ...prev, [option.name]: value }))}
                             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all border-2 ${
-                              selectedOptions[option.id] === value
+                              selectedOptions[option.name] === value
                                 ? 'border-[#4a3f3a] bg-[#4a3f3a] text-white shadow-md transform scale-105'
                                 : 'border-slate-200 bg-white text-slate-600 hover:border-[#c9a896]'
                             }`}
@@ -527,7 +527,7 @@ export default function GameDetailClient({ game }: Props) {
               <div className="pt-4 space-y-3">
                 <button
                   onClick={handleAddToCart}
-                  disabled={addingToCart || game.inventory?.status === 'out_of_stock'}
+                  disabled={addingToCart || (currentVariant ? currentVariant.stock <= 0 : game.inventory?.status === 'out_of_stock')}
                   className="w-full py-4 bg-[#4a3f3a] text-white rounded-2xl font-bold text-lg shadow-xl hover:bg-[#c9a896] hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 group"
                 >
                   {addingToCart ? (
@@ -535,7 +535,7 @@ export default function GameDetailClient({ game }: Props) {
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       <span>در حال افزودن...</span>
                     </>
-                  ) : game.inventory?.status === 'out_of_stock' ? (
+                  ) : (currentVariant ? currentVariant.stock <= 0 : game.inventory?.status === 'out_of_stock') ? (
                     <>
                       <Icon name="lock" size={20} />
                       <span>ناموجود</span>
