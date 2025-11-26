@@ -55,8 +55,24 @@ export const listGames = async (filters: GameFilters) => {
   return queryBuilder;
 };
 
+import { CategoryModel } from '../models/category.model';
+
+// ... (existing imports)
+
 export const createGame = async (payload: CreateGameInput) => {
-  return GameModel.create(payload);
+  const game = await GameModel.create(payload);
+  
+  // Update product counts for associated categories
+  if (game.categories && game.categories.length > 0) {
+    await Promise.all(
+      game.categories.map(async (catId) => {
+        const category = await CategoryModel.findById(catId);
+        if (category) await category.updateProductCount();
+      })
+    );
+  }
+  
+  return game;
 };
 
 const gameIdentifierFilter = (idOrSlug: string): FilterQuery<GameDocument> => {
@@ -71,6 +87,9 @@ export const getGameById = async (idOrSlug: string) => {
 };
 
 export const updateGame = async (idOrSlug: string, payload: UpdateGameInput) => {
+  // Get original game to know previous categories
+  const originalGame = await GameModel.findOne(gameIdentifierFilter(idOrSlug));
+  
   const game = await GameModel.findOneAndUpdate(gameIdentifierFilter(idOrSlug), payload, { new: true });
   
   // Check price alerts if price was updated
@@ -87,12 +106,43 @@ export const updateGame = async (idOrSlug: string, payload: UpdateGameInput) => 
       // Don't fail the update if price alert check fails
     }
   }
+
+  // Update product counts for both old and new categories
+  if (game) {
+    const oldCategories = originalGame?.categories || [];
+    const newCategories = game.categories || [];
+    
+    // Collect all unique category IDs affected
+    const allCatIds = new Set([
+      ...oldCategories.map(id => id.toString()),
+      ...newCategories.map(id => id.toString())
+    ]);
+    
+    await Promise.all(
+      Array.from(allCatIds).map(async (catId) => {
+        const category = await CategoryModel.findById(catId);
+        if (category) await category.updateProductCount();
+      })
+    );
+  }
   
   return game;
 };
 
 export const deleteGame = async (idOrSlug: string) => {
-  return GameModel.findOneAndDelete(gameIdentifierFilter(idOrSlug));
+  const game = await GameModel.findOneAndDelete(gameIdentifierFilter(idOrSlug));
+  
+  // Update product counts for removed categories
+  if (game && game.categories && game.categories.length > 0) {
+    await Promise.all(
+      game.categories.map(async (catId) => {
+        const category = await CategoryModel.findById(catId);
+        if (category) await category.updateProductCount();
+      })
+    );
+  }
+  
+  return game;
 };
 
 export const seedSampleGames = async () => {

@@ -101,6 +101,31 @@ export default function CategoriesPage() {
     handleReorder(newCategories);
   };
 
+  const handleSync = async () => {
+    setLoading(true);
+    try {
+      const token = getAuthToken();
+      const res = await fetch(`${API_BASE_URL}/api/categories/sync-counts`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_API_KEY || ''
+        }
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message);
+        fetchCategories();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error('خطا در همگام‌سازی');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -116,13 +141,22 @@ export default function CategoriesPage() {
           <h1 className="text-xl sm:text-2xl font-black text-slate-900">دسته‌بندی‌ها</h1>
           <p className="mt-1 text-sm text-slate-500">مدیریت دسته‌بندی‌های محصولات</p>
         </div>
-        <Link
-          href="/admin/categories/new"
-          className="flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-emerald-600 self-start sm:self-auto"
-        >
-          <Icon name="plus" size={20} />
-          <span>دسته‌بندی جدید</span>
-        </Link>
+        <div className="flex gap-2 self-start sm:self-auto">
+          <button
+            onClick={handleSync}
+            className="flex items-center gap-2 rounded-xl bg-white border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+          >
+            <Icon name="refresh" size={20} />
+            <span>همگام‌سازی</span>
+          </button>
+          <Link
+            href="/admin/categories/new"
+            className="flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-emerald-600"
+          >
+            <Icon name="plus" size={20} />
+            <span>دسته‌بندی جدید</span>
+          </Link>
+        </div>
       </div>
 
       {/* Mobile Card View */}

@@ -407,3 +407,26 @@ export const reorderCategories = async (req: Request, res: Response) => {
     });
   }
 };
+
+// Sync category product counts (admin)
+export const syncCategoryCounts = async (_req: Request, res: Response) => {
+  try {
+    const categories = await CategoryModel.find();
+    
+    await Promise.all(
+      categories.map(cat => cat.updateProductCount())
+    );
+    
+    res.json({
+      success: true,
+      message: 'تعداد محصولات تمام دسته‌بندی‌ها به‌روزرسانی شد',
+      count: categories.length
+    });
+  } catch (error) {
+    console.error('Error syncing counts:', error);
+    res.status(500).json({
+      success: false,
+      message: 'خطا در همگام‌سازی تعداد محصولات'
+    });
+  }
+};

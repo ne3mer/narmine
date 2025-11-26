@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.reorderCategories = exports.removeGameFromCategory = exports.addGameToCategory = exports.deleteCategory = exports.updateCategory = exports.createCategory = exports.getCategoryGames = exports.getCategoryBySlug = exports.getAllCategories = void 0;
+exports.syncCategoryCounts = exports.reorderCategories = exports.removeGameFromCategory = exports.addGameToCategory = exports.deleteCategory = exports.updateCategory = exports.createCategory = exports.getCategoryGames = exports.getCategoryBySlug = exports.getAllCategories = void 0;
 const category_model_1 = require("../models/category.model");
 const game_model_1 = require("../models/game.model");
 const slugify = (value) => value
@@ -349,4 +349,24 @@ const reorderCategories = async (req, res) => {
     }
 };
 exports.reorderCategories = reorderCategories;
+// Sync category product counts (admin)
+const syncCategoryCounts = async (_req, res) => {
+    try {
+        const categories = await category_model_1.CategoryModel.find();
+        await Promise.all(categories.map(cat => cat.updateProductCount()));
+        res.json({
+            success: true,
+            message: 'تعداد محصولات تمام دسته‌بندی‌ها به‌روزرسانی شد',
+            count: categories.length
+        });
+    }
+    catch (error) {
+        console.error('Error syncing counts:', error);
+        res.status(500).json({
+            success: false,
+            message: 'خطا در همگام‌سازی تعداد محصولات'
+        });
+    }
+};
+exports.syncCategoryCounts = syncCategoryCounts;
 //# sourceMappingURL=category.controller.js.map

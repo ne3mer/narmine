@@ -10,7 +10,8 @@ import {
   deleteCategory,
   addGameToCategory,
   removeGameFromCategory,
-  reorderCategories
+  reorderCategories,
+  syncCategoryCounts
 } from '../controllers/category.controller';
 
 const router = Router();
@@ -27,5 +28,6 @@ router.put('/:id', authenticateUser, adminAuth, updateCategory);
 router.delete('/:id', authenticateUser, adminAuth, deleteCategory);
 router.post('/:id/add-game', authenticateUser, adminAuth, addGameToCategory);
 router.delete('/:id/remove-game/:gameId', authenticateUser, adminAuth, removeGameFromCategory);
+router.post('/sync-counts', authenticateUser, adminAuth, syncCategoryCounts);
 
 export default router;

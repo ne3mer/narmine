@@ -14,7 +14,7 @@ interface Props {
 async function getCategory(slug: string) {
   try {
     const res = await fetch(`${API_BASE_URL}/api/categories/${slug}`, {
-      next: { revalidate: 3600 }
+      next: { revalidate: 0 }
     });
     
     if (!res.ok) return null;
@@ -30,7 +30,7 @@ async function getCategoryGames(slug: string, page: number = 1, sort: string = '
   try {
     const res = await fetch(
       `${API_BASE_URL}/api/categories/${slug}/games?page=${page}&limit=20&sort=${sort}`,
-      { next: { revalidate: 60 } } // Cache for 1 minute
+      { next: { revalidate: 0 } }
     );
     
     if (!res.ok) return null;

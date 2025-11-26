@@ -16,5 +16,6 @@ router.put('/:id', authenticateUser_1.authenticateUser, adminAuth_1.adminAuth, c
 router.delete('/:id', authenticateUser_1.authenticateUser, adminAuth_1.adminAuth, category_controller_1.deleteCategory);
 router.post('/:id/add-game', authenticateUser_1.authenticateUser, adminAuth_1.adminAuth, category_controller_1.addGameToCategory);
 router.delete('/:id/remove-game/:gameId', authenticateUser_1.authenticateUser, adminAuth_1.adminAuth, category_controller_1.removeGameFromCategory);
+router.post('/sync-counts', authenticateUser_1.authenticateUser, adminAuth_1.adminAuth, category_controller_1.syncCategoryCounts);
 exports.default = router;
 //# sourceMappingURL=category.route.js.map
