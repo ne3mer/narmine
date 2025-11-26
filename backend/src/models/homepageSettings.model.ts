@@ -52,9 +52,19 @@ export const DEFAULT_SECTIONS: SectionConfig[] = [
     settings: {}
   },
   {
-    id: 'featured-collections',
+    id: 'sale-showcase',
     enabled: true,
     order: 3,
+    settings: {
+      layout: 'spotlight',
+      highlightCount: 1,
+      secondaryCount: 3
+    }
+  },
+  {
+    id: 'featured-collections',
+    enabled: true,
+    order: 4,
     settings: {
       itemCount: 8,
       sortBy: 'sales'
@@ -63,7 +73,7 @@ export const DEFAULT_SECTIONS: SectionConfig[] = [
   {
     id: 'new-arrivals',
     enabled: true,
-    order: 4,
+    order: 5,
     settings: {
       itemCount: 8,
       daysThreshold: 14
@@ -72,7 +82,7 @@ export const DEFAULT_SECTIONS: SectionConfig[] = [
   {
     id: 'categories',
     enabled: true,
-    order: 5,
+    order: 6,
     settings: {
       layout: 'grid',
       categoryCount: 6
@@ -81,19 +91,19 @@ export const DEFAULT_SECTIONS: SectionConfig[] = [
   {
     id: 'trust-signals',
     enabled: true,
-    order: 6,
+    order: 7,
     settings: {}
   },
   {
     id: 'shipping-experience',
     enabled: true,
-    order: 7,
+    order: 8,
     settings: {}
   },
   {
     id: 'testimonials',
     enabled: true,
-    order: 8,
+    order: 9,
     settings: {
       itemCount: 3,
       autoRotate: false
@@ -102,7 +112,7 @@ export const DEFAULT_SECTIONS: SectionConfig[] = [
   {
     id: 'newsletter',
     enabled: true,
-    order: 9,
+    order: 10,
     settings: {}
   }
 ];

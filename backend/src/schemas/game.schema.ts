@@ -8,7 +8,11 @@ const gameQuery = z.object({
 
   search: z.string().optional(),
   sort: z.string().optional(),
-  limit: z.string().optional().transform((val) => val ? parseInt(val, 10) : undefined)
+  limit: z.string().optional().transform((val) => val ? parseInt(val, 10) : undefined),
+  onSale: z
+    .string()
+    .optional()
+    .transform((val) => (val === undefined ? undefined : val === 'true'))
 });
 
 export const createGameSchema = z.object({

@@ -9,6 +9,7 @@ import { API_BASE_URL } from "@/lib/api";
 import { defaultHomeContent, type HomeContent } from "@/data/homeContent";
 import { ShippingExperience } from "@/components/sections/ShippingExperience";
 import { DynamicBannersSection } from "@/components/sections/DynamicBannersSection";
+import { SaleShowcaseSection } from "@/components/sections/SaleShowcaseSection";
 
 type CategoryHighlight = {
   id: string;
@@ -74,6 +75,7 @@ export default async function HomePage() {
     : [
         { id: 'hero-carousel', enabled: true },
         { id: 'dynamic-banners', enabled: true },
+        { id: 'sale-showcase', enabled: true },
         { id: 'featured-collections', enabled: true },
         { id: 'new-arrivals', enabled: true },
         { id: 'categories', enabled: true },
@@ -92,6 +94,14 @@ export default async function HomePage() {
       
       case 'dynamic-banners':
         return <DynamicBannersSection key={section.id} />;
+      case 'sale-showcase':
+        return (
+          <section key={section.id} className="w-full bg-[#111827] py-20">
+            <div className="mx-auto max-w-7xl px-6">
+              <SaleShowcaseSection />
+            </div>
+          </section>
+        );
       
       case 'featured-collections':
       case 'popular-games': // Backward compatibility

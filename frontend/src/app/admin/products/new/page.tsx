@@ -12,6 +12,7 @@ import { Icon } from '@/components/icons/Icon';
 import { ProductTypeSelector } from '@/components/admin/ProductTypeSelector';
 import { DynamicField } from '@/components/admin/DynamicField';
 import { PRODUCT_TEMPLATES, getProductTemplate } from '@/config/productTemplates';
+import { DiscountDesigner } from '@/components/admin/products/DiscountDesigner';
 
 const RichTextEditor = dynamic(
   () => import('@/components/editor/RichTextEditor').then((mod) => ({ default: mod.RichTextEditor })),
@@ -38,7 +39,6 @@ export default function NewProductPage() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('basic');
-  const [discountPercent, setDiscountPercent] = useState<string>('');
 
   // Multi-product state
   const [productType, setProductType] = useState('physical_product');
@@ -60,38 +60,21 @@ export default function NewProductPage() {
   const handleNewProductChange = (field: keyof NewProductState, value: string | boolean) => {
     setNewProduct((prev) => {
       const newState = { ...prev, [field]: value };
-      
-      // Auto-calculate discount percentage if sale price or base price changes
-      if (field === 'salePrice' || field === 'basePrice') {
-        const base = Number(field === 'basePrice' ? value : prev.basePrice);
-        const sale = Number(field === 'salePrice' ? value : prev.salePrice);
-        
-        if (base > 0 && sale > 0 && sale < base) {
-          const percent = Math.round(((base - sale) / base) * 100);
-          setDiscountPercent(String(percent));
-        } else if (field === 'salePrice' && !value) {
-          setDiscountPercent('');
+
+      if (field === 'basePrice' && prev.onSale && prev.salePrice) {
+        const previousBase = Number(prev.basePrice);
+        const previousSale = Number(prev.salePrice);
+        const nextBase = Number(value);
+        if (previousBase > 0 && previousSale > 0 && previousSale < previousBase && nextBase > 0) {
+          const discountRatio = (previousBase - previousSale) / previousBase;
+          const recalculatedSale = Math.round(nextBase * (1 - discountRatio));
+          const roundedSale = Math.max(0, Math.round(recalculatedSale / 1000) * 1000);
+          newState.salePrice = String(roundedSale);
         }
       }
-      
+
       return newState;
     });
-  };
-
-  const handleDiscountChange = (percentStr: string) => {
-    setDiscountPercent(percentStr);
-    const percent = Number(percentStr);
-    const base = Number(newProduct.basePrice);
-    
-    if (base > 0 && percent > 0 && percent <= 100) {
-      const sale = Math.round(base * (1 - percent / 100));
-      // Round to nearest 1000 for cleaner prices
-      const roundedSale = Math.round(sale / 1000) * 1000;
-      handleNewProductChange('salePrice', String(roundedSale));
-      handleNewProductChange('onSale', true);
-    } else if (!percentStr) {
-      handleNewProductChange('salePrice', '');
-    }
   };
 
   const handleScreenshotsChange = (value: string) => {
@@ -715,7 +698,7 @@ export default function NewProductPage() {
                 <p className="text-xs text-slate-500 mt-1">حداکثر 160 کاراکتر (بهینه: 150-160)</p>
               </label>
 
-              <div className="grid gap-4 md:grid-cols-2 p-4 rounded-xl border border-slate-200 bg-slate-50">
+              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
                 <label className="flex items-center gap-3">
                   <input
                     type="checkbox"
@@ -728,54 +711,15 @@ export default function NewProductPage() {
                     <p className="text-xs text-slate-500 mt-1">نمایش در بخش محصولات ویژه</p>
                   </div>
                 </label>
-
-                <label className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    checked={newProduct.onSale}
-                    onChange={(event) => handleNewProductChange('onSale', event.target.checked)}
-                    className="h-5 w-5 rounded border-slate-300 accent-emerald-500"
-                  />
-                  <div>
-                    <span className="text-sm font-bold text-slate-700">در حال فروش</span>
-                    <p className="text-xs text-slate-500 mt-1">نمایش برچسب تخفیف</p>
-                  </div>
-                </label>
               </div>
 
-              {newProduct.onSale && (
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label>
-                    <span className="text-sm font-bold text-slate-700 mb-2 block">درصد تخفیف (%)</span>
-                    <div className="relative">
-                      <input
-                        type="number"
-                        value={discountPercent}
-                        onChange={(event) => handleDiscountChange(event.target.value)}
-                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition pl-10"
-                        min="0"
-                        max="100"
-                        placeholder="20"
-                      />
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                        <Icon name="trending-down" size={16} />
-                      </div>
-                    </div>
-                  </label>
-                  <label>
-                    <span className="text-sm font-bold text-slate-700 mb-2 block">قیمت تخفیف (تومان)</span>
-                    <input
-                      type="number"
-                      value={newProduct.salePrice}
-                      onChange={(event) => handleNewProductChange('salePrice', event.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                      min="0"
-                      placeholder="1200000"
-                    />
-                    <p className="text-xs text-slate-500 mt-1">قیمت با تخفیف (باید کمتر از قیمت پایه باشد)</p>
-                  </label>
-                </div>
-              )}
+              <DiscountDesigner
+                basePrice={Number(newProduct.basePrice) || 0}
+                salePrice={newProduct.salePrice}
+                enabled={newProduct.onSale}
+                onToggle={(value) => handleNewProductChange('onSale', value)}
+                onSalePriceChange={(value) => handleNewProductChange('salePrice', value)}
+              />
             </div>
           </div>
         )}

@@ -13,6 +13,7 @@ router.get('/', async (req: Request, res: Response) => {
   try {
     let settings = await HomepageSettings.findOne();
     let contentNeedsSave = false;
+    let sectionsNeedUpdate = false;
     
     // If no settings exist, create default
     if (!settings) {
@@ -26,6 +27,23 @@ router.get('/', async (req: Request, res: Response) => {
     if (!settings.content) {
       settings.content = DEFAULT_HOME_CONTENT;
       await settings.save();
+    }
+
+    if (!settings.sections || settings.sections.length === 0) {
+      settings.sections = DEFAULT_SECTIONS;
+      sectionsNeedUpdate = true;
+    } else {
+      const existingSectionIds = new Set((settings.sections || []).map((section) => section.id));
+      for (const defaultSection of DEFAULT_SECTIONS) {
+        if (!existingSectionIds.has(defaultSection.id)) {
+          settings.sections.push(defaultSection);
+          sectionsNeedUpdate = true;
+        }
+      }
+
+      if (sectionsNeedUpdate) {
+        settings.sections = settings.sections.sort((a, b) => a.order - b.order);
+      }
     }
 
     const rawContent = (settings.content as any)?.toJSON?.() ?? settings.content ?? {};
@@ -45,7 +63,7 @@ router.get('/', async (req: Request, res: Response) => {
       contentNeedsSave = true;
     }
 
-    if (contentNeedsSave) {
+    if (contentNeedsSave || sectionsNeedUpdate) {
       await settings.save();
     }
 

@@ -9,18 +9,20 @@ type GameQuery = {
   search?: string;
   sort?: string;
   limit?: string;
+  onSale?: boolean;
 };
 
 export const getGames = async (req: Request<unknown, unknown, unknown, GameQuery>, res: Response) => {
   try {
-    const { genre, region, search, sort, limit } = req.query;
+    const { genre, region, search, sort, limit, onSale } = req.query;
     const games = await listGames({
       genre: genre || undefined,
       region: region || undefined,
 
       search: search || undefined,
       sort: sort || undefined,
-      limit: limit ? parseInt(limit, 10) : undefined
+      limit: limit ? parseInt(limit, 10) : undefined,
+      onSale
     });
 
     res.json({ data: games });

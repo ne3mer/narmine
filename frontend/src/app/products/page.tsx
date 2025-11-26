@@ -61,9 +61,9 @@ function ProductsContent() {
       if (filters.search) searchParams.set('search', filters.search);
       if (filters.category) searchParams.set('genre', filters.category); // Assuming genre maps to category slug
       if (filters.sort) searchParams.set('sort', filters.sort);
+      if (filters.onSale) searchParams.set('onSale', 'true');
       
-      // Note: Backend might need updates to support min/max price and onSale filters if not already present
-      // For now, we'll handle what we can via existing API params or add them if supported
+      // Backend now supports filtering by onSale directly; price range filtering is still handled client-side
       
       const queryString = searchParams.toString();
       const url = queryString 
@@ -76,9 +76,6 @@ function ProductsContent() {
       let backendGames: BackendGame[] = payload?.data ?? [];
 
       // Client-side filtering for features not yet in API (optional, but good for immediate feedback)
-      if (filters.onSale) {
-        backendGames = backendGames.filter(g => g.onSale);
-      }
       if (filters.minPrice > 0 || filters.maxPrice < 50000000) {
         backendGames = backendGames.filter(g => {
           const price = g.onSale && g.salePrice ? g.salePrice : g.basePrice;

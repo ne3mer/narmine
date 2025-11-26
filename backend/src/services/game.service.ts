@@ -15,6 +15,7 @@ export interface GameFilters {
   search?: string;
   sort?: string;
   limit?: number;
+  onSale?: boolean;
 }
 
 export const listGames = async (filters: GameFilters) => {
@@ -22,6 +23,10 @@ export const listGames = async (filters: GameFilters) => {
 
   if (filters.genre) {
     query.genre = filters.genre;
+  }
+
+  if (typeof filters.onSale === 'boolean') {
+    query.onSale = filters.onSale;
   }
 
   if (filters.region) {

@@ -9,6 +9,7 @@ import { ImageGalleryUpload } from '@/components/upload/ImageGalleryUpload';
 import CategorySelector from '@/components/admin/products/CategorySelector';
 import type { NewProductState, ProductRow } from '@/types/admin';
 import { Icon } from '@/components/icons/Icon';
+import { DiscountDesigner } from '@/components/admin/products/DiscountDesigner';
 
 const RichTextEditor = dynamic(
   () => import('@/components/editor/RichTextEditor').then((mod) => ({ default: mod.RichTextEditor })),
@@ -45,7 +46,6 @@ export default function EditProductPage() {
   const [deleting, setDeleting] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('basic');
-  const [discountPercent, setDiscountPercent] = useState<string>('');
 
   const loadProduct = useCallback(async (silent = false) => {
     if (!productId) return;
@@ -101,12 +101,6 @@ export default function EditProductPage() {
         options: product.options?.map(opt => ({ ...opt, values: opt.values.join(', ') })) ?? [],
         variants: product.variants ?? []
       });
-      
-      // Calculate initial discount percent
-      if (product.basePrice && product.salePrice && product.basePrice > product.salePrice) {
-        const percent = Math.round(((product.basePrice - product.salePrice) / product.basePrice) * 100);
-        setDiscountPercent(String(percent));
-      }
     } catch (err) {
       setStatus({
         type: 'error',
@@ -125,41 +119,23 @@ export default function EditProductPage() {
 
   const handleFieldChange = (field: keyof NewProductState, value: string | boolean) => {
     setFormState((prev) => {
-      const newState = prev ? { ...prev, [field]: value } : prev;
-      
-      // Auto-calculate discount percentage if sale price or base price changes
-      if (prev && (field === 'salePrice' || field === 'basePrice')) {
-        const base = Number(field === 'basePrice' ? value : prev.basePrice);
-        const sale = Number(field === 'salePrice' ? value : prev.salePrice);
-        
-        if (base > 0 && sale > 0 && sale < base) {
-          const percent = Math.round(((base - sale) / base) * 100);
-          setDiscountPercent(String(percent));
-        } else if (field === 'salePrice' && !value) {
-          setDiscountPercent('');
+      if (!prev) return prev;
+      const newState = { ...prev, [field]: value };
+
+      if (field === 'basePrice' && prev.onSale && prev.salePrice) {
+        const previousBase = Number(prev.basePrice);
+        const previousSale = Number(prev.salePrice);
+        const nextBase = Number(value);
+        if (previousBase > 0 && previousSale > 0 && previousSale < previousBase && nextBase > 0) {
+          const discountRatio = (previousBase - previousSale) / previousBase;
+          const recalculatedSale = Math.round(nextBase * (1 - discountRatio));
+          const roundedSale = Math.max(0, Math.round(recalculatedSale / 1000) * 1000);
+          newState.salePrice = String(roundedSale);
         }
       }
-      
+
       return newState;
     });
-  };
-
-  const handleDiscountChange = (percentStr: string) => {
-    setDiscountPercent(percentStr);
-    if (!formState) return;
-
-    const percent = Number(percentStr);
-    const base = Number(formState.basePrice);
-    
-    if (base > 0 && percent > 0 && percent <= 100) {
-      const sale = Math.round(base * (1 - percent / 100));
-      // Round to nearest 1000 for cleaner prices
-      const roundedSale = Math.round(sale / 1000) * 1000;
-      handleFieldChange('salePrice', String(roundedSale));
-      handleFieldChange('onSale', true);
-    } else if (!percentStr) {
-      handleFieldChange('salePrice', '');
-    }
   };
 
   const handleScreenshotsChange = (value: string) => {
@@ -719,7 +695,7 @@ export default function EditProductPage() {
                 <p className="text-xs text-slate-500 mt-1">حداکثر 160 کاراکتر (بهینه: 150-160)</p>
               </label>
 
-              <div className="grid gap-4 md:grid-cols-2 p-4 rounded-xl border border-slate-200 bg-slate-50">
+              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
                 <label className="flex items-center gap-3">
                   <input
                     type="checkbox"
@@ -732,54 +708,15 @@ export default function EditProductPage() {
                     <p className="text-xs text-slate-500 mt-1">نمایش در بخش محصولات ویژه</p>
                   </div>
                 </label>
-
-                <label className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    checked={formState.onSale}
-                    onChange={(event) => handleFieldChange('onSale', event.target.checked)}
-                    className="h-5 w-5 rounded border-slate-300 accent-emerald-500"
-                  />
-                  <div>
-                    <span className="text-sm font-bold text-slate-700">در حال فروش</span>
-                    <p className="text-xs text-slate-500 mt-1">نمایش برچسب تخفیف</p>
-                  </div>
-                </label>
               </div>
 
-              {formState.onSale && (
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label>
-                    <span className="text-sm font-bold text-slate-700 mb-2 block">درصد تخفیف (%)</span>
-                    <div className="relative">
-                      <input
-                        type="number"
-                        value={discountPercent}
-                        onChange={(event) => handleDiscountChange(event.target.value)}
-                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition pl-10"
-                        min="0"
-                        max="100"
-                        placeholder="20"
-                      />
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                        <Icon name="trending-down" size={16} />
-                      </div>
-                    </div>
-                  </label>
-                  <label>
-                    <span className="text-sm font-bold text-slate-700 mb-2 block">قیمت تخفیف (تومان)</span>
-                    <input
-                      type="number"
-                      value={formState.salePrice}
-                      onChange={(event) => handleFieldChange('salePrice', event.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
-                      min="0"
-                      placeholder="1200000"
-                    />
-                    <p className="text-xs text-slate-500 mt-1">قیمت با تخفیف (باید کمتر از قیمت پایه باشد)</p>
-                  </label>
-                </div>
-              )}
+              <DiscountDesigner
+                basePrice={Number(formState.basePrice) || 0}
+                salePrice={formState.salePrice}
+                enabled={formState.onSale}
+                onToggle={(value) => handleFieldChange('onSale', value)}
+                onSalePriceChange={(value) => handleFieldChange('salePrice', value)}
+              />
             </div>
           </div>
         )}
