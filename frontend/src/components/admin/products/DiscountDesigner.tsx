@@ -131,9 +131,9 @@ export const DiscountDesigner = ({ basePrice, salePrice, enabled, onToggle, onSa
                   className="w-full accent-rose-500"
                 />
                 <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
-                  <span>۰%</span>
+                  <span>0%</span>
                   <div className="flex-1 h-px bg-slate-200" />
-                  <span>۷۰%</span>
+                  <span>70%</span>
                 </div>
               </div>
 
@@ -174,7 +174,7 @@ export const DiscountDesigner = ({ basePrice, salePrice, enabled, onToggle, onSa
         <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
           با فعال‌سازی تخفیف، امکان تنظیم درصد و قیمت نهایی برای این محصول فراهم می‌شود.
         </div>
-      )
+      )}
     </div>
   );
 };
