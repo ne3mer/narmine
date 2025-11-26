@@ -19,6 +19,10 @@ const remotePatterns: Required<NonNullable<NextConfig["images"]>>["remotePattern
     hostname: "narmine-backend.onrender.com",
   },
   {
+    protocol: "http",
+    hostname: "narmine-backend.onrender.com",
+  },
+  {
     protocol: "https",
     hostname: "api.narmineh.com",
   },

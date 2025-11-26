@@ -9,6 +9,11 @@ const getApiBaseUrl = () => {
   if (typeof window !== 'undefined') {
     if (!url) return 'https://narmine-backend.onrender.com';
     
+    // Force HTTPS for Render URLs to avoid mixed content issues
+    if (url.includes('onrender.com') && url.startsWith('http://')) {
+      return url.replace('http://', 'https://');
+    }
+    
     // Replace localhost with actual hostname (e.g. for mobile testing on LAN)
     if (url.includes('localhost') && window.location.hostname !== 'localhost') {
       return url.replace('localhost', window.location.hostname);
