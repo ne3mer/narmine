@@ -10,7 +10,11 @@ router.post('/image', adminAuth_1.adminAuth, upload_middleware_1.upload.single('
         if (!req.file) {
             return res.status(400).json({ message: 'لطفاً یک تصویر انتخاب کنید' });
         }
-        const imageUrl = `/uploads/${req.file.filename}`;
+        // Check if file was uploaded to Cloudinary (has 'path' starting with http)
+        // or local storage (needs /uploads/ prefix)
+        const imageUrl = req.file.path && req.file.path.startsWith('http')
+            ? req.file.path
+            : `/uploads/${req.file.filename}`;
         res.json({
             message: 'تصویر با موفقیت آپلود شد',
             data: {

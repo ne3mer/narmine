@@ -7,7 +7,7 @@ const shippingAddressSchema = zod_1.z.object({
     province: zod_1.z.string().optional(),
     city: zod_1.z.string().min(2, 'شهر را وارد کنید'),
     address: zod_1.z.string().min(5, 'آدرس را کامل وارد کنید'),
-    postalCode: zod_1.z.string().min(5, 'کد پستی حداقل ۵ رقم باشد').max(15).optional(),
+    postalCode: zod_1.z.string().min(5, 'کد پستی حداقل ۵ رقم باشد').max(15).optional().or(zod_1.z.literal('')),
     recipientName: zod_1.z.string().optional(),
     recipientPhone: zod_1.z.string().optional()
 });
@@ -51,7 +51,7 @@ exports.createOrderSchema = zod_1.z.object({
     body: zod_1.z.object({
         customerInfo: customerInfoSchema,
         items: zod_1.z.array(orderItemSchema).min(1, 'حداقل یک محصول باید در سفارش باشد'),
-        totalAmount: zod_1.z.number().positive(),
+        totalAmount: zod_1.z.number().nonnegative(),
         couponCode: zod_1.z.string().optional(),
         discountAmount: zod_1.z.number().nonnegative().optional(),
         note: zod_1.z.string().optional(),

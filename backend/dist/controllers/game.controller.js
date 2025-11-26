@@ -5,13 +5,14 @@ const errorHandler_1 = require("../middleware/errorHandler");
 const game_service_1 = require("../services/game.service");
 const getGames = async (req, res) => {
     try {
-        const { genre, region, search, sort, limit } = req.query;
+        const { genre, region, search, sort, limit, onSale } = req.query;
         const games = await (0, game_service_1.listGames)({
             genre: genre || undefined,
             region: region || undefined,
             search: search || undefined,
             sort: sort || undefined,
-            limit: limit ? parseInt(limit, 10) : undefined
+            limit: limit ? parseInt(limit, 10) : undefined,
+            onSale
         });
         res.json({ data: games });
     }

@@ -64,19 +64,34 @@ exports.DEFAULT_SECTIONS = [
         }
     },
     {
-        id: 'popular-games',
+        id: 'dynamic-banners',
         enabled: true,
         order: 2,
+        settings: {}
+    },
+    {
+        id: 'sale-showcase',
+        enabled: true,
+        order: 3,
+        settings: {
+            layout: 'spotlight',
+            highlightCount: 1,
+            secondaryCount: 3
+        }
+    },
+    {
+        id: 'featured-collections',
+        enabled: true,
+        order: 4,
         settings: {
             itemCount: 8,
-            sortBy: 'sales',
-            categoryFilter: null
+            sortBy: 'sales'
         }
     },
     {
         id: 'new-arrivals',
         enabled: true,
-        order: 3,
+        order: 5,
         settings: {
             itemCount: 8,
             daysThreshold: 14
@@ -85,43 +100,37 @@ exports.DEFAULT_SECTIONS = [
     {
         id: 'categories',
         enabled: true,
-        order: 4,
+        order: 6,
         settings: {
             layout: 'grid',
             categoryCount: 6
         }
     },
     {
-        id: 'gaming-gear',
+        id: 'trust-signals',
         enabled: true,
-        order: 5,
-        settings: {
-            itemCount: 4,
-            productTypes: ['gaming_gear']
-        }
+        order: 7,
+        settings: {}
     },
     {
-        id: 'collectibles',
+        id: 'shipping-experience',
         enabled: true,
-        order: 6,
-        settings: {
-            itemCount: 4,
-            productTypes: ['action_figure', 'collectible_card']
-        }
+        order: 8,
+        settings: {}
     },
     {
         id: 'testimonials',
         enabled: true,
-        order: 7,
+        order: 9,
         settings: {
             itemCount: 3,
             autoRotate: false
         }
     },
     {
-        id: 'trust-signals',
+        id: 'newsletter',
         enabled: true,
-        order: 8,
+        order: 10,
         settings: {}
     }
 ];

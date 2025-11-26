@@ -8,33 +8,15 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const path_1 = __importDefault(require("path"));
 const routes_1 = __importDefault(require("./routes"));
 const env_1 = require("./config/env");
 const errorHandler_1 = require("./middleware/errorHandler");
 const helmet_1 = __importDefault(require("helmet"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
-const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
-const xss_clean_1 = __importDefault(require("xss-clean"));
-const hpp_1 = __importDefault(require("hpp"));
+const fs_1 = __importDefault(require("fs"));
 const createApp = () => {
     const app = (0, express_1.default)();
-    // Security Headers
-    app.use((0, helmet_1.default)({
-        crossOriginResourcePolicy: { policy: "cross-origin" } // Allow loading images from uploads
-    }));
-    // Rate Limiting
-    const limiter = (0, express_rate_limit_1.default)({
-        windowMs: 15 * 60 * 1000, // 15 minutes
-        max: 100, // Limit each IP to 100 requests per windowMs
-        message: 'Too many requests from this IP, please try again later'
-    });
-    app.use('/api', limiter);
-    // Data Sanitization against NoSQL query injection
-    app.use((0, express_mongo_sanitize_1.default)());
-    // Data Sanitization against XSS
-    app.use((0, xss_clean_1.default)());
-    // Prevent Parameter Pollution
-    app.use((0, hpp_1.default)());
     // CORS configuration - support multiple origins in production
     const allowedOrigins = [
         'https://narmineh.com',
@@ -51,7 +33,21 @@ const createApp = () => {
         preflightContinue: false,
         optionsSuccessStatus: 200
     };
+    // CORS MUST be the first middleware to ensure headers are always present
     app.use((0, cors_1.default)(corsOptions));
+    // Security Headers
+    app.use((0, helmet_1.default)({
+        crossOriginResourcePolicy: { policy: "cross-origin" } // Allow loading images from uploads
+    }));
+    // Rate Limiting
+    const limiter = (0, express_rate_limit_1.default)({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 1000, // Increased limit for SPA: 1000 requests per 15 mins
+        message: 'Too many requests from this IP, please try again later',
+        standardHeaders: true,
+        legacyHeaders: false,
+    });
+    app.use('/api', limiter);
     app.use((_req, res, next) => {
         res.header('Vary', 'Origin');
         next();
@@ -67,8 +63,16 @@ const createApp = () => {
     app.get('/', (_req, res) => {
         res.json({ message: 'Narmine Backend API is running', version: '1.0.0' });
     });
-    // Serve static files from uploads directory
-    app.use('/uploads', express_1.default.static('public/uploads'));
+    // Resolve uploads directory relative to compiled dist folder
+    const uploadsDir = path_1.default.join(__dirname, '../public/uploads');
+    fs_1.default.mkdirSync(uploadsDir, { recursive: true });
+    // Serve static files from uploads directory with Cache-Control for Cloudflare
+    app.use('/uploads', express_1.default.static(uploadsDir, {
+        maxAge: '7d', // Cache for 7 days
+        setHeaders: (res) => {
+            res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+        }
+    }));
     app.use('/api', routes_1.default);
     app.use(errorHandler_1.notFoundHandler);
     app.use(errorHandler_1.errorHandler);

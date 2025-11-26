@@ -8,7 +8,11 @@ const gameQuery = zod_1.z.object({
     region: zod_1.z.string().optional(),
     search: zod_1.z.string().optional(),
     sort: zod_1.z.string().optional(),
-    limit: zod_1.z.string().optional().transform((val) => val ? parseInt(val, 10) : undefined)
+    limit: zod_1.z.string().optional().transform((val) => val ? parseInt(val, 10) : undefined),
+    onSale: zod_1.z
+        .string()
+        .optional()
+        .transform((val) => (val === undefined ? undefined : val === 'true'))
 });
 exports.createGameSchema = zod_1.z.object({
     body: zod_1.z.object({

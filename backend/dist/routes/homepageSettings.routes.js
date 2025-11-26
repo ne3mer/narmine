@@ -13,6 +13,7 @@ router.get('/', async (req, res) => {
     try {
         let settings = await homepageSettings_model_1.HomepageSettings.findOne();
         let contentNeedsSave = false;
+        let sectionsNeedUpdate = false;
         // If no settings exist, create default
         if (!settings) {
             settings = await homepageSettings_model_1.HomepageSettings.create({
@@ -24,6 +25,22 @@ router.get('/', async (req, res) => {
         if (!settings.content) {
             settings.content = homepageContent_1.DEFAULT_HOME_CONTENT;
             await settings.save();
+        }
+        if (!settings.sections || settings.sections.length === 0) {
+            settings.sections = homepageSettings_model_1.DEFAULT_SECTIONS;
+            sectionsNeedUpdate = true;
+        }
+        else {
+            const existingSectionIds = new Set((settings.sections || []).map((section) => section.id));
+            for (const defaultSection of homepageSettings_model_1.DEFAULT_SECTIONS) {
+                if (!existingSectionIds.has(defaultSection.id)) {
+                    settings.sections.push(defaultSection);
+                    sectionsNeedUpdate = true;
+                }
+            }
+            if (sectionsNeedUpdate) {
+                settings.sections = settings.sections.sort((a, b) => a.order - b.order);
+            }
         }
         const rawContent = settings.content?.toJSON?.() ?? settings.content ?? {};
         const normalizedContent = {
@@ -37,7 +54,7 @@ router.get('/', async (req, res) => {
             settings.content = normalizedContent;
             contentNeedsSave = true;
         }
-        if (contentNeedsSave) {
+        if (contentNeedsSave || sectionsNeedUpdate) {
             await settings.save();
         }
         const responseSettings = settings.toObject();

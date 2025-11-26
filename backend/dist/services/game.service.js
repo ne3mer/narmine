@@ -42,6 +42,9 @@ const listGames = async (filters) => {
     if (filters.genre) {
         query.genre = filters.genre;
     }
+    if (typeof filters.onSale === 'boolean') {
+        query.onSale = filters.onSale;
+    }
     if (filters.region) {
         query.regionOptions = filters.region;
     }
