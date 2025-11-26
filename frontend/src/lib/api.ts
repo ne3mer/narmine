@@ -3,8 +3,24 @@ const normalizeUrl = (value?: string | null, fallback: string = '') => {
   return value.endsWith('/') ? value.slice(0, -1) : value;
 };
 
+const getApiBaseUrl = () => {
+  let url = process.env.NEXT_PUBLIC_API_URL;
+
+  if (typeof window !== 'undefined') {
+    if (!url) return 'https://narmine-backend.onrender.com';
+    
+    // Replace localhost with actual hostname (e.g. for mobile testing on LAN)
+    if (url.includes('localhost') && window.location.hostname !== 'localhost') {
+      return url.replace('localhost', window.location.hostname);
+    }
+    return url;
+  }
+
+  return url || 'http://localhost:5050';
+};
+
 export const API_BASE_URL = normalizeUrl(
-  process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? 'https://narmine-backend.onrender.com' : 'http://localhost:5050'),
+  getApiBaseUrl(),
   'http://localhost:5050'
 );
 
