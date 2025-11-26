@@ -6,6 +6,7 @@ import { Icon } from '@/components/icons/Icon';
 import { API_BASE_URL } from '@/lib/api';
 import { getAuthToken } from '@/lib/auth';
 import { toast } from 'react-hot-toast';
+import EmojiSelector from './EmojiSelector';
 
 interface CategoryFormProps {
   initialData?: any;
@@ -195,14 +196,9 @@ export default function CategoryForm({ initialData, isEditing = false }: Categor
             <h2 className="mb-4 text-lg font-bold text-slate-900">تنظیمات نمایش</h2>
             <div className="space-y-4">
               <div>
-                <label className="mb-2 block text-sm font-bold text-slate-700">آیکون (ایموجی)</label>
-                <input
-                  type="text"
-                  name="icon"
+                <EmojiSelector
                   value={formData.icon}
-                  onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-center text-2xl transition focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  placeholder="🛏️"
+                  onChange={(value: string) => setFormData(prev => ({ ...prev, icon: value }))}
                 />
               </div>
               <div>
