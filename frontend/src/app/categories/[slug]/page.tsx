@@ -45,12 +45,12 @@ async function getCategoryGames(slug: string, page: number = 1, sort: string = '
 const FALLBACK_COVER = 'https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.webp';
 
 const mapBackendGameToCard = (game: any): GameCardContent => {
-  const basePrice =
-    typeof game?.basePrice === 'number'
-      ? game.basePrice
-      : typeof game?.price === 'number'
-        ? game.price
-        : 0;
+  // Ensure we have valid numbers for prices
+  const basePrice = typeof game?.basePrice === 'number' ? game.basePrice : 0;
+  const salePrice = typeof game?.salePrice === 'number' ? game.salePrice : undefined;
+  
+  // Determine if on sale
+  const onSale = game?.onSale === true && salePrice !== undefined && salePrice < basePrice;
 
   const fallbackId = game?._id?.toString() ?? game?.id ?? game?.slug ?? `game-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -59,9 +59,12 @@ const mapBackendGameToCard = (game: any): GameCardContent => {
     slug: game?.slug ?? game?._id?.toString() ?? '',
     title: game?.title ?? 'محصول نامشخص',
     platform: game?.platform ?? 'General',
-    price: game?.price ?? 0,
-    basePrice: game?.price ?? 0,
-    finalPrice: game?.price ?? 0,
+    // Map basePrice to price for components that expect 'price'
+    price: basePrice,
+    basePrice: basePrice,
+    salePrice: salePrice,
+    finalPrice: onSale ? salePrice : basePrice,
+    onSale: onSale,
     region: game?.region ?? 'Global',
     safe: true,
     monthlyPrice: 0,
@@ -70,6 +73,8 @@ const mapBackendGameToCard = (game: any): GameCardContent => {
       : 'general',
     rating: typeof game?.rating === 'number' ? game.rating : 0,
     cover: game?.coverUrl || game?.cover || FALLBACK_COVER,
+    // Pass shipping info if available
+    shipping: game?.shipping
   };
 };
 
