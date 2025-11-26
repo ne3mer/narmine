@@ -50,9 +50,13 @@ export const resolveImageUrl = (path?: string) => {
   // Remove any leading slash to avoid double slashes when joining
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   
+  // Encode the path to handle spaces and special characters
+  // We split by '/' to encode each segment individually, preserving the directory structure
+  const encodedPath = cleanPath.split('/').map(segment => encodeURIComponent(segment)).join('/');
+  
   // If path already starts with uploads/, just append to base
   // If not, assume it's inside uploads/
-  const finalPath = cleanPath.startsWith('uploads/') ? cleanPath : `uploads/${cleanPath}`;
+  const finalPath = encodedPath.startsWith('uploads/') ? encodedPath : `uploads/${encodedPath}`;
   
   return `${UPLOAD_BASE_URL}/${finalPath}`;
 };

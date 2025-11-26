@@ -63,7 +63,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   images: {
     remotePatterns,
-    unoptimized: process.env.NEXT_IMAGE_UNOPTIMIZED === 'true' || shouldDisableOptimization
+    unoptimized: true, // Temporarily disable optimization to fix Safari issues
   },
   // Enable compression for better performance
   compress: true,
