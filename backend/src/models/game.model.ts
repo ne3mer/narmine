@@ -76,6 +76,8 @@ export interface GameDocument extends Document {
     id: string;
     selectedOptions: Map<string, string>;
     price: number;
+    salePrice?: number;
+    onSale?: boolean;
     stock: number;
   }[];
   createdAt: Date;
@@ -167,6 +169,8 @@ const gameSchema = new Schema<GameDocument>(
         id: { type: String, required: true },
         selectedOptions: { type: Map, of: String, required: true },
         price: { type: Number, required: true },
+        salePrice: { type: Number },
+        onSale: { type: Boolean, default: false },
         stock: { type: Number, required: true, default: 0 }
       }
     ]

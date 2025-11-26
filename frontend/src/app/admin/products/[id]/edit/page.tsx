@@ -178,7 +178,7 @@ export default function EditProductPage() {
     );
   };
 
-  const handleVariantChange = (id: string, field: 'price' | 'stock', value: number) => {
+  const handleVariantChange = (id: string, field: string, value: string | number | boolean) => {
     setFormState((prev) =>
       prev
         ? {
@@ -231,6 +231,8 @@ export default function EditProductPage() {
           id: crypto.randomUUID(),
           selectedOptions: combo,
           price: basePrice,
+          salePrice: undefined,
+          onSale: false,
           stock: 10
         }))
       };
@@ -807,6 +809,8 @@ export default function EditProductPage() {
                           <tr>
                             <th className="p-3 text-right">ترکیب</th>
                             <th className="p-3 text-right">قیمت (تومان)</th>
+                            <th className="p-3 text-right">قیمت حراج</th>
+                            <th className="p-3 text-right">حراج؟</th>
                             <th className="p-3 text-right">موجودی</th>
                           </tr>
                         </thead>
@@ -825,6 +829,26 @@ export default function EditProductPage() {
                                   onChange={(e) => handleVariantChange(variant.id, 'price', Number(e.target.value))}
                                   className="w-32 rounded-lg border border-slate-200 px-2 py-1 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
                                   min="0"
+                                  placeholder="قیمت اصلی"
+                                />
+                              </td>
+                              <td className="p-3">
+                                <input
+                                  type="number"
+                                  value={variant.salePrice || ''}
+                                  onChange={(e) => handleVariantChange(variant.id, 'salePrice', e.target.value ? Number(e.target.value) : '')}
+                                  className="w-32 rounded-lg border border-slate-200 px-2 py-1 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
+                                  min="0"
+                                  placeholder="قیمت حراج"
+                                  disabled={!variant.onSale}
+                                />
+                              </td>
+                              <td className="p-3">
+                                <input
+                                  type="checkbox"
+                                  checked={variant.onSale || false}
+                                  onChange={(e) => handleVariantChange(variant.id, 'onSale', e.target.checked)}
+                                  className="h-5 w-5 rounded border-slate-300 accent-emerald-500"
                                 />
                               </td>
                               <td className="p-3">

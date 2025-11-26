@@ -43,6 +43,8 @@ export type ProductRow = {
     id: string;
     selectedOptions: Record<string, string>;
     price: number;
+    salePrice?: number;
+    onSale?: boolean;
     stock: number;
   }[];
 };
@@ -89,6 +91,8 @@ export type NewProductState = {
     id: string;
     selectedOptions: Record<string, string>;
     price: number;
+    salePrice?: number;
+    onSale?: boolean;
     stock: number;
   }[];
 };
