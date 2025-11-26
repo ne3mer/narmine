@@ -3,6 +3,8 @@ import { Metadata } from 'next';
 import { API_BASE_URL } from '@/lib/api';
 import { Icon } from '@/components/icons/Icon';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'دسته‌بندی‌های محصولات | نرمینه خواب',
   description: 'محصولات بر اساس دسته‌بندی',
