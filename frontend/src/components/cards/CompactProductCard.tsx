@@ -63,6 +63,9 @@ export const CompactProductCard = ({ product }: CompactProductCardProps) => {
                 </span>
               </div>
               <div className="flex items-baseline gap-1">
+                {product.hasMultiplePrices && (
+                  <span className="text-[10px] text-rose-600/80">از</span>
+                )}
                 <span className="font-serif text-base font-bold text-rose-600">
                   {formatToman(product.salePrice || product.basePrice)}
                 </span>
@@ -71,8 +74,11 @@ export const CompactProductCard = ({ product }: CompactProductCardProps) => {
             </div>
           ) : (
             <>
+              {product.hasMultiplePrices && (
+                <span className="text-[10px] text-[#4a3f3a]/60">از</span>
+              )}
               <span className="font-serif text-base font-bold text-[#4a3f3a]">
-                {formatToman(product.basePrice)}
+                {formatToman(product.minPrice || product.basePrice)}
               </span>
               <span className="text-xs text-[#4a3f3a]/60">تومان</span>
             </>

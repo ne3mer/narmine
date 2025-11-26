@@ -119,6 +119,9 @@ export const ProductCard = ({ game }: Props) => {
                 </span>
               </div>
               <div className="flex items-baseline gap-2">
+                {game.hasMultiplePrices && (
+                  <span className="text-xs text-rose-600/80">از</span>
+                )}
                 <span className="font-serif text-2xl font-bold text-rose-600">
                   {formatToman(game.salePrice || game.price)}
                 </span>
@@ -127,8 +130,11 @@ export const ProductCard = ({ game }: Props) => {
             </div>
           ) : (
             <div className="flex items-baseline gap-2">
+              {game.hasMultiplePrices && (
+                <span className="text-xs text-[#4a3f3a]/60">از</span>
+              )}
               <span className="font-serif text-2xl font-bold text-[#4a3f3a]">
-                {formatToman(game.price)}
+                {formatToman(game.minPrice || game.price)}
               </span>
               <span className="text-sm text-[#4a3f3a]/60">تومان</span>
             </div>

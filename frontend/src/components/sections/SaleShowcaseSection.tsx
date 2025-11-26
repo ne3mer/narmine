@@ -31,9 +31,20 @@ const getDiscountSnapshot = (product: SaleProduct) => {
   let base = product.basePrice || 0;
   let finalPrice = product.onSale && product.salePrice ? product.salePrice : product.basePrice;
   
-  // Check variants for better deals
+  // Check variants for better deals and price range
+  let minPrice = base;
+  let hasMultiplePrices = false;
+  const prices = new Set<number>([base]);
+
   if (Array.isArray(product.variants)) {
     for (const variant of product.variants) {
+      if (typeof variant.price === 'number') {
+        prices.add(variant.price);
+        if (variant.price < minPrice) {
+          minPrice = variant.price;
+        }
+      }
+
       if (variant.onSale && typeof variant.salePrice === 'number' && variant.salePrice < variant.price) {
         // If this variant has a lower sale price than current finalPrice
         if (variant.salePrice < finalPrice) {
@@ -44,9 +55,11 @@ const getDiscountSnapshot = (product: SaleProduct) => {
     }
   }
 
+  hasMultiplePrices = prices.size > 1;
+
   const percent = base > 0 && finalPrice < base ? Math.round(((base - finalPrice) / base) * 100) : 0;
   const savings = base > finalPrice ? base - finalPrice : 0;
-  return { base, finalPrice, percent, savings };
+  return { base, finalPrice, percent, savings, minPrice, hasMultiplePrices };
 };
 
 export const SaleShowcaseSection = () => {
@@ -218,6 +231,9 @@ export const SaleShowcaseSection = () => {
                     {product.description || 'تخفیف ویژه برای مدت محدود'}
                   </p>
                   <div className="flex items-baseline gap-2">
+                    {stats.hasMultiplePrices && (
+                      <span className="text-xs text-white/60">از</span>
+                    )}
                     <span className="text-lg font-black text-white">{formatToman(stats.finalPrice)}</span>
                     <span className="text-xs text-white/60">تومان</span>
                     <span className="text-[10px] text-white/50 line-through">{formatToman(stats.base)}</span>

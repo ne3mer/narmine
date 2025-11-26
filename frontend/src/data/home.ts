@@ -31,6 +31,8 @@ export type ProductCardContent = {
   salePrice?: number;
   coverUrl?: string;
   customFields?: Record<string, any>;
+  minPrice?: number;
+  hasMultiplePrices?: boolean;
 };
 
 export type GameCardContent = ProductCardContent; // Alias for backward compatibility

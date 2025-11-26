@@ -292,4 +292,6 @@ export type CompactProduct = {
   salePrice?: number;
   rating?: number;
   slug: string;
+  minPrice?: number;
+  hasMultiplePrices?: boolean;
 };

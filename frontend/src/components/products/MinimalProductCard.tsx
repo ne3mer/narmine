@@ -17,6 +17,8 @@ type MinimalProductCardProps = {
   onSale?: boolean;
   salePrice?: number;
   basePrice?: number;
+  minPrice?: number;
+  hasMultiplePrices?: boolean;
 };
 
 export const MinimalProductCard = ({ 
@@ -28,7 +30,9 @@ export const MinimalProductCard = ({
   rating: staticRating,
   onSale,
   salePrice,
-  basePrice
+  basePrice,
+  minPrice,
+  hasMultiplePrices
 }: MinimalProductCardProps) => {
   const { rating: dynamicRating } = useProductRating(id);
   const displayRating = dynamicRating !== null && dynamicRating > 0 ? dynamicRating : (staticRating || 0);
@@ -89,7 +93,11 @@ export const MinimalProductCard = ({
                   {basePrice ? formatToman(basePrice) : ''}
                 </span>
               </div>
+
               <div className="flex items-baseline gap-1">
+                {hasMultiplePrices && (
+                  <span className="text-[10px] text-rose-600/80">از</span>
+                )}
                 <span className="font-serif text-lg font-bold text-rose-600">
                   {formatToman(salePrice || price)}
                 </span>
@@ -98,7 +106,10 @@ export const MinimalProductCard = ({
             </div>
           ) : (
             <>
-              <span className="font-serif text-lg font-bold text-[#4a3f3a]">{formatToman(price)}</span>
+              {hasMultiplePrices && (
+                <span className="text-[10px] text-[#4a3f3a]/60">از</span>
+              )}
+              <span className="font-serif text-lg font-bold text-[#4a3f3a]">{formatToman(minPrice || price)}</span>
               <span className="text-xs text-[#4a3f3a]/60">تومان</span>
             </>
           )}

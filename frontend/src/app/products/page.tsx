@@ -21,6 +21,11 @@ type BackendGame = {
   coverUrl?: string;
   productType?: string;
   rating?: number;
+  variants?: {
+    price: number;
+    salePrice?: number;
+    onSale?: boolean;
+  }[];
 };
 
 type Product = {
@@ -33,19 +38,55 @@ type Product = {
   onSale?: boolean;
   salePrice?: number;
   basePrice?: number;
+  minPrice?: number;
+  hasMultiplePrices?: boolean;
 };
 
-const mapGame = (game: BackendGame): Product => ({
-  id: game.id,
-  slug: game.slug,
-  title: game.title,
-  price: game.onSale && game.salePrice ? game.salePrice : game.basePrice,
-  cover: game.coverUrl || '',
-  rating: game.rating || 4.5,
-  onSale: game.onSale,
-  salePrice: game.salePrice,
-  basePrice: game.basePrice,
-});
+const mapGame = (game: BackendGame): Product => {
+  let basePrice = game.basePrice;
+  let salePrice = game.salePrice;
+  let onSale = game.onSale;
+
+  // Check variants for better deals and price range
+  let minPrice = basePrice;
+  let hasMultiplePrices = false;
+  const prices = new Set<number>([basePrice]);
+
+  if (Array.isArray(game.variants)) {
+    for (const variant of game.variants) {
+      if (typeof variant.price === 'number') {
+        prices.add(variant.price);
+        if (variant.price < minPrice) {
+          minPrice = variant.price;
+        }
+      }
+
+      if (variant.onSale && typeof variant.salePrice === 'number' && variant.salePrice < variant.price) {
+        if (!onSale || variant.salePrice < (salePrice || Infinity)) {
+          onSale = true;
+          salePrice = variant.salePrice;
+          basePrice = variant.price;
+        }
+      }
+    }
+  }
+
+  hasMultiplePrices = prices.size > 1;
+
+  return {
+    id: game.id,
+    slug: game.slug,
+    title: game.title,
+    price: onSale && salePrice ? salePrice : basePrice,
+    cover: game.coverUrl || '',
+    rating: game.rating || 4.5,
+    onSale: onSale,
+    salePrice: salePrice,
+    basePrice: basePrice,
+    minPrice: minPrice,
+    hasMultiplePrices: hasMultiplePrices,
+  };
+};
 
 function ProductsContent() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -178,6 +219,8 @@ function ProductsContent() {
                     onSale={product.onSale}
                     salePrice={product.salePrice}
                     basePrice={product.basePrice}
+                    minPrice={product.minPrice}
+                    hasMultiplePrices={product.hasMultiplePrices}
                   />
                 ))}
               </div>

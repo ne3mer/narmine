@@ -34,9 +34,20 @@ const mapBackendGameToCard = (game: BackendGame): GameCardContent => {
   let salePrice = game.salePrice;
   let onSale = game.onSale;
 
-  // Check variants for better deals
+  // Check variants for better deals and price range
+  let minPrice = basePrice;
+  let hasMultiplePrices = false;
+  const prices = new Set<number>([basePrice]);
+
   if (Array.isArray(game.variants)) {
     for (const variant of game.variants) {
+      if (typeof variant.price === 'number') {
+        prices.add(variant.price);
+        if (variant.price < minPrice) {
+          minPrice = variant.price;
+        }
+      }
+
       if (variant.onSale && typeof variant.salePrice === 'number' && variant.salePrice < variant.price) {
         if (!onSale || variant.salePrice < (salePrice || Infinity)) {
           onSale = true;
@@ -46,6 +57,8 @@ const mapBackendGameToCard = (game: BackendGame): GameCardContent => {
       }
     }
   }
+
+  hasMultiplePrices = prices.size > 1;
 
   return {
     id: game.id,
@@ -65,7 +78,9 @@ const mapBackendGameToCard = (game: BackendGame): GameCardContent => {
     description: game.description,
     productType: game.productType as any,
     onSale: onSale,
-    salePrice: salePrice
+    salePrice: salePrice,
+    minPrice: minPrice,
+    hasMultiplePrices: hasMultiplePrices
   };
 };
 
@@ -134,7 +149,9 @@ export const NewArrivalsSection = () => {
                 basePrice: game.basePrice,
                 title: game.title,
                 onSale: game.onSale,
-                salePrice: game.salePrice
+                salePrice: game.salePrice,
+                minPrice: game.minPrice,
+                hasMultiplePrices: game.hasMultiplePrices
               } satisfies CompactProduct}
             />
           ))}

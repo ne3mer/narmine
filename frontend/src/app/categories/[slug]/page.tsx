@@ -52,9 +52,20 @@ const mapBackendGameToCard = (game: any): GameCardContent => {
   // Determine if on sale
   let onSale = game?.onSale === true && salePrice !== undefined && salePrice < basePrice;
 
-  // Check variants for better deals
+  // Check variants for better deals and price range
+  let minPrice = basePrice;
+  let hasMultiplePrices = false;
+  const prices = new Set<number>([basePrice]);
+
   if (Array.isArray(game?.variants)) {
     for (const variant of game.variants) {
+      if (typeof variant.price === 'number') {
+        prices.add(variant.price);
+        if (variant.price < minPrice) {
+          minPrice = variant.price;
+        }
+      }
+
       if (variant.onSale && typeof variant.salePrice === 'number' && variant.salePrice < variant.price) {
         // If main product is not on sale, or this variant has a lower sale price
         if (!onSale || variant.salePrice < (salePrice || Infinity)) {
@@ -65,6 +76,8 @@ const mapBackendGameToCard = (game: any): GameCardContent => {
       }
     }
   }
+
+  hasMultiplePrices = prices.size > 1;
 
   const fallbackId = game?._id?.toString() ?? game?.id ?? game?.slug ?? `game-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -82,6 +95,8 @@ const mapBackendGameToCard = (game: any): GameCardContent => {
     region: game?.region ?? 'Global',
     safe: true,
     monthlyPrice: 0,
+    minPrice: minPrice,
+    hasMultiplePrices: hasMultiplePrices,
     category: Array.isArray(game?.genre) && game.genre.length > 0
       ? String(game.genre[0]).toLowerCase()
       : 'general',
