@@ -22,28 +22,52 @@ type BackendGame = {
   productType?: string;
   onSale?: boolean;
   salePrice?: number;
+  variants?: {
+    price: number;
+    salePrice?: number;
+    onSale?: boolean;
+  }[];
 };
 
-const mapBackendGameToCard = (game: BackendGame): GameCardContent => ({
-  id: game.id,
-  slug: game.slug,
-  title: game.title,
-  platform: game.platform || 'PC', // Default to PC if undefined
-  price: game.basePrice,
-  basePrice: game.basePrice,
-  finalPrice: game.onSale && game.salePrice ? game.salePrice : game.basePrice,
-  monthlyPrice: Math.round(game.basePrice * 0.3),
-  region: game.regionOptions?.[0] ?? 'Global',
+const mapBackendGameToCard = (game: BackendGame): GameCardContent => {
+  let basePrice = game.basePrice;
+  let salePrice = game.salePrice;
+  let onSale = game.onSale;
 
-  category: game.genre?.[0] ?? 'general',
-  rating: 4.5,
-  cover: game.coverUrl || '',
-  coverUrl: game.coverUrl || '',
-  description: game.description,
-  productType: game.productType as any,
-  onSale: game.onSale,
-  salePrice: game.salePrice
-});
+  // Check variants for better deals
+  if (Array.isArray(game.variants)) {
+    for (const variant of game.variants) {
+      if (variant.onSale && typeof variant.salePrice === 'number' && variant.salePrice < variant.price) {
+        if (!onSale || variant.salePrice < (salePrice || Infinity)) {
+          onSale = true;
+          salePrice = variant.salePrice;
+          basePrice = variant.price;
+        }
+      }
+    }
+  }
+
+  return {
+    id: game.id,
+    slug: game.slug,
+    title: game.title,
+    platform: game.platform || 'PC', // Default to PC if undefined
+    price: basePrice,
+    basePrice: basePrice,
+    finalPrice: onSale && salePrice ? salePrice : basePrice,
+    monthlyPrice: Math.round(basePrice * 0.3),
+    region: game.regionOptions?.[0] ?? 'Global',
+
+    category: game.genre?.[0] ?? 'general',
+    rating: 4.5,
+    cover: game.coverUrl || '',
+    coverUrl: game.coverUrl || '',
+    description: game.description,
+    productType: game.productType as any,
+    onSale: onSale,
+    salePrice: salePrice
+  };
+};
 
 export const NewArrivalsSection = () => {
   const [games, setGames] = useState<GameCardContent[]>([]);

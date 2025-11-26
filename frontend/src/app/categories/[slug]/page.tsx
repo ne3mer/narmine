@@ -46,11 +46,25 @@ const FALLBACK_COVER = 'https://images.igdb.com/igdb/image/upload/t_cover_big/no
 
 const mapBackendGameToCard = (game: any): GameCardContent => {
   // Ensure we have valid numbers for prices
-  const basePrice = typeof game?.basePrice === 'number' ? game.basePrice : 0;
-  const salePrice = typeof game?.salePrice === 'number' ? game.salePrice : undefined;
+  let basePrice = typeof game?.basePrice === 'number' ? game.basePrice : 0;
+  let salePrice = typeof game?.salePrice === 'number' ? game.salePrice : undefined;
   
   // Determine if on sale
-  const onSale = game?.onSale === true && salePrice !== undefined && salePrice < basePrice;
+  let onSale = game?.onSale === true && salePrice !== undefined && salePrice < basePrice;
+
+  // Check variants for better deals
+  if (Array.isArray(game?.variants)) {
+    for (const variant of game.variants) {
+      if (variant.onSale && typeof variant.salePrice === 'number' && variant.salePrice < variant.price) {
+        // If main product is not on sale, or this variant has a lower sale price
+        if (!onSale || variant.salePrice < (salePrice || Infinity)) {
+          onSale = true;
+          salePrice = variant.salePrice;
+          basePrice = variant.price;
+        }
+      }
+    }
+  }
 
   const fallbackId = game?._id?.toString() ?? game?.id ?? game?.slug ?? `game-${Math.random().toString(36).slice(2, 8)}`;
 

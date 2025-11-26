@@ -56,6 +56,8 @@ export type BackendGame = {
     id: string;
     selectedOptions: Record<string, string>;
     price: number;
+    salePrice?: number;
+    onSale?: boolean;
     stock: number;
   }[];
   // Multi-product fields
@@ -139,23 +141,20 @@ export default function GameDetailClient({ game }: Props) {
     }
   }, [selectedOptions, game.variants]);
 
-  // Calculate discount percentage from main product
-  const mainProductDiscountPercent = game.onSale && game.basePrice > (game.salePrice || game.basePrice)
-    ? Math.round(((game.basePrice - (game.salePrice || game.basePrice)) / game.basePrice) * 100)
-    : 0;
-
   // Determine current price based on variant and discount
   let currentPrice = currentVariant ? currentVariant.price : (game.salePrice || game.basePrice);
   let basePrice = currentVariant ? currentVariant.price : game.basePrice;
+  let isOnSale = currentVariant ? currentVariant.onSale : game.onSale;
 
-  // Apply discount to variant if main product is on sale
-  if (currentVariant && game.onSale && mainProductDiscountPercent > 0) {
-    const discountedVariantPrice = Math.round(currentVariant.price * (1 - mainProductDiscountPercent / 100));
-    // Round to nearest 1000 for cleaner prices
-    currentPrice = Math.round(discountedVariantPrice / 1000) * 1000;
+  if (currentVariant) {
+    if (currentVariant.onSale && currentVariant.salePrice) {
+      currentPrice = currentVariant.salePrice;
+    }
+  } else if (game.onSale && game.salePrice) {
+    currentPrice = game.salePrice;
   }
 
-  const discountPercent = basePrice > currentPrice 
+  const discountPercent = isOnSale && basePrice > currentPrice
     ? Math.round(((basePrice - currentPrice) / basePrice) * 100)
     : 0;
   const savings = basePrice > currentPrice ? basePrice - currentPrice : 0;
@@ -495,11 +494,11 @@ export default function GameDetailClient({ game }: Props) {
               <div className="space-y-2">
                 <div className="flex items-baseline justify-between">
                   <span className="text-[#4a3f3a]/60 font-medium">قیمت نهایی:</span>
-                  {game.onSale || discountPercent > 0 ? (
+                  {discountPercent > 0 ? (
                     <div className="text-right">
                       <div className="flex items-center justify-end gap-2 mb-1">
                         <span className="text-sm text-rose-500 line-through decoration-2 opacity-60">
-                          {formatToman(game.basePrice)}
+                          {formatToman(basePrice)}
                         </span>
                         <span className="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-600">
                           {discountPercent}% تخفیف

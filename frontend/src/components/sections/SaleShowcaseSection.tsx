@@ -18,13 +18,32 @@ interface SaleProduct {
   coverUrl?: string;
   gallery?: string[];
   updatedAt?: string;
+  variants?: {
+    price: number;
+    salePrice?: number;
+    onSale?: boolean;
+  }[];
 }
 
 const DEFAULT_IMAGE = 'https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.webp';
 
 const getDiscountSnapshot = (product: SaleProduct) => {
-  const base = product.basePrice || 0;
-  const finalPrice = product.onSale && product.salePrice ? product.salePrice : product.basePrice;
+  let base = product.basePrice || 0;
+  let finalPrice = product.onSale && product.salePrice ? product.salePrice : product.basePrice;
+  
+  // Check variants for better deals
+  if (Array.isArray(product.variants)) {
+    for (const variant of product.variants) {
+      if (variant.onSale && typeof variant.salePrice === 'number' && variant.salePrice < variant.price) {
+        // If this variant has a lower sale price than current finalPrice
+        if (variant.salePrice < finalPrice) {
+          finalPrice = variant.salePrice;
+          base = variant.price;
+        }
+      }
+    }
+  }
+
   const percent = base > 0 && finalPrice < base ? Math.round(((base - finalPrice) / base) * 100) : 0;
   const savings = base > finalPrice ? base - finalPrice : 0;
   return { base, finalPrice, percent, savings };
