@@ -43,8 +43,7 @@ const cartItemSchema = new Schema<ICartItem>(
       type: Date,
       default: Date.now
     }
-  },
-  { _id: false }
+  }
 );
 
 const cartSchema = new Schema<ICart>(

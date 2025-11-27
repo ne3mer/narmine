@@ -6,8 +6,10 @@ import { useCart } from '@/contexts/CartContext';
 import { formatToman } from '@/lib/format';
 import { Icon } from '@/components/icons/Icon';
 
+import toast from 'react-hot-toast';
+
 export default function CartPage() {
-  const { cart, loading, updateQuantity, removeFromCart, totalPrice, shippingCost, finalTotal } = useCart();
+  const { cart, loading, updateQuantity, removeFromCart, addToCart, totalPrice, shippingCost, finalTotal } = useCart();
 
   // Calculate total savings
   const totalSavings = cart?.items.reduce((acc, item) => {
@@ -111,7 +113,7 @@ export default function CartPage() {
                 <div className="flex items-center justify-between gap-4 sm:justify-end">
                   <div className="flex items-center gap-3 rounded-full border border-[#c9a896]/30 bg-[#f8f5f2]/50 px-4 py-2">
                     <button
-                      onClick={() => updateQuantity(item.gameId.id, item.quantity - 1)}
+                      onClick={() => updateQuantity(item._id, item.quantity - 1)}
                       className="text-[#4a3f3a] transition-colors hover:text-[#c9a896]"
                       disabled={loading}
                     >
@@ -119,7 +121,7 @@ export default function CartPage() {
                     </button>
                     <span className="w-8 text-center font-semibold text-[#4a3f3a]">{item.quantity}</span>
                     <button
-                      onClick={() => updateQuantity(item.gameId.id, item.quantity + 1)}
+                      onClick={() => updateQuantity(item._id, item.quantity + 1)}
                       className="text-[#4a3f3a] transition-colors hover:text-[#c9a896]"
                       disabled={loading}
                     >
@@ -127,7 +129,39 @@ export default function CartPage() {
                     </button>
                   </div>
                   <button
-                    onClick={() => removeFromCart(item.gameId.id)}
+                    onClick={() => {
+                      removeFromCart(item._id);
+                      toast.custom((t) => (
+                        <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}>
+                          <div className="flex-1 w-0 p-4">
+                            <div className="flex items-start">
+                              <div className="flex-shrink-0 pt-0.5">
+                                <Icon name="trash" size={20} className="text-red-500" />
+                              </div>
+                              <div className="ml-3 flex-1">
+                                <p className="text-sm font-medium text-gray-900">
+                                  محصول حذف شد
+                                </p>
+                                <p className="mt-1 text-sm text-gray-500">
+                                  {item.gameId.title} از سبد خرید حذف شد.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex border-r border-gray-200">
+                            <button
+                              onClick={() => {
+                                addToCart(item.gameId.id, item.quantity, item.variantId, item.selectedOptions);
+                                toast.dismiss(t.id);
+                              }}
+                              className="w-full border border-transparent rounded-none rounded-l-lg p-4 flex items-center justify-center text-sm font-medium text-emerald-600 hover:text-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            >
+                              بازگردانی
+                            </button>
+                          </div>
+                        </div>
+                      ));
+                    }}
                     className="rounded-full bg-red-50 p-2.5 text-red-500 transition-all hover:bg-red-100"
                     disabled={loading}
                   >

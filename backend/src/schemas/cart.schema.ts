@@ -25,7 +25,7 @@ export const updateCartItemSchema = z.object({
   }),
   query: empty,
   params: z.object({
-    gameId: z.string().min(1)
+    itemId: z.string().min(1)
   })
 });
 
@@ -33,7 +33,7 @@ export const removeFromCartSchema = z.object({
   body: empty,
   query: empty,
   params: z.object({
-    gameId: z.string().min(1)
+    itemId: z.string().min(1)
   })
 });
 

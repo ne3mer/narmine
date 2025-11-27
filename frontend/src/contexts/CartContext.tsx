@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { API_BASE_URL } from '@/lib/api';
 
 type CartItem = {
+  _id: string;
   gameId: {
     id: string;
     title: string;
@@ -40,8 +41,8 @@ type CartContextType = {
   shippingCost: number;
   finalTotal: number;
   addToCart: (gameId: string, quantity?: number, variantId?: string, selectedOptions?: Record<string, string>) => Promise<void>;
-  updateQuantity: (gameId: string, quantity: number) => Promise<void>;
-  removeFromCart: (gameId: string) => Promise<void>;
+  updateQuantity: (itemId: string, quantity: number) => Promise<void>;
+  removeFromCart: (itemId: string) => Promise<void>;
   clearCart: () => Promise<void>;
   refreshCart: () => Promise<void>;
 };
@@ -161,7 +162,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateQuantity = async (gameId: string, quantity: number) => {
+  const updateQuantity = async (itemId: string, quantity: number) => {
     const token = getAuthToken();
     if (!token) return;
 
@@ -169,7 +170,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       setError('');
 
-      const response = await fetch(`${API_BASE_URL}/api/cart/${gameId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/cart/${itemId}`, {
         method: 'PATCH',
         headers: getAuthHeaders(),
         body: JSON.stringify({ quantity })
@@ -189,7 +190,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const removeFromCart = async (gameId: string) => {
+  const removeFromCart = async (itemId: string) => {
     const token = getAuthToken();
     if (!token) return;
 
@@ -197,7 +198,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       setError('');
 
-      const response = await fetch(`${API_BASE_URL}/api/cart/${gameId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/cart/${itemId}`, {
         method: 'DELETE',
         headers: getAuthHeaders()
       });

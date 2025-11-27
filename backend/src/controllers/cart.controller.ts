@@ -39,8 +39,8 @@ export const updateCartItem = async (req: Request, res: Response) => {
     return res.status(401).json({ message: 'Unauthorized' });
   }
   
-  const { gameId } = req.params;
-  const cart = await cartService.updateCartItem(userId, gameId, req.body);
+  const { itemId } = req.params;
+  const cart = await cartService.updateCartItem(userId, itemId, req.body);
   
   res.json({
     success: true,
@@ -56,8 +56,8 @@ export const removeFromCart = async (req: Request, res: Response) => {
     return res.status(401).json({ message: 'Unauthorized' });
   }
   
-  const { gameId } = req.params;
-  const cart = await cartService.removeFromCart(userId, gameId);
+  const { itemId } = req.params;
+  const cart = await cartService.removeFromCart(userId, itemId);
   
   res.json({
     success: true,

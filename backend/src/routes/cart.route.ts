@@ -24,8 +24,8 @@ router.use(authenticateUser);
 
 router.get('/', validateResource(getCartSchema), asyncHandler(getCart));
 router.post('/add', validateResource(addToCartSchema), asyncHandler(addToCart));
-router.patch('/:gameId', validateResource(updateCartItemSchema), asyncHandler(updateCartItem));
-router.delete('/:gameId', validateResource(removeFromCartSchema), asyncHandler(removeFromCart));
+router.patch('/:itemId', validateResource(updateCartItemSchema), asyncHandler(updateCartItem));
+router.delete('/:itemId', validateResource(removeFromCartSchema), asyncHandler(removeFromCart));
 router.delete('/', validateResource(clearCartSchema), asyncHandler(clearCart));
 
 export default router;

@@ -92,7 +92,7 @@ export const addToCart = async (userId: string, input: AddToCartInput) => {
 
 export const updateCartItem = async (
   userId: string,
-  gameId: string,
+  itemId: string,
   input: UpdateCartItemInput
 ) => {
   const { quantity } = input;
@@ -102,7 +102,7 @@ export const updateCartItem = async (
     throw new ApiError(404, 'Cart not found');
   }
   
-  const itemIndex = cart.items.findIndex((item) => item.gameId.toString() === gameId);
+  const itemIndex = cart.items.findIndex((item: any) => item._id.toString() === itemId);
   
   if (itemIndex === -1) {
     throw new ApiError(404, 'Item not found in cart');
@@ -126,13 +126,14 @@ export const updateCartItem = async (
   return populatedCart;
 };
 
-export const removeFromCart = async (userId: string, gameId: string) => {
+export const removeFromCart = async (userId: string, itemId: string) => {
   const cart = await CartModel.findOne({ userId });
   if (!cart) {
     throw new ApiError(404, 'Cart not found');
   }
   
-  cart.items = cart.items.filter((item) => item.gameId.toString() !== gameId);
+  // Filter out the specific item by its _id
+  cart.items = cart.items.filter((item: any) => item._id.toString() !== itemId);
   await cart.save();
   
   const populatedCart = await CartModel.findById(cart._id).populate(
