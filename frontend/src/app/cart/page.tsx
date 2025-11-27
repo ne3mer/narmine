@@ -211,13 +211,32 @@ export default function CartPage() {
               <span className="font-serif text-2xl font-bold text-[#4a3f3a]">{formatToman(finalTotal)}</span>
             </div>
 
-            <Link
-              href="/checkout"
-              className="mt-6 flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4a3f3a] to-[#c9a896] py-4 text-center font-semibold text-white shadow-lg transition-all hover:shadow-xl"
-            >
-              <Icon name="arrow-left" size={18} />
-              ادامه فرآیند خرید
-            </Link>
+            {typeof window !== 'undefined' && localStorage.getItem('gc_token') ? (
+              <Link
+                href="/checkout"
+                className="mt-6 flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4a3f3a] to-[#c9a896] py-4 text-center font-semibold text-white shadow-lg transition-all hover:shadow-xl"
+              >
+                <Icon name="arrow-left" size={18} />
+                ادامه فرآیند خرید
+              </Link>
+            ) : (
+              <div className="mt-6 flex flex-col gap-3">
+                <Link
+                  href="/auth/login?redirect=/checkout"
+                  className="flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4a3f3a] to-[#c9a896] py-4 text-center font-semibold text-white shadow-lg transition-all hover:shadow-xl"
+                >
+                  <Icon name="user" size={18} />
+                  ورود و ادامه خرید
+                </Link>
+                <Link
+                  href="/checkout/guest"
+                  className="flex items-center justify-center gap-2 rounded-full border-2 border-[#4a3f3a] py-3.5 text-center font-semibold text-[#4a3f3a] transition-all hover:bg-[#4a3f3a] hover:text-white"
+                >
+                  <Icon name="arrow-left" size={18} />
+                  خرید به عنوان مهمان
+                </Link>
+              </div>
+            )}
             
             <div className="mt-6 space-y-3">
               <div className="flex items-center gap-2 text-sm text-[#4a3f3a]/60">

@@ -75,14 +75,41 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     };
   };
 
+  // Helper to save guest cart to local storage
+  const saveGuestCart = (newCart: Cart) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('guest_cart', JSON.stringify(newCart));
+      setCart(newCart);
+    }
+  };
+
+  // Helper to get guest cart from local storage
+  const getGuestCart = (): Cart => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('guest_cart');
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    }
+    return {
+      userId: 'guest',
+      items: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+  };
+
   const refreshCart = async () => {
     const token = getAuthToken();
+    
+    // If guest, load from local storage
     if (!token) {
-      setCart(null);
+      setCart(getGuestCart());
       setError('');
       return;
     }
 
+    // If authenticated, fetch from API
     try {
       setLoading(true);
       setError('');
@@ -97,10 +124,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setCart(data.data);
         setError('');
       } else if (response.status === 401) {
-        // Unauthorized - token might be invalid
-        setCart(null);
+        setCart(getGuestCart());
         setError('');
-        // Clear invalid token
         if (typeof window !== 'undefined') {
           localStorage.removeItem('gc_token');
           localStorage.removeItem('gc_user');
@@ -111,13 +136,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setCart(null);
       }
     } catch (err) {
-      // Network error or CORS issue
       const errorMessage = err instanceof Error ? err.message : 'خطا در اتصال به سرور';
       console.error('Failed to fetch cart:', err);
-      
-      // Only show error if it's not a network issue (user might be offline)
       if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
-        // Silently fail for network errors - user might be offline
         setCart(null);
         setError('');
       } else {
@@ -131,11 +152,68 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addToCart = async (gameId: string, quantity: number = 1, variantId?: string, selectedOptions?: Record<string, string>) => {
     const token = getAuthToken();
+
+    // Guest Logic
     if (!token) {
-      setError('لطفاً ابتدا وارد حساب کاربری خود شوید');
-      return;
+      try {
+        setLoading(true);
+        // We need to fetch product details to store in local cart
+        // In a real app, we might store minimal info and fetch details on view, 
+        // but for consistency with backend cart structure, we'll try to mimic it.
+        // However, we can't easily fetch full product details here without an endpoint.
+        // Ideally, addToCart should receive the product object, but the signature is fixed.
+        // For now, we will fetch the product details using the public API.
+        const productRes = await fetch(`${API_BASE_URL}/api/games/${gameId}`);
+        if (!productRes.ok) throw new Error('Product not found');
+        const productData = await productRes.json();
+        const product = productData.data;
+
+        const currentCart = getGuestCart();
+        const existingItemIndex = currentCart.items.findIndex(item => 
+          item.gameId.id === gameId && item.variantId === variantId
+        );
+
+        let price = product.basePrice;
+        // If variant, find variant price
+        if (variantId && product.variants) {
+           const variant = product.variants.find((v: { id: string; salePrice?: number; price: number }) => v.id === variantId);
+           if (variant) {
+             price = variant.salePrice || variant.price;
+           }
+        }
+
+        if (existingItemIndex > -1) {
+          currentCart.items[existingItemIndex].quantity += quantity;
+        } else {
+          currentCart.items.push({
+            _id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            gameId: {
+              id: product._id || product.id,
+              title: product.title,
+              slug: product.slug,
+              coverUrl: product.coverUrl,
+              basePrice: product.basePrice,
+              shipping: product.shipping
+            },
+            quantity,
+            priceAtAdd: price,
+            addedAt: new Date().toISOString(),
+            variantId,
+            selectedOptions
+          });
+        }
+        
+        saveGuestCart(currentCart);
+        setLoading(false);
+        return;
+      } catch (err) {
+        console.error('Guest add to cart error:', err);
+        setLoading(false);
+        throw err;
+      }
     }
 
+    // Authenticated Logic
     try {
       setLoading(true);
       setError('');
@@ -164,8 +242,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const updateQuantity = async (itemId: string, quantity: number) => {
     const token = getAuthToken();
-    if (!token) return;
 
+    // Guest Logic
+    if (!token) {
+      const currentCart = getGuestCart();
+      const itemIndex = currentCart.items.findIndex(item => item._id === itemId);
+      
+      if (itemIndex > -1) {
+        if (quantity <= 0) {
+          currentCart.items.splice(itemIndex, 1);
+        } else {
+          currentCart.items[itemIndex].quantity = quantity;
+        }
+        saveGuestCart(currentCart);
+      }
+      return;
+    }
+
+    // Authenticated Logic
     try {
       setLoading(true);
       setError('');
@@ -192,8 +286,17 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const removeFromCart = async (itemId: string) => {
     const token = getAuthToken();
-    if (!token) return;
 
+    // Guest Logic
+    if (!token) {
+      const currentCart = getGuestCart();
+      const newItems = currentCart.items.filter(item => item._id !== itemId);
+      currentCart.items = newItems;
+      saveGuestCart(currentCart);
+      return;
+    }
+
+    // Authenticated Logic
     try {
       setLoading(true);
       setError('');
@@ -219,8 +322,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const clearCart = async () => {
     const token = getAuthToken();
-    if (!token) return;
 
+    // Guest Logic
+    if (!token) {
+      localStorage.removeItem('guest_cart');
+      setCart(getGuestCart());
+      return;
+    }
+
+    // Authenticated Logic
     try {
       setLoading(true);
       setError('');
@@ -244,15 +354,45 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Load cart on mount only if user is authenticated
-  useEffect(() => {
+  // Sync local cart to backend after login
+  const syncLocalCart = async () => {
     const token = getAuthToken();
-    if (token) {
-      refreshCart();
-    } else {
-      setCart(null);
-      setError('');
+    if (!token) return;
+
+    const localCart = getGuestCart();
+    if (localCart.items.length === 0) return;
+
+    try {
+      setLoading(true);
+      // We process items sequentially to ensure order
+      for (const item of localCart.items) {
+        await fetch(`${API_BASE_URL}/api/cart/add`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            gameId: item.gameId.id,
+            quantity: item.quantity,
+            variantId: item.variantId,
+            selectedOptions: item.selectedOptions
+          })
+        });
+      }
+      // Clear local cart after sync
+      localStorage.removeItem('guest_cart');
+      // Refresh to get merged state
+      await refreshCart();
+    } catch (err) {
+      console.error('Failed to sync cart:', err);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  // Load cart on mount
+  useEffect(() => {
+    refreshCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Listen for auth changes
@@ -260,10 +400,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const handleAuthChange = () => {
       const token = getAuthToken();
       if (token) {
-        refreshCart();
+        // If logging in, try to sync local cart first
+        syncLocalCart().then(() => refreshCart());
       } else {
-        setCart(null);
-        setError('');
+        // If logging out, switch to guest cart
+        refreshCart();
       }
     };
 
@@ -271,6 +412,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       window.addEventListener('gc-auth-change', handleAuthChange);
       return () => window.removeEventListener('gc-auth-change', handleAuthChange);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const itemCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
