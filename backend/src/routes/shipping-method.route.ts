@@ -17,9 +17,9 @@ router.get('/', getAllShippingMethods);
 router.get('/:id', getShippingMethodById);
 
 // Admin routes
-router.post('/', authenticate, isAdmin, createShippingMethod);
-router.put('/reorder', authenticate, isAdmin, reorderShippingMethods);
-router.patch('/:id', authenticate, isAdmin, updateShippingMethod);
-router.delete('/:id', authenticate, isAdmin, deleteShippingMethod);
+router.post('/', isAdmin, createShippingMethod);
+router.put('/reorder', isAdmin, reorderShippingMethods);
+router.patch('/:id', isAdmin, updateShippingMethod);
+router.delete('/:id', isAdmin, deleteShippingMethod);
 
 export default router;
