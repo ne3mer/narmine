@@ -8,7 +8,7 @@ export type AddToCartInput = z.infer<typeof addToCartSchema>['body'];
 export type UpdateCartItemInput = z.infer<typeof updateCartItemSchema>['body'];
 
 export const getCart = async (userId: string) => {
-  const cart = await CartModel.findOne({ userId }).populate('items.gameId', 'title slug coverUrl basePrice');
+  let cart = await CartModel.findOne({ userId });
   
   if (!cart) {
     // Return empty cart if not found
@@ -18,6 +18,33 @@ export const getCart = async (userId: string) => {
       createdAt: new Date(),
       updatedAt: new Date()
     };
+  }
+
+  // Migration: Ensure all items have _id
+  // This handles items created before schema change
+  let hasChanges = false;
+  // We need to cast to any because Typescript might not know about the internal _id property on subdocs if not typed explicitly in interface
+  cart.items.forEach((item: any) => {
+    if (!item._id) {
+      // Mongoose automatically assigns _id to subdocs if they are defined in schema without _id: false
+      // But for existing docs, we might need to trigger a save or manually assign if it doesn't happen automatically on load
+      // Actually, just saving the document usually triggers validation and defaults. 
+      // However, to be safe, we can check. 
+      // If we just loaded it and it doesn't have _id, it means it wasn't saved with one.
+      // Mongoose might not auto-generate it on load.
+      // Let's force a save if we detect missing IDs, which should trigger default generation for the new schema.
+      hasChanges = true;
+    }
+  });
+
+  if (hasChanges) {
+    await cart.save();
+    // Reload to get the IDs
+    cart = await CartModel.findOne({ userId });
+  }
+  
+  if (cart) {
+    await cart.populate('items.gameId', 'title slug coverUrl basePrice');
   }
   
   return cart;
@@ -102,7 +129,11 @@ export const updateCartItem = async (
     throw new ApiError(404, 'Cart not found');
   }
   
-  const itemIndex = cart.items.findIndex((item: any) => item._id.toString() === itemId);
+  // Find item by _id (itemId)
+  // We use loose comparison or toString() to ensure ObjectId matches string
+  const itemIndex = cart.items.findIndex((item: any) => 
+    item._id && item._id.toString() === itemId
+  );
   
   if (itemIndex === -1) {
     throw new ApiError(404, 'Item not found in cart');
@@ -133,7 +164,11 @@ export const removeFromCart = async (userId: string, itemId: string) => {
   }
   
   // Filter out the specific item by its _id
-  cart.items = cart.items.filter((item: any) => item._id.toString() !== itemId);
+  // Ensure we handle potential missing _id or type mismatch
+  cart.items = cart.items.filter((item: any) => 
+    item._id && item._id.toString() !== itemId
+  );
+  
   await cart.save();
   
   const populatedCart = await CartModel.findById(cart._id).populate(
