@@ -9,7 +9,6 @@ import { formatToman } from '@/lib/format';
 import { API_BASE_URL } from '@/lib/api';
 import { Icon } from '@/components/icons/Icon';
 import { getAuthToken } from '@/lib/auth';
-import { defaultHomeContent, type ShippingMethodContent } from '@/data/homeContent';
 
 type OrderPayloadItem = {
   gameId: string;
@@ -28,7 +27,12 @@ export default function CheckoutPage() {
     clearCart,
     paymentMethods,
     selectedPaymentMethodId,
-    setSelectedPaymentMethodId
+    setSelectedPaymentMethodId,
+    shippingMethods,
+    selectedShippingMethodId,
+    setSelectedShippingMethodId,
+    shippingCost,
+    finalTotal: contextFinalTotal
   } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -54,10 +58,7 @@ export default function CheckoutPage() {
       if (method) setPaymentMethod(method.name);
     }
   }, [selectedPaymentMethodId, paymentMethods]);
-  const [shippingMethods, setShippingMethods] = useState<ShippingMethodContent[]>(defaultHomeContent.shippingMethods);
-  const [selectedShippingId, setSelectedShippingId] = useState<string>(
-    defaultHomeContent.shippingMethods[0]?.id ?? ''
-  );
+
   const [deliveryDate, setDeliveryDate] = useState('');
   const [deliveryNote, setDeliveryNote] = useState('');
 
@@ -72,19 +73,10 @@ export default function CheckoutPage() {
   }, [cart]);
 
   const discountAmount = appliedCoupon?.discount || 0;
-  const selectedShippingMethod =
-    shippingMethods.find((method) => method.id === selectedShippingId) ?? shippingMethods[0] ?? null;
-  const shippingCost = useMemo(() => {
-    if (!selectedShippingMethod) return 0;
-    if (selectedShippingMethod.freeThreshold && totalPrice >= selectedShippingMethod.freeThreshold) {
-      return 0;
-    }
-    return selectedShippingMethod.price ?? 0;
-  }, [selectedShippingMethod, totalPrice]);
-  const finalTotal = useMemo(
-    () => Math.max(totalPrice - discountAmount + shippingCost, 0),
-    [totalPrice, discountAmount, shippingCost]
-  );
+  
+  // Use finalTotal from context but subtract discount
+  const finalTotal = Math.max(contextFinalTotal - discountAmount, 0);
+  
   const shippingPriceLabel = shippingCost > 0 ? `${formatToman(shippingCost)} تومان` : 'رایگان';
 
   useEffect(() => {
@@ -138,27 +130,6 @@ export default function CheckoutPage() {
     fetchInitialData();
   }, []);
 
-  useEffect(() => {
-    const fetchShippingMethods = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/homepage-settings`);
-        if (!response.ok) return;
-        const payload = await response.json();
-        const methods = payload?.data?.content?.shippingMethods;
-        if (Array.isArray(methods) && methods.length > 0) {
-          setShippingMethods(methods);
-          setSelectedShippingId((prev) =>
-            methods.some((method: ShippingMethodContent) => method.id === prev) ? prev : methods[0].id
-          );
-        }
-      } catch (error) {
-        console.warn('Shipping methods unavailable:', error);
-      }
-    };
-
-    fetchShippingMethods();
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -193,6 +164,13 @@ export default function CheckoutPage() {
         return;
       }
 
+      const selectedShippingMethod = shippingMethods.find(m => m._id === selectedShippingMethodId);
+      if (!selectedShippingMethod) {
+        setError('لطفاً یک روش ارسال انتخاب کنید');
+        setLoading(false);
+        return;
+      }
+
       const shippingAddressPayload = {
         city: customerInfo.city,
         address: customerInfo.address,
@@ -208,19 +186,12 @@ export default function CheckoutPage() {
         shippingAddress: shippingAddressPayload
       };
 
-      const shippingMethodPayload = selectedShippingMethod
-        ? {
-            id: selectedShippingMethod.id,
-            name: selectedShippingMethod.name,
-            badge: selectedShippingMethod.badge,
-            icon: selectedShippingMethod.icon,
-            eta: selectedShippingMethod.eta,
-            perks: selectedShippingMethod.perks,
-            freeThreshold: selectedShippingMethod.freeThreshold,
-            priceLabel: shippingCost === 0 ? selectedShippingMethod.priceLabel ?? 'رایگان' : selectedShippingMethod.priceLabel,
-            price: shippingCost
-          }
-        : undefined;
+      const shippingMethodPayload = {
+        id: selectedShippingMethod._id,
+        name: selectedShippingMethod.name,
+        price: shippingCost,
+        eta: selectedShippingMethod.eta
+      };
 
       const shippingPreferencesPayload =
         deliveryDate || deliveryNote
@@ -470,13 +441,13 @@ export default function CheckoutPage() {
                   </div>
                 )}
                 {shippingMethods.map((method) => {
-                  const isSelected = method.id === selectedShippingId;
-                  const cost =
-                    method.freeThreshold && totalPrice >= method.freeThreshold ? 0 : method.price ?? 0;
+                  const isSelected = method._id === selectedShippingMethodId;
+                  const isFree = method.freeThreshold && totalPrice >= method.freeThreshold;
+                  const cost = isFree ? 0 : method.price;
 
                   return (
                     <label
-                      key={method.id}
+                      key={method._id}
                       className={`block cursor-pointer rounded-2xl border-2 p-4 transition-all ${
                         isSelected
                           ? 'border-[#c9a896] bg-[#fdf8f3] shadow-lg'
@@ -486,35 +457,25 @@ export default function CheckoutPage() {
                       <input
                         type="radio"
                         name="shippingMethod"
-                        value={method.id}
-                        checked={selectedShippingId === method.id}
-                        onChange={() => setSelectedShippingId(method.id)}
+                        value={method._id}
+                        checked={isSelected}
+                        onChange={() => setSelectedShippingMethodId(method._id)}
                         className="sr-only"
                       />
                       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div className="flex flex-1 items-start gap-3">
                           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-2xl">
-                            {method.icon ?? '🚚'}
+                            {/* You might want to add icons to your shipping model or map them here */}
+                            {'🚚'}
                           </div>
                           <div>
                             <div className="flex flex-wrap items-center gap-2">
                               <p className="font-serif text-xl font-semibold text-[#4a3f3a]">{method.name}</p>
-                              {method.badge && (
-                                <span className="rounded-full bg-[#f4e5d9] px-3 py-1 text-xs font-semibold text-[#a26c4d]">
-                                  {method.badge}
-                                </span>
-                              )}
                             </div>
-                            <p className="text-sm text-[#4a3f3a]/70">{method.description}</p>
                             <div className="mt-3 flex flex-wrap gap-2 text-xs text-[#4a3f3a]/60">
                               <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1">
                                 <Icon name="clock" size={14} /> {method.eta}
                               </span>
-                              {(method.perks ?? []).slice(0, 2).map((perk) => (
-                                <span key={perk} className="rounded-full bg-white px-3 py-1">
-                                  {perk}
-                                </span>
-                              ))}
                             </div>
                           </div>
                         </div>
@@ -523,10 +484,8 @@ export default function CheckoutPage() {
                           <p className="text-2xl font-bold text-[#4a3f3a]">
                             {cost === 0 ? 'رایگان' : `${formatToman(cost)} تومان`}
                           </p>
-                          {method.freeThreshold && (
-                            <p className="text-xs text-[#4a3f3a]/60">
-                              رایگان برای سفارش‌های بالای {formatToman(method.freeThreshold)} تومان
-                            </p>
+                          {isFree && (
+                            <span className="text-xs text-green-600">ارسال رایگان سفارش‌های بالای {formatToman(method.freeThreshold || 0)} تومان</span>
                           )}
                         </div>
                       </div>
@@ -705,9 +664,9 @@ export default function CheckoutPage() {
                   <span>هزینه ارسال</span>
                   <span className="font-semibold text-[#4a3f3a]">{shippingPriceLabel}</span>
                 </div>
-                {selectedShippingMethod && (
+                {selectedShippingMethodId && (
                   <div className="text-xs text-[#4a3f3a]/60">
-                    {selectedShippingMethod.name} – {selectedShippingMethod.eta}
+                    {shippingMethods.find(m => m._id === selectedShippingMethodId)?.name} – {shippingMethods.find(m => m._id === selectedShippingMethodId)?.eta}
                   </div>
                 )}
               </div>
