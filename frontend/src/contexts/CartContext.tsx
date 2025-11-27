@@ -33,6 +33,7 @@ type Cart = {
 };
 
 import { getAllShippingMethods, type ShippingMethod } from '@/lib/api/shipping';
+import { getAllPaymentMethods, type PaymentMethod } from '@/lib/api/payment';
 
 // ... (previous imports)
 
@@ -47,6 +48,9 @@ type CartContextType = {
   shippingMethods: ShippingMethod[];
   selectedShippingMethodId: string;
   setSelectedShippingMethodId: (id: string) => void;
+  paymentMethods: PaymentMethod[];
+  selectedPaymentMethodId: string;
+  setSelectedPaymentMethodId: (id: string) => void;
   addToCart: (gameId: string, quantity?: number, variantId?: string, selectedOptions?: Record<string, string>) => Promise<void>;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
   removeFromCart: (itemId: string) => Promise<void>;
@@ -386,71 +390,26 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Fetch shipping methods
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string>('');
+
+  // ... (existing code)
+
+  // Fetch payment methods
   useEffect(() => {
-    const fetchShippingMethods = async () => {
+    const fetchPaymentMethods = async () => {
       try {
-        const methods = await getAllShippingMethods(true);
-        setShippingMethods(methods);
+        const methods = await getAllPaymentMethods(true);
+        setPaymentMethods(methods);
         if (methods.length > 0) {
-          setSelectedShippingMethodId(methods[0]._id);
+          setSelectedPaymentMethodId(methods[0]._id);
         }
       } catch (err) {
-        console.error('Failed to fetch shipping methods:', err);
+        console.error('Failed to fetch payment methods:', err);
       }
     };
-    fetchShippingMethods();
+    fetchPaymentMethods();
   }, []);
-
-  // Load cart on mount
-  useEffect(() => {
-    refreshCart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Listen for auth changes
-  useEffect(() => {
-    const handleAuthChange = () => {
-      const token = getAuthToken();
-      if (token) {
-        syncLocalCart().then(() => refreshCart());
-      } else {
-        refreshCart();
-      }
-    };
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('gc-auth-change', handleAuthChange);
-      return () => window.removeEventListener('gc-auth-change', handleAuthChange);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const itemCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
-  const totalPrice = cart?.items.reduce((sum, item) => sum + item.priceAtAdd * item.quantity, 0) || 0;
-  
-  // Calculate Shipping Cost
-  const selectedMethod = shippingMethods.find(m => m._id === selectedShippingMethodId);
-  
-  let shippingCost = 0;
-  if (selectedMethod) {
-    if (selectedMethod.freeThreshold && totalPrice >= selectedMethod.freeThreshold) {
-      shippingCost = 0;
-    } else {
-      shippingCost = selectedMethod.price;
-    }
-  } else {
-    // Fallback to legacy per-item shipping if no method selected (or no methods available)
-    shippingCost = cart?.items.reduce((sum, item) => {
-      if (!item.gameId) return sum;
-      if (item.gameId.shipping?.requiresShipping && !item.gameId.shipping.freeShipping) {
-        return sum + (item.gameId.shipping.shippingCost || 0) * item.quantity;
-      }
-      return sum;
-    }, 0) || 0;
-  }
-
-  const finalTotal = totalPrice + shippingCost;
 
   const value: CartContextType = {
     cart,
@@ -463,6 +422,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     shippingMethods,
     selectedShippingMethodId,
     setSelectedShippingMethodId,
+    paymentMethods,
+    selectedPaymentMethodId,
+    setSelectedPaymentMethodId,
     addToCart,
     updateQuantity,
     removeFromCart,

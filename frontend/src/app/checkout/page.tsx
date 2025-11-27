@@ -38,7 +38,14 @@ export default function CheckoutPage() {
     postalCode: ''
   });
 
-  const [paymentMethod, setPaymentMethod] = useState('online');
+  const [paymentMethod, setPaymentMethod] = useState('');
+  
+  useEffect(() => {
+    if (selectedPaymentMethodId && paymentMethods.length > 0) {
+      const method = paymentMethods.find(m => m._id === selectedPaymentMethodId);
+      if (method) setPaymentMethod(method.name);
+    }
+  }, [selectedPaymentMethodId, paymentMethods]);
   const [shippingMethods, setShippingMethods] = useState<ShippingMethodContent[]>(defaultHomeContent.shippingMethods);
   const [selectedShippingId, setSelectedShippingId] = useState<string>(
     defaultHomeContent.shippingMethods[0]?.id ?? ''
@@ -551,31 +558,42 @@ export default function CheckoutPage() {
               <h2 className="mb-6 font-serif text-2xl font-bold text-[#4a3f3a]">روش پرداخت</h2>
               
               <div className="space-y-3">
-                <label className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-[#c9a896]/30 p-4 transition-all hover:border-[#c9a896] has-[:checked]:border-[#c9a896] has-[:checked]:bg-[#f8f5f2]/50">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="online"
-                    checked={paymentMethod === 'online'}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="accent-[#c9a896]"
-                  />
-                  <Icon name="credit-card" size={20} className="text-[#c9a896]" />
-                  <span className="font-medium text-[#4a3f3a]">پرداخت آنلاین</span>
-                </label>
-
-                <label className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-[#c9a896]/30 p-4 transition-all hover:border-[#c9a896] has-[:checked]:border-[#c9a896] has-[:checked]:bg-[#f8f5f2]/50">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="cash"
-                    checked={paymentMethod === 'cash'}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="accent-[#c9a896]"
-                  />
-                  <Icon name="dollar" size={20} className="text-[#c9a896]" />
-                  <span className="font-medium text-[#4a3f3a]">پرداخت در محل</span>
-                </label>
+                {paymentMethods.length === 0 && (
+                  <div className="rounded-2xl border border-dashed border-[#c9a896]/40 bg-[#f8f5f2]/50 p-4 text-center text-sm text-[#4a3f3a]/70">
+                    روش پرداخت در دسترس نیست.
+                  </div>
+                )}
+                {paymentMethods.map((method) => (
+                  <label
+                    key={method._id}
+                    className={`flex cursor-pointer items-center gap-3 rounded-xl border-2 p-4 transition-all ${
+                      selectedPaymentMethodId === method._id
+                        ? 'border-[#c9a896] bg-[#f8f5f2]/50'
+                        : 'border-[#c9a896]/30 hover:border-[#c9a896]'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      value={method.name}
+                      checked={selectedPaymentMethodId === method._id}
+                      onChange={() => {
+                        setSelectedPaymentMethodId(method._id);
+                        setPaymentMethod(method.name);
+                      }}
+                      className="accent-[#c9a896]"
+                    />
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl">{method.icon || '💳'}</span>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-[#4a3f3a]">{method.label}</span>
+                        {method.description && (
+                          <span className="text-xs text-[#4a3f3a]/60">{method.description}</span>
+                        )}
+                      </div>
+                    </div>
+                  </label>
+                ))}
               </div>
             </div>
           </div>
