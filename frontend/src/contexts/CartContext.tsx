@@ -411,6 +411,36 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     fetchPaymentMethods();
   }, []);
 
+  // Fetch shipping methods
+  useEffect(() => {
+    const fetchShippingMethods = async () => {
+      try {
+        const methods = await getAllShippingMethods(true);
+        setShippingMethods(methods);
+        if (methods.length > 0) {
+          setSelectedShippingMethodId(methods[0]._id);
+        }
+      } catch (err) {
+        console.error('Failed to fetch shipping methods:', err);
+      }
+    };
+    fetchShippingMethods();
+  }, []);
+
+  // Derived state
+  const itemCount = cart?.items.reduce((total, item) => total + item.quantity, 0) || 0;
+  
+  const totalPrice = cart?.items.reduce((total, item) => {
+    return total + (item.priceAtAdd * item.quantity);
+  }, 0) || 0;
+
+  const selectedShippingMethod = shippingMethods.find(m => m._id === selectedShippingMethodId);
+  const shippingCost = selectedShippingMethod 
+    ? (selectedShippingMethod.freeThreshold && totalPrice >= selectedShippingMethod.freeThreshold ? 0 : selectedShippingMethod.price)
+    : 0;
+
+  const finalTotal = totalPrice + shippingCost;
+
   const value: CartContextType = {
     cart,
     loading,
