@@ -65,8 +65,8 @@ const updateCartItem = async (req, res) => {
     if (!userId) {
         return res.status(401).json({ message: 'Unauthorized' });
     }
-    const { gameId } = req.params;
-    const cart = await cartService.updateCartItem(userId, gameId, req.body);
+    const { itemId } = req.params;
+    const cart = await cartService.updateCartItem(userId, itemId, req.body);
     res.json({
         success: true,
         message: 'Cart updated',
@@ -79,8 +79,8 @@ const removeFromCart = async (req, res) => {
     if (!userId) {
         return res.status(401).json({ message: 'Unauthorized' });
     }
-    const { gameId } = req.params;
-    const cart = await cartService.removeFromCart(userId, gameId);
+    const { itemId } = req.params;
+    const cart = await cartService.removeFromCart(userId, itemId);
     res.json({
         success: true,
         message: 'Item removed from cart',

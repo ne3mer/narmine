@@ -101,7 +101,7 @@ export default function CartPage() {
                   <div className="text-sm text-[#4a3f3a]/60">
                     {item.selectedOptions && Object.keys(item.selectedOptions).length > 0
                       ? Object.entries(item.selectedOptions)
-                          .map(([k, v]) => `${v}`)
+                          .map(([, v]) => `${v}`)
                           .join(' | ')
                       : 'استاندارد'}
                   </div>

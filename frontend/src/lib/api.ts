@@ -1,10 +1,11 @@
+
 const normalizeUrl = (value?: string | null, fallback: string = '') => {
   if (!value) return fallback;
   return value.endsWith('/') ? value.slice(0, -1) : value;
 };
 
 const getApiBaseUrl = () => {
-  let url = process.env.NEXT_PUBLIC_API_URL;
+  const url = process.env.NEXT_PUBLIC_API_URL;
 
   if (typeof window !== 'undefined') {
     if (!url) return 'https://narmine-backend.onrender.com';

@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AdminGuard } from '@/components/admin/AdminGuard';
-import { Icon } from '@/components/icons/Icon';
+import { Icon, type IconName } from '@/components/icons/Icon';
 import { API_BASE_URL, ADMIN_API_KEY, adminHeaders } from '@/lib/api';
 import { getAuthToken } from '@/lib/auth';
 
 type NavGroup = {
   title?: string;
-  items: Array<{ href: string; label: string; icon: string; badge?: string }>;
+  items: Array<{ href: string; label: string; icon: IconName; badge?: string }>;
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -184,7 +184,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         }`}
                       >
                         <Icon 
-                          name={link.icon as any} 
+                          name={link.icon} 
                           size={20} 
                           className={`transition-transform ${isActive ? 'scale-110 text-white' : 'text-slate-600 group-hover:scale-110'}`}
                           strokeWidth={isActive ? 2.5 : 2}

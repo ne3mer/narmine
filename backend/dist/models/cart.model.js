@@ -28,7 +28,7 @@ const cartItemSchema = new mongoose_1.Schema({
         type: Date,
         default: Date.now
     }
-}, { _id: false });
+});
 const cartSchema = new mongoose_1.Schema({
     userId: {
         type: mongoose_1.Schema.Types.ObjectId,

@@ -24,14 +24,14 @@ exports.updateCartItemSchema = zod_1.z.object({
     }),
     query: empty,
     params: zod_1.z.object({
-        gameId: zod_1.z.string().min(1)
+        itemId: zod_1.z.string().min(1)
     })
 });
 exports.removeFromCartSchema = zod_1.z.object({
     body: empty,
     query: empty,
     params: zod_1.z.object({
-        gameId: zod_1.z.string().min(1)
+        itemId: zod_1.z.string().min(1)
     })
 });
 exports.clearCartSchema = zod_1.z.object({

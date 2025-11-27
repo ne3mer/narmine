@@ -80,6 +80,8 @@ const gameSchema = new mongoose_1.Schema({
             id: { type: String, required: true },
             selectedOptions: { type: Map, of: String, required: true },
             price: { type: Number, required: true },
+            salePrice: { type: Number },
+            onSale: { type: Boolean, default: false },
             stock: { type: Number, required: true, default: 0 }
         }
     ]

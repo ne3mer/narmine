@@ -26,6 +26,7 @@ const homepageSettings_routes_1 = __importDefault(require("./homepageSettings.ro
 const shipping_method_route_1 = __importDefault(require("./shipping-method.route"));
 const page_route_1 = __importDefault(require("./page.route"));
 const contact_route_1 = __importDefault(require("./contact.route"));
+const gameRequest_route_1 = __importDefault(require("./gameRequest.route"));
 const router = (0, express_1.Router)();
 router.use("/health", health_route_1.default);
 router.use("/games", game_route_1.default);
@@ -49,5 +50,6 @@ router.use("/homepage-settings", homepageSettings_routes_1.default);
 router.use("/shipping-methods", shipping_method_route_1.default);
 router.use("/pages", page_route_1.default);
 router.use("/contact", contact_route_1.default);
+router.use("/game-requests", gameRequest_route_1.default);
 exports.default = router;
 //# sourceMappingURL=index.js.map

@@ -11,8 +11,8 @@ const router = (0, express_1.Router)();
 router.use(authenticateUser_1.authenticateUser);
 router.get('/', (0, validateResource_1.validateResource)(cart_schema_1.getCartSchema), (0, asyncHandler_1.asyncHandler)(cart_controller_1.getCart));
 router.post('/add', (0, validateResource_1.validateResource)(cart_schema_1.addToCartSchema), (0, asyncHandler_1.asyncHandler)(cart_controller_1.addToCart));
-router.patch('/:gameId', (0, validateResource_1.validateResource)(cart_schema_1.updateCartItemSchema), (0, asyncHandler_1.asyncHandler)(cart_controller_1.updateCartItem));
-router.delete('/:gameId', (0, validateResource_1.validateResource)(cart_schema_1.removeFromCartSchema), (0, asyncHandler_1.asyncHandler)(cart_controller_1.removeFromCart));
+router.patch('/:itemId', (0, validateResource_1.validateResource)(cart_schema_1.updateCartItemSchema), (0, asyncHandler_1.asyncHandler)(cart_controller_1.updateCartItem));
+router.delete('/:itemId', (0, validateResource_1.validateResource)(cart_schema_1.removeFromCartSchema), (0, asyncHandler_1.asyncHandler)(cart_controller_1.removeFromCart));
 router.delete('/', (0, validateResource_1.validateResource)(cart_schema_1.clearCartSchema), (0, asyncHandler_1.asyncHandler)(cart_controller_1.clearCart));
 exports.default = router;
 //# sourceMappingURL=cart.route.js.map

@@ -59,6 +59,8 @@ exports.createGameSchema = zod_1.z.object({
             id: zod_1.z.string(),
             selectedOptions: zod_1.z.record(zod_1.z.string(), zod_1.z.string()),
             price: zod_1.z.number().positive(),
+            salePrice: zod_1.z.number().positive().optional(),
+            onSale: zod_1.z.boolean().default(false),
             stock: zod_1.z.number().int().nonnegative().default(10)
         })).default([]),
         // Multi-product fields
@@ -138,6 +140,8 @@ const updateGameBody = zod_1.z
         id: zod_1.z.string(),
         selectedOptions: zod_1.z.record(zod_1.z.string(), zod_1.z.string()),
         price: zod_1.z.number().positive(),
+        salePrice: zod_1.z.number().positive().optional(),
+        onSale: zod_1.z.boolean().default(false),
         stock: zod_1.z.number().int().nonnegative().default(10)
     })).optional(),
     // Multi-product fields
