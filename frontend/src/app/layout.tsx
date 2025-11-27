@@ -4,6 +4,7 @@ import "./globals.css";
 import { MainNav } from "@/components/layout/MainNav";
 import { CartProvider } from "@/contexts/CartContext";
 import { AnalyticsProvider } from "@/contexts/AnalyticsContext";
+import { ToastProvider } from "@/components/ui/ToastProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -82,6 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AnalyticsProvider>
             <MainNav />
             {children}
+            <ToastProvider />
           </AnalyticsProvider>
         </CartProvider>
       </body>
