@@ -63,12 +63,44 @@ const fetchHomepageSettings = async (): Promise<HomepageSettingsResponse | null>
   }
 };
 
+const fetchShippingMethods = async (): Promise<any[]> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/shipping-methods?active=true`, {
+      next: { revalidate: 300 },
+    });
+    if (!response.ok) return [];
+    const payload = await response.json();
+    return Array.isArray(payload?.data) ? payload.data : [];
+  } catch (error) {
+    console.warn("Shipping methods unavailable:", error);
+    return [];
+  }
+};
+
 export default async function HomePage() {
   const categories = await fetchCategories();
   const categoriesDisplay = categories.length > 0 ? categories : defaultCategories;
   const homepageSettings = await fetchHomepageSettings();
   const homeContent = homepageSettings?.content ?? defaultHomeContent;
   
+  // Fetch dynamic shipping methods
+  const dynamicShippingMethods = await fetchShippingMethods();
+  const shippingMethodsDisplay = dynamicShippingMethods.length > 0 
+    ? dynamicShippingMethods.map(m => ({
+        id: m._id,
+        name: m.name,
+        description: m.description || '', // Ensure description exists
+        eta: m.eta,
+        price: m.price,
+        priceLabel: m.priceLabel,
+        badge: m.badge,
+        icon: m.icon,
+        freeThreshold: m.freeThreshold,
+        perks: m.perks,
+        highlight: false // Default to false or logic to highlight
+      }))
+    : homeContent.shippingMethods;
+
   // Use settings sections if available, otherwise fallback to default order
   const sections = homepageSettings?.sections?.length 
     ? [...homepageSettings.sections].sort((a, b) => a.order - b.order)
@@ -175,7 +207,7 @@ export default async function HomePage() {
         return (
           <section key={section.id} className="w-full bg-[#f8f5f2] py-20">
             <div className="mx-auto max-w-7xl px-6">
-              <ShippingExperience methods={homeContent.shippingMethods} />
+              <ShippingExperience methods={shippingMethodsDisplay} />
             </div>
           </section>
         );
