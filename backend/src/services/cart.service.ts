@@ -8,10 +8,10 @@ export type AddToCartInput = z.infer<typeof addToCartSchema>['body'];
 export type UpdateCartItemInput = z.infer<typeof updateCartItemSchema>['body'];
 
 export const getCart = async (userId: string) => {
-  let cart = await CartModel.findOne({ userId });
+  // Check for missing IDs using lean() to see actual DB state
+  const rawCart = await CartModel.findOne({ userId }).lean();
   
-  if (!cart) {
-    // Return empty cart if not found
+  if (!rawCart) {
     return {
       userId,
       items: [],
@@ -20,29 +20,25 @@ export const getCart = async (userId: string) => {
     };
   }
 
-  // Migration: Ensure all items have _id
-  // This handles items created before schema change
-  let hasChanges = false;
-  // We need to cast to any because Typescript might not know about the internal _id property on subdocs if not typed explicitly in interface
-  cart.items.forEach((item: any) => {
-    if (!item._id) {
-      // Mongoose automatically assigns _id to subdocs if they are defined in schema without _id: false
-      // But for existing docs, we might need to trigger a save or manually assign if it doesn't happen automatically on load
-      // Actually, just saving the document usually triggers validation and defaults. 
-      // However, to be safe, we can check. 
-      // If we just loaded it and it doesn't have _id, it means it wasn't saved with one.
-      // Mongoose might not auto-generate it on load.
-      // Let's force a save if we detect missing IDs, which should trigger default generation for the new schema.
-      hasChanges = true;
-    }
-  });
+  // Check if any item is missing _id in the database
+  const needsMigration = rawCart.items.some((item: any) => !item._id);
 
-  if (hasChanges) {
-    await cart.save();
-    // Reload to get the IDs
+  let cart;
+  if (needsMigration) {
+    // Load full document to update
+    cart = await CartModel.findOne({ userId });
+    if (cart) {
+      // Mongoose will auto-generate IDs for items in schema that don't have them
+      // We just need to mark as modified to ensure it saves them
+      cart.markModified('items');
+      await cart.save();
+      // Reload to ensure we have the persisted IDs
+      cart = await CartModel.findOne({ userId });
+    }
+  } else {
     cart = await CartModel.findOne({ userId });
   }
-  
+
   if (cart) {
     await cart.populate('items.gameId', 'title slug coverUrl basePrice');
   }
