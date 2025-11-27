@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { validateResource } from '../middleware/validateResource';
 import { authenticateUser } from '../middleware/authenticateUser';
-import { requireAdmin } from '../middleware/requireAdmin';
+import { adminAuth } from '../middleware/adminAuth';
 import {
   createGameRequestSchema,
   updateGameRequestStatusSchema,
@@ -24,8 +24,8 @@ router.post('/', authenticateUser, validateResource(createGameRequestSchema), as
 router.get('/', authenticateUser, asyncHandler(getUserGameRequests));
 
 // Admin routes
-router.get('/all', authenticateUser, requireAdmin, validateResource(getGameRequestsSchema), asyncHandler(getAllGameRequests));
-router.patch('/:id', authenticateUser, requireAdmin, validateResource(updateGameRequestStatusSchema), asyncHandler(updateGameRequestStatus));
-router.delete('/:id', authenticateUser, requireAdmin, validateResource(deleteGameRequestSchema), asyncHandler(deleteGameRequest));
+router.get('/all', authenticateUser, adminAuth, validateResource(getGameRequestsSchema), asyncHandler(getAllGameRequests));
+router.patch('/:id', authenticateUser, adminAuth, validateResource(updateGameRequestStatusSchema), asyncHandler(updateGameRequestStatus));
+router.delete('/:id', authenticateUser, adminAuth, validateResource(deleteGameRequestSchema), asyncHandler(deleteGameRequest));
 
 export default router;
