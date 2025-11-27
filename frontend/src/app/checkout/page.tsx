@@ -21,7 +21,15 @@ type OrderPayloadItem = {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart, totalPrice, loading: cartLoading, clearCart } = useCart();
+  const { 
+    cart, 
+    totalPrice, 
+    loading: cartLoading, 
+    clearCart,
+    paymentMethods,
+    selectedPaymentMethodId,
+    setSelectedPaymentMethodId
+  } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [couponInput, setCouponInput] = useState('');
