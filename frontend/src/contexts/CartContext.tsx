@@ -32,6 +32,10 @@ type Cart = {
   updatedAt?: string;
 };
 
+import { getAllShippingMethods, type ShippingMethod } from '@/lib/api/shipping';
+
+// ... (previous imports)
+
 type CartContextType = {
   cart: Cart | null;
   loading: boolean;
@@ -40,6 +44,9 @@ type CartContextType = {
   totalPrice: number;
   shippingCost: number;
   finalTotal: number;
+  shippingMethods: ShippingMethod[];
+  selectedShippingMethodId: string;
+  setSelectedShippingMethodId: (id: string) => void;
   addToCart: (gameId: string, quantity?: number, variantId?: string, selectedOptions?: Record<string, string>) => Promise<void>;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
   removeFromCart: (itemId: string) => Promise<void>;
@@ -61,6 +68,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>([]);
+  const [selectedShippingMethodId, setSelectedShippingMethodId] = useState<string>('');
 
   const getAuthToken = () => {
     if (typeof window === 'undefined') return null;
@@ -75,7 +84,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     };
   };
 
-  // Helper to save guest cart to local storage
+  // ... (saveGuestCart, getGuestCart helpers - unchanged)
   const saveGuestCart = (newCart: Cart) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('guest_cart', JSON.stringify(newCart));
@@ -83,7 +92,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Helper to get guest cart from local storage
   const getGuestCart = (): Cart => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('guest_cart');
@@ -150,6 +158,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // ... (addToCart, updateQuantity, removeFromCart, clearCart, syncLocalCart - unchanged)
   const addToCart = async (gameId: string, quantity: number = 1, variantId?: string, selectedOptions?: Record<string, string>) => {
     const token = getAuthToken();
 
@@ -157,12 +166,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     if (!token) {
       try {
         setLoading(true);
-        // We need to fetch product details to store in local cart
-        // In a real app, we might store minimal info and fetch details on view, 
-        // but for consistency with backend cart structure, we'll try to mimic it.
-        // However, we can't easily fetch full product details here without an endpoint.
-        // Ideally, addToCart should receive the product object, but the signature is fixed.
-        // For now, we will fetch the product details using the public API.
         const productRes = await fetch(`${API_BASE_URL}/api/games/${gameId}`);
         if (!productRes.ok) throw new Error('Product not found');
         const productData = await productRes.json();
@@ -174,7 +177,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         );
 
         let price = product.basePrice;
-        // If variant, find variant price
         if (variantId && product.variants) {
            const variant = product.variants.find((v: { id: string; salePrice?: number; price: number }) => v.id === variantId);
            if (variant) {
@@ -354,7 +356,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Sync local cart to backend after login
   const syncLocalCart = async () => {
     const token = getAuthToken();
     if (!token) return;
@@ -364,7 +365,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       setLoading(true);
-      // We process items sequentially to ensure order
       for (const item of localCart.items) {
         await fetch(`${API_BASE_URL}/api/cart/add`, {
           method: 'POST',
@@ -377,9 +377,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           })
         });
       }
-      // Clear local cart after sync
       localStorage.removeItem('guest_cart');
-      // Refresh to get merged state
       await refreshCart();
     } catch (err) {
       console.error('Failed to sync cart:', err);
@@ -388,10 +386,25 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Fetch shipping methods
+  useEffect(() => {
+    const fetchShippingMethods = async () => {
+      try {
+        const methods = await getAllShippingMethods(true);
+        setShippingMethods(methods);
+        if (methods.length > 0) {
+          setSelectedShippingMethodId(methods[0]._id);
+        }
+      } catch (err) {
+        console.error('Failed to fetch shipping methods:', err);
+      }
+    };
+    fetchShippingMethods();
+  }, []);
+
   // Load cart on mount
   useEffect(() => {
     refreshCart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -400,10 +413,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const handleAuthChange = () => {
       const token = getAuthToken();
       if (token) {
-        // If logging in, try to sync local cart first
         syncLocalCart().then(() => refreshCart());
       } else {
-        // If logging out, switch to guest cart
         refreshCart();
       }
     };
@@ -418,13 +429,26 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const itemCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
   const totalPrice = cart?.items.reduce((sum, item) => sum + item.priceAtAdd * item.quantity, 0) || 0;
   
-  const shippingCost = cart?.items.reduce((sum, item) => {
-    if (!item.gameId) return sum;
-    if (item.gameId.shipping?.requiresShipping && !item.gameId.shipping.freeShipping) {
-      return sum + (item.gameId.shipping.shippingCost || 0) * item.quantity;
+  // Calculate Shipping Cost
+  const selectedMethod = shippingMethods.find(m => m._id === selectedShippingMethodId);
+  
+  let shippingCost = 0;
+  if (selectedMethod) {
+    if (selectedMethod.freeThreshold && totalPrice >= selectedMethod.freeThreshold) {
+      shippingCost = 0;
+    } else {
+      shippingCost = selectedMethod.price;
     }
-    return sum;
-  }, 0) || 0;
+  } else {
+    // Fallback to legacy per-item shipping if no method selected (or no methods available)
+    shippingCost = cart?.items.reduce((sum, item) => {
+      if (!item.gameId) return sum;
+      if (item.gameId.shipping?.requiresShipping && !item.gameId.shipping.freeShipping) {
+        return sum + (item.gameId.shipping.shippingCost || 0) * item.quantity;
+      }
+      return sum;
+    }, 0) || 0;
+  }
 
   const finalTotal = totalPrice + shippingCost;
 
@@ -436,6 +460,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     totalPrice,
     shippingCost,
     finalTotal,
+    shippingMethods,
+    selectedShippingMethodId,
+    setSelectedShippingMethodId,
     addToCart,
     updateQuantity,
     removeFromCart,

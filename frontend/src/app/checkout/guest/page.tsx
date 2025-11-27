@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 
 export default function GuestCheckoutPage() {
   const router = useRouter();
-  const { cart, finalTotal, clearCart, totalPrice, shippingCost } = useCart();
+  const { cart, finalTotal, clearCart, totalPrice, shippingCost, shippingMethods, selectedShippingMethodId, setSelectedShippingMethodId } = useCart();
   const [loading, setLoading] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -46,6 +46,11 @@ export default function GuestCheckoutPage() {
     setLoading(true);
 
     try {
+      const selectedMethod = shippingMethods.find(m => m._id === selectedShippingMethodId);
+      if (!selectedMethod) {
+        throw new Error('لطفاً یک روش ارسال انتخاب کنید');
+      }
+
       // 1. Create Order
       const orderData = {
         customerInfo: {
@@ -71,8 +76,10 @@ export default function GuestCheckoutPage() {
         totalAmount: finalTotal,
         paymentMethod: 'online', // Default to online payment
         shippingMethod: {
-          name: 'پست پیشتاز', // Default shipping
-          price: 0
+          id: selectedMethod._id,
+          name: selectedMethod.name,
+          price: shippingCost, // Use calculated cost (0 if free)
+          eta: selectedMethod.eta
         }
       };
 
@@ -247,6 +254,61 @@ export default function GuestCheckoutPage() {
                     onChange={handleInputChange}
                     className="w-full rounded-xl border border-[#c9a896]/30 bg-[#f8f5f2] px-4 py-3 outline-none focus:border-[#c9a896] focus:ring-2 focus:ring-[#c9a896]/20"
                   />
+                </div>
+              </div>
+
+              <div className="border-t border-[#c9a896]/20 pt-6"></div>
+
+              {/* Shipping Method Selection */}
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold text-[#4a3f3a]">روش ارسال</h2>
+                <div className="grid gap-4">
+                  {shippingMethods.map((method) => {
+                    const isFree = method.freeThreshold && totalPrice >= method.freeThreshold;
+                    const cost = isFree ? 0 : method.price;
+                    
+                    return (
+                      <label
+                        key={method._id}
+                        className={`relative flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all ${
+                          selectedShippingMethodId === method._id
+                            ? 'border-[#c9a896] bg-[#f8f5f2] shadow-sm'
+                            : 'border-[#c9a896]/20 hover:border-[#c9a896]/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="shippingMethod"
+                            value={method._id}
+                            checked={selectedShippingMethodId === method._id}
+                            onChange={() => setSelectedShippingMethodId(method._id)}
+                            className="h-5 w-5 border-gray-300 text-[#c9a896] focus:ring-[#c9a896]"
+                          />
+                          <div>
+                            <span className="block font-bold text-[#4a3f3a]">{method.name}</span>
+                            {method.eta && (
+                              <span className="text-sm text-[#4a3f3a]/70">{method.eta}</span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className={`block font-bold ${cost === 0 ? 'text-green-600' : 'text-[#4a3f3a]'}`}>
+                            {cost === 0 ? 'رایگان' : `${cost.toLocaleString('fa-IR')} تومان`}
+                          </span>
+                          {isFree && (
+                            <span className="text-xs text-green-600">ارسال رایگان سفارش‌های بالای {method.freeThreshold?.toLocaleString('fa-IR')}</span>
+                          )}
+                        </div>
+                      </label>
+                    );
+                  })}
+                  
+                  {shippingMethods.length === 0 && (
+                    <div className="rounded-xl border border-dashed border-gray-300 p-4 text-center text-gray-500">
+                      هیچ روش ارسالی موجود نیست.
+                    </div>
+                  )}
                 </div>
               </div>
 
