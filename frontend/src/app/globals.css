@@ -38,6 +38,14 @@ body {
   text-align: right;
   font-feature-settings: "ss01" on, "kern" on;
   line-height: 1.7;
+  /* Fix for Persian characters disconnecting on some mobile devices */
+  letter-spacing: 0 !important;
+  font-variant-ligatures: normal;
+}
+
+/* Ensure no letter spacing on any element for Persian text */
+* {
+  letter-spacing: 0;
 }
 
 .rtl-input,
