@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Icon } from '@/components/icons/Icon';
+import { EnamadLogo } from '@/components/common/EnamadLogo';
 
 export const SiteFooter = () => (
   <footer className="bg-gradient-to-b from-white to-[#f8f5f2] border-t border-[#c9a896]/20">
@@ -92,20 +93,7 @@ export const SiteFooter = () => (
         <div>
           <h4 className="mb-4 font-serif text-lg font-bold text-[#4a3f3a]">نماد اعتماد</h4>
           <div className="flex gap-4">
-            <a 
-              referrerPolicy='origin' 
-              target='_blank' 
-              href='https://trustseal.enamad.ir/?id=680511&Code=S8Sj9eDCgNjtTBrbUHTvNkd1d2dAqOnD'
-              className="relative block h-32 w-28 overflow-hidden rounded-xl bg-white p-2 shadow-md transition-transform hover:scale-105"
-            >
-              <img 
-                referrerPolicy='origin' 
-                src='https://trustseal.enamad.ir/logo.aspx?id=680511&Code=S8Sj9eDCgNjtTBrbUHTvNkd1d2dAqOnD' 
-                alt='نماد اعتماد الکترونیکی' 
-                style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'contain' }}
-                {...{ code: 'S8Sj9eDCgNjtTBrbUHTvNkd1d2dAqOnD' }}
-              />
-            </a>
+            <EnamadLogo />
           </div>
         </div>
       </div>
