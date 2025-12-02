@@ -106,7 +106,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { href: '/admin/users', label: 'کاربران', icon: 'users' },
         { href: '/admin/reviews', label: 'نظرات', icon: 'star', badge: formatBadge(sectionCounts.reviews) },
         { href: '/admin/analytics', label: 'آنالیتیکس فروش', icon: 'chart' },
-        { href: '/admin/pageviews', label: 'آمار بازدید', icon: 'eye' }
+        { href: '/admin/pageviews', label: 'آمار بازدید', icon: 'eye' },
+        { href: '/admin/messages', label: 'پیام‌های تماس', icon: 'mail' }
       ]
     },
     {

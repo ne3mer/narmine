@@ -31,7 +31,7 @@ export const createProductRequest = async (data: {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
+      'Authorization': `Bearer ${localStorage.getItem('gc_token')}`
     },
     body: JSON.stringify(data)
   });
@@ -47,7 +47,7 @@ export const createProductRequest = async (data: {
 export const getUserProductRequests = async (): Promise<ProductRequest[]> => {
   const response = await fetch(`${API_BASE_URL}/api/game-requests`, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
+      'Authorization': `Bearer ${localStorage.getItem('gc_token')}`
     }
   });
 
@@ -66,7 +66,7 @@ export const getAllProductRequests = async (status?: string): Promise<{ data: Pr
 
   const response = await fetch(url, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
+      'Authorization': `Bearer ${localStorage.getItem('gc_token')}`
     }
   });
 
@@ -87,7 +87,7 @@ export const updateProductRequestStatus = async (
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
+      'Authorization': `Bearer ${localStorage.getItem('gc_token')}`
     },
     body: JSON.stringify({ status, adminNote })
   });
@@ -104,7 +104,7 @@ export const deleteProductRequest = async (id: string): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/api/game-requests/${id}`, {
     method: 'DELETE',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
+      'Authorization': `Bearer ${localStorage.getItem('gc_token')}`
     }
   });
 
