@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { formatToman } from '@/lib/format';
+import { formatToman, toPersianDigits } from '@/lib/format';
 import { API_BASE_URL, resolveImageUrl } from '@/lib/api';
 import { useCart } from '@/contexts/CartContext';
 import { PriceAlertModal } from '@/components/alerts/PriceAlertModal';
@@ -235,7 +235,7 @@ export default function GameDetailClient({ game }: Props) {
               {/* Badges */}
               {game.onSale && (
                 <div className="absolute top-4 left-4 bg-rose-500 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-lg animate-pulse">
-                  {discountPercent}% تخفیف
+                  {toPersianDigits(discountPercent)}% تخفیف
                 </div>
               )}
             </button>
@@ -249,7 +249,7 @@ export default function GameDetailClient({ game }: Props) {
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-[#4a3f3a]/80">
                 <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-xl border border-[#c9a896]/20 cursor-pointer hover:bg-white/80 transition-colors">
                   <Icon name="star" size={20} className="text-amber-500 fill-amber-500" />
-                  <span className="font-bold">{gameRating.toFixed(1)}</span>
+                  <span className="font-bold">{toPersianDigits(gameRating.toFixed(1))}</span>
                 </div>
               </div>
 
@@ -404,14 +404,14 @@ export default function GameDetailClient({ game }: Props) {
                           {game.shipping.weight && (
                             <div className="flex justify-between items-center border-b border-[#c9a896]/10 pb-3 last:border-0 last:pb-0">
                               <span className="text-slate-600 font-medium">وزن</span>
-                              <span className="text-[#4a3f3a] font-bold">{game.shipping.weight} گرم</span>
+                              <span className="text-[#4a3f3a] font-bold">{toPersianDigits(game.shipping.weight)} گرم</span>
                             </div>
                           )}
                           {game.shipping.dimensions && (
                             <div className="flex justify-between items-center border-b border-[#c9a896]/10 pb-3 last:border-0 last:pb-0">
                               <span className="text-slate-600 font-medium">ابعاد</span>
                               <span className="text-[#4a3f3a] font-bold" dir="ltr">
-                                {game.shipping.dimensions.length} x {game.shipping.dimensions.width} x {game.shipping.dimensions.height} cm
+                                {toPersianDigits(game.shipping.dimensions.length)} x {toPersianDigits(game.shipping.dimensions.width)} x {toPersianDigits(game.shipping.dimensions.height)} cm
                               </span>
                             </div>
                           )}
@@ -445,7 +445,7 @@ export default function GameDetailClient({ game }: Props) {
                 <div className="space-y-8">
                   <div className="bg-[#f8f5f2] rounded-2xl p-6 border border-[#c9a896]/20 flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="flex items-center gap-4">
-                      <div className="text-5xl font-black text-[#4a3f3a]">{gameRating.toFixed(1)}</div>
+                      <div className="text-5xl font-black text-[#4a3f3a]">{toPersianDigits(gameRating.toFixed(1))}</div>
                       <div className="space-y-1">
                         <div className="flex text-amber-500">
                           {[1, 2, 3, 4, 5].map((star) => (
@@ -457,7 +457,7 @@ export default function GameDetailClient({ game }: Props) {
                             />
                           ))}
                         </div>
-                        <p className="text-sm text-[#4a3f3a]/60 font-medium">از مجموع {reviewCount} نظر</p>
+                        <p className="text-sm text-[#4a3f3a]/60 font-medium">از مجموع {toPersianDigits(reviewCount)} نظر</p>
                       </div>
                     </div>
                     <button 
@@ -501,7 +501,7 @@ export default function GameDetailClient({ game }: Props) {
                           {formatToman(basePrice)}
                         </span>
                         <span className="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-600">
-                          {discountPercent}% تخفیف
+                          {toPersianDigits(discountPercent)}% تخفیف
                         </span>
                       </div>
                       <div className="text-3xl font-black text-[#4a3f3a]">

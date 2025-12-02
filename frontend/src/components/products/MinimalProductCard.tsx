@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { formatToman } from '@/lib/format';
+import { formatToman, toPersianDigits } from '@/lib/format';
 import { resolveImageUrl } from '@/lib/api';
 import { Icon } from '@/components/icons/Icon';
 import { useProductRating } from '@/hooks/useProductRating';
@@ -68,14 +68,14 @@ export const MinimalProductCard = ({
         {onSale && discountPercent > 0 && (
           <div className="absolute top-2 right-2 z-10 flex items-center gap-0.5 rounded-full bg-rose-500 px-2 py-1 text-[10px] font-bold text-white shadow-md animate-pulse">
             <Icon name="zap" size={10} className="fill-white" />
-            <span>{discountPercent}%</span>
+            <span>{toPersianDigits(discountPercent)}%</span>
           </div>
         )}
 
         {displayRating > 0 && (
           <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full border border-white/40 bg-white/90 backdrop-blur-sm px-2 py-1 shadow-sm">
             <Icon name="star" size={12} className="text-amber-500" strokeWidth={0} />
-            <span className="text-xs font-bold text-[#4a3f3a]">{displayRating.toFixed(1)}</span>
+            <span className="text-xs font-bold text-[#4a3f3a]">{toPersianDigits(displayRating.toFixed(1))}</span>
           </div>
         )}
       </div>

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { formatToman } from '@/lib/format';
+import { formatToman, toPersianDigits } from '@/lib/format';
 import { Icon } from '@/components/icons/Icon';
 import type { CompactProduct } from '@/types/admin';
 
@@ -36,7 +36,7 @@ export const CompactProductCard = ({ product }: CompactProductCardProps) => {
         {product.onSale && discountPercent > 0 && (
           <div className="absolute top-1 right-1 z-10 flex items-center gap-0.5 rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-bold text-white shadow-md animate-pulse">
             <Icon name="zap" size={10} className="fill-white" />
-            <span>{discountPercent}%</span>
+            <span>{toPersianDigits(discountPercent)}%</span>
           </div>
         )}
       </div>
@@ -50,7 +50,7 @@ export const CompactProductCard = ({ product }: CompactProductCardProps) => {
           {product.rating !== undefined && product.rating > 0 && (
             <div className="flex items-center gap-1 text-xs text-[#4a3f3a]/60">
               <Icon name="star" size={12} className="text-amber-500" strokeWidth={0} />
-              <span>{product.rating.toFixed(1)}</span>
+              <span>{toPersianDigits(product.rating.toFixed(1))}</span>
             </div>
           )}
         </div>

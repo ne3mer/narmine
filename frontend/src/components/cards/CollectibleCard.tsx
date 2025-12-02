@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/Icon';
-import { formatToman } from '@/lib/format';
+import { formatToman, toPersianDigits } from '@/lib/format';
 import type { ProductCardContent } from '@/data/home';
 
 interface CollectibleCardProps {
@@ -49,7 +49,7 @@ export function CollectibleCard({ product }: CollectibleCardProps) {
           {discountPercent > 0 && (
             <div className="flex items-center gap-1 rounded-full bg-rose-500 px-3 py-1 text-xs font-bold text-white shadow-lg animate-pulse">
               <Icon name="zap" size={14} className="fill-white" />
-              <span>{discountPercent}%</span>
+              <span>{toPersianDigits(discountPercent)}%</span>
             </div>
           )}
           {product.inventory?.status === 'low_stock' && (

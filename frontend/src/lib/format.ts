@@ -9,3 +9,8 @@ export const formatDateTime = (value?: string) => {
     return value;
   }
 };
+
+export const toPersianDigits = (value: string | number) => {
+  const str = String(value);
+  return str.replace(/[0-9]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d)]);
+};

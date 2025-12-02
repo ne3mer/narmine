@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/Icon';
-import { formatToman } from '@/lib/format';
+import { formatToman, toPersianDigits } from '@/lib/format';
 import type { ProductCardContent } from '@/data/home';
 
 interface GearCardProps {
@@ -52,7 +52,7 @@ export function GearCard({ product }: GearCardProps) {
               {discountPercent > 0 && (
                 <div className="flex items-center gap-1 rounded-full bg-rose-500 px-2 py-1 text-[10px] font-bold text-white shadow-lg animate-pulse">
                   <Icon name="zap" size={12} className="fill-white" />
-                  <span>{discountPercent}%</span>
+                  <span>{toPersianDigits(discountPercent)}%</span>
                 </div>
               )}
               {product.shipping?.freeShipping && (

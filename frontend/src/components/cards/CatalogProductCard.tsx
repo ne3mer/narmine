@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { formatToman } from '@/lib/format';
+import { formatToman, toPersianDigits } from '@/lib/format';
 import { resolveImageUrl } from '@/lib/api';
 import type { GameCardContent } from '@/data/home';
 import { Icon } from '@/components/icons/Icon';
@@ -51,7 +51,7 @@ export function CatalogProductCard({ game }: { game: GameCardContent }) {
         {game.onSale && discountPercent > 0 && (
           <div className="absolute right-4 top-12 z-20 flex items-center gap-1 rounded-full bg-rose-500 px-3 py-1 text-xs font-bold text-white shadow-lg animate-pulse">
             <Icon name="zap" size={14} className="fill-white" />
-            <span>{discountPercent}%</span>
+            <span>{toPersianDigits(discountPercent)}%</span>
           </div>
         )}
       </div>
@@ -63,7 +63,7 @@ export function CatalogProductCard({ game }: { game: GameCardContent }) {
             {game.rating > 0 && (
               <span className="inline-flex items-center gap-1 font-bold text-slate-700">
                 <Icon name="star" size={12} className="text-amber-400" strokeWidth={0} />
-                {game.rating.toFixed(1)}
+                {toPersianDigits(game.rating.toFixed(1))}
               </span>
             )}
           </div>
