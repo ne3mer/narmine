@@ -127,7 +127,7 @@ export const SaleShowcaseSection = () => {
   return (
     <div className="space-y-10">
       <div className="flex flex-col gap-2 text-white">
-        <p className="text-sm font-semibold tracking-[0.4em] text-rose-200 uppercase">mega sale zone</p>
+        <p className="text-sm font-semibold tracking-[0.4em] text-rose-200 uppercase">منطقه حراج بزرگ</p>
         <h2 className="text-3xl md:text-4xl font-black">حراج ویژه نرمینه خواب</h2>
         <p className="text-white/70 max-w-2xl">
           محصولات منتخب با تخفیف‌های هیجان‌انگیز و محدود. قیمت قبل و بعد از تخفیف را واضح ببینید و خرید هوشمندانه‌تری داشته باشید.

@@ -22,7 +22,16 @@ export const listGames = async (filters: GameFilters) => {
   const query: FilterQuery<GameDocument> = {};
 
   if (filters.genre) {
-    query.genre = filters.genre;
+    // Try to find category by slug first
+    const category = await CategoryModel.findOne({ slug: filters.genre });
+    
+    if (category) {
+      // If category found, filter by category ID
+      query.categories = category._id;
+    } else {
+      // Fallback to legacy genre string match
+      query.genre = filters.genre;
+    }
   }
 
   if (typeof filters.onSale === 'boolean') {

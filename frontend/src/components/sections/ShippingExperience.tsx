@@ -19,7 +19,7 @@ export const ShippingExperience = ({ methods = defaultHomeContent.shippingMethod
     <div className="rounded-3xl border border-[#c9a896]/30 bg-gradient-to-br from-white via-[#fefaf6] to-[#f5ebe3] p-8 shadow-xl">
       <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#8b6f47]">SHIPPING EXPERIENCE</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#8b6f47]">تجربه ارسال</p>
           <h2 className="mt-3 font-serif text-3xl text-[#4a3f3a]" style={{ fontFamily: 'var(--font-vazirmatn)' }}>
             روش‌های ارسال نرمینه خواب
           </h2>
@@ -27,10 +27,6 @@ export const ShippingExperience = ({ methods = defaultHomeContent.shippingMethod
             متناسب با سبک زندگی خود، تجربه ارسال لوکس یا اقتصادی را انتخاب کنید. تمام روش‌ها با بسته‌بندی محافظ و
             پیگیری آنلاین ارائه می‌شوند.
           </p>
-        </div>
-        <div className="rounded-2xl bg-white/80 px-5 py-3 text-sm text-[#4a3f3a]/70 shadow-inner">
-          <p>به‌روزرسانی توسط تیم تجربه مشتری</p>
-          <p className="mt-1 font-semibold text-[#4a3f3a]">قابل ویرایش از پنل مدیریت</p>
         </div>
       </div>
 
