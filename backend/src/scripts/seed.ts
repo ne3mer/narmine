@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { GameModel } from '../models/game.model';
 import { CategoryModel } from '../models/category.model';
+import { PaymentMethodModel } from '../models/payment-method.model';
 
 dotenv.config();
 
@@ -107,6 +108,18 @@ async function seed() {
       });
     }
     console.log('Inserted products');
+
+    // Payment Methods
+    await PaymentMethodModel.deleteMany({});
+    await PaymentMethodModel.create({
+      name: 'zarinpal',
+      label: 'پرداخت آنلاین (زرین‌پال)',
+      description: 'پرداخت امن با کلیه کارت‌های عضو شتاب',
+      icon: '💳',
+      isActive: true,
+      order: 1
+    });
+    console.log('Inserted payment methods');
 
     console.log('Seeding completed successfully');
     process.exit(0);

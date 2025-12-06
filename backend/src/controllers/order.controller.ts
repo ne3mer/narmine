@@ -72,6 +72,54 @@ export const createOrder = async (req: Request, res: Response) => {
       shippingPreferences
     });
 
+    // Handle Online Payment (ZarinPal)
+    if (paymentMethod === 'online' || paymentMethod === 'zarinpal') {
+      try {
+        const { zarinpalService } = await import('../services/zarinpal.service');
+        const callbackUrl = `${env.CLIENT_URL}/orders/verify`;
+        const description = `Order: ${order.orderNumber}`;
+        const mobile = normalizedCustomerInfo.phone;
+        const email = normalizedCustomerInfo.email;
+        
+        // ZarinPal Amount is in Toman, ensure totalAmount is correct
+        const paymentResponse = await zarinpalService.requestPayment(
+          totalAmount, 
+          description, 
+          callbackUrl, 
+          mobile, 
+          email
+        ); // totalAmount is Toman
+
+        if (paymentResponse.success && paymentResponse.authority) {
+          // Update order with authority
+          await orderService.updateOrderStatus(order._id.toString(), {
+            paymentReference: paymentResponse.authority
+          });
+
+          // Record coupon usage if coupon was applied
+          if (couponCode && discountAmount && discountAmount > 0) {
+            try {
+              const { recordCouponUsage } = await import('../services/coupon.service');
+              await recordCouponUsage(couponCode, discountAmount);
+            } catch (error) {
+              console.warn('Failed to record coupon usage:', error);
+            }
+          }
+
+          return res.status(201).json({
+            message: 'سفارش با موفقیت ثبت شد',
+            data: {
+              ...order.toObject(),
+              paymentUrl: paymentResponse.paymentUrl
+            }
+          });
+        }
+      } catch (paymentError) {
+        console.error('Payment Request Failed:', paymentError);
+        // Fallback or just return order
+      }
+    }
+
     // Record coupon usage if coupon was applied
     if (couponCode && discountAmount && discountAmount > 0) {
       try {
@@ -79,7 +127,6 @@ export const createOrder = async (req: Request, res: Response) => {
         await recordCouponUsage(couponCode, discountAmount);
       } catch (error) {
         console.warn('Failed to record coupon usage:', error);
-        // Don't fail the order if coupon recording fails
       }
     }
 
@@ -257,32 +304,68 @@ export const acknowledgeOrderDeliveryHandler = async (req: Request, res: Respons
   });
 };
 
-// ZarinPal payment verification (placeholder)
+// ZarinPal payment verification
 export const verifyPayment = async (req: Request, res: Response) => {
-  const { Authority, Status } = req.body;
+  const { Authority, Status } = req.body; // Changed to body as schema might expect post body. Or if GET callback, need to check. Usually callbacks are GET.
+  // Actually ZarinPal callbacks are GET usually. But the router defined it as POST in route.ts: router.post('/verify-payment', ...). 
+  // Wait, standard ZarinPal callback is a redirect (GET). The frontend usually handles the callback page, then calls backend.
+  // Let's assume frontend calls this endpoint with Authority and Status from query params.
+  // Checking route `router.post('/verify-payment', ...)` -> Frontend receives callback, then POSTs to backend. Correct.
 
   try {
-    // TODO: Implement actual ZarinPal verification
-    // For now, just update order status based on Status
+    const { OrderModel } = await import('../models/order.model');
+    const { zarinpalService } = await import('../services/zarinpal.service');
     
-    if (Status === 'OK') {
-      // Find order by payment reference
-      const order = await orderService.updateOrderStatus(Authority, {
-        paymentStatus: 'paid',
-        paymentReference: Authority
-      });
+    // Find order by authority (stored in paymentReference)
+    // Note: In createOrder we stored authority in paymentReference
+    const order = await OrderModel.findOne({ paymentReference: Authority });
 
-      if (order) {
-        return res.json({
-          message: 'پرداخت با موفقیت انجام شد',
-          data: order
+    if (!order) {
+      return res.status(404).json({ message: 'سفارش یافت نشد' });
+    }
+
+    if (Status === 'NOK') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'پرداخت توسط کاربر لغو شد یا ناموفق بود' 
+      });
+    }
+
+    if (Status === 'OK') {
+      const amount = order.totalAmount;
+      const verifyResult = await zarinpalService.verifyPayment(amount, Authority);
+
+      if (verifyResult.success) {
+        // Payment Verified
+        const updatedOrder = await orderService.updateOrderStatus(order._id.toString(), {
+          paymentStatus: 'paid',
+          paymentReference: Authority // keep it or update with refId if needed
+          // We could add refId to a new field if schema supports it, for now paymentReference is good.
+        });
+
+        if (updatedOrder) {
+          return res.json({
+            success: true,
+            message: 'پرداخت با موفقیت انجام شد',
+            data: {
+              ...updatedOrder.toObject(),
+              refId: verifyResult.refId
+            }
+          });
+        }
+      } else {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'تایید پرداخت با خطا مواجه شد',
+          error: verifyResult.code
         });
       }
     }
 
-    res.status(400).json({ message: 'پرداخت ناموفق بود' });
+    res.status(400).json({ success: false, message: 'وضعیت پرداخت نامعتبر است' });
   } catch (error) {
-    res.status(500).json({ message: 'خطا در تأیید پرداخت' });
+    console.error('Payment Verification Error:', error);
+    res.status(500).json({ success: false, message: 'خطا در تأیید پرداخت' });
   }
 };
 

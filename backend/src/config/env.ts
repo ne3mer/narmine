@@ -33,7 +33,8 @@ const envSchema = z.object({
   CONTACT_EMAIL: z.string().optional(),
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),
-  CLOUDINARY_API_SECRET: z.string().optional()
+  CLOUDINARY_API_SECRET: z.string().optional(),
+  ZARINPAL_MERCHANT_ID: z.string().default('173f7fc9-29d1-46ca-8a66-9f40d1a68224')
 });
 
 const parsed = envSchema.safeParse(process.env);
